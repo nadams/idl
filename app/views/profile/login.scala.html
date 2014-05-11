@@ -1,0 +1,28 @@
+@(model: ProfileModel, errors: Seq[String])
+
+@main("Login") {
+	<form method="post" action="@routes.ProfileController.post()">
+		<fieldset>
+			<legend>Login</legend>
+			<ul>
+				@for(error <- errors) {
+					<li class="error">@error</li>
+				}
+			</ul>
+
+			<ul>
+				<li>
+					<label>Username (email address)</label>
+					<input type="text" id="username" name="username" value="@model.username" />
+				</li>
+				<li>
+					<label>Password<label>
+					<input type="password" id="password" name="password" />
+				</li>
+				<li>
+					<button type="submit">Log In</button>
+				</li>
+			</ul>
+		</fieldset>
+	</form>
+}
