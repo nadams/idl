@@ -16,9 +16,20 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 	override val profileService: ProfileService = new ProfileServiceImpl
 
 	private class ProfileServiceImpl extends ProfileService {
+		import io.github.nremond._
+
+		val hasher = SecureHash(dkLength = 64)
+
 		override def getByUsername(username: String) : Option[Profile] =
 			profileRepository.getByUsername(username)
 
-		override def authenticate(username: String, password: String) : Boolean = false
+		override def authenticate(username: String, password: String) : Boolean =
+			getByUsername(username) match {
+				case Some(profile) => checkCredentials(profile, password)
+				case None => false
+			}
+
+		private def checkCredentials(profile: Profile, givenPassword: String) =
+			hasher.validatePassword(givenPassword, profile.password)
 	}
 }
