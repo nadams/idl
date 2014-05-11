@@ -26,13 +26,14 @@ object ProfileModelErrors {
 object ChangePasswordForm extends ProfileComponentImpl {
   def apply()(implicit request: RequestHeader) = {
     val username = request.session.get(controllers.SessionKeys.username).getOrElse("")
+    val minLength = 6
 
     Form(
       mapping(
-        "currentPassword" -> nonEmptyText(minLength = 6)
+        "currentPassword" -> nonEmptyText(minLength = minLength)
           .verifying("Incorrect password", password => profileService.authenticate(username, password)),
-        "newPassword" -> nonEmptyText(minLength = 6),
-        "confirmPassword" -> nonEmptyText(minLength = 6)
+        "newPassword" -> nonEmptyText(minLength = minLength),
+        "confirmPassword" -> nonEmptyText(minLength = minLength)
       )(ProfileModel.apply)(ProfileModel.unapply)
       verifying("error.passwordsDoNotMatch", result => result.newPassword == result.confirmPassword)
     )
