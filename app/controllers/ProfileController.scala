@@ -38,7 +38,10 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
 
         BadRequest(views.html.profile.index(ProfileModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
       },
-      result => Redirect(routes.ProfileController.login).withSession(session - SessionKeys.username)
+      result => profileService.updateProfilePassword(request.session.get(SessionKeys.username).get, result.newPassword) match {
+        case true => Redirect(routes.ProfileController.login).withSession(session - SessionKeys.username)
+        case false => InternalServerError("Could not update password")
+      }
     )
   }
 
