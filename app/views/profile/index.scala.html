@@ -1,25 +1,44 @@
-@()(implicit header: MenuModel, flash: Flash)
+@(errors: models.profile.ProfileModelErrors)(implicit header: MenuModel)
 
 @main("Manage Profile") {
 	<form method="post" action="@routes.ProfileController.updateProfile" class="panel panel-default" role="form">
 		<fieldset class="panel-body">
 			<legend>Change Password</legend>
+
+			@if(errors.globalErrors.nonEmpty) {
+				<div class="alert alert-danger">
+					@for(error <- errors.globalErrors) {
+						<span class="error">@error</span>
+					}
+				</div>
+			}
+
 			<div class="row form-group">
-				<div class="col-xs-4">
-					<label for="currentPassword">Current Password</label>
+				<div class="col-xs-4 @if(errors.currentPasswordError.nonEmpty) { has-error }">
+					<label for="currentPassword" class="control-label">Current Password</label>
 					<input type="password" class="form-control" id="currentPassword" name="currentPassword" />
+					@if(errors.currentPasswordError.nonEmpty) {
+						<span class="help-block">@errors.currentPasswordError.get</span>
+					}
 				</div>
 			</div>
 			<div class="row form-group">
-				<div class="col-xs-4">
-					<label for="newPassword">New Password</label>
+				<div class="col-xs-4 @if(errors.newPasswordError.nonEmpty) { has-error }">
+					<label for="newPassword" class="control-label">New Password</label>
 					<input type="password" class="form-control" id="newPassword" name="newPassword" />
+					@if(errors.newPasswordError.nonEmpty) {
+						<span class="help-block">@errors.newPasswordError.get</span>
+					}
 				</div>
 			</div>
 			<div class="row form-group">
-				<div class="col-xs-4">
-					<label for="confirmPassword">Confirm Password</label>
+				<div class="col-xs-4 @if(errors.confirmPasswordError.nonEmpty) { has-error }">
+					<label for="confirmPassword" class="control-label">Confirm Password</label>
 					<input type="password" class="form-control" id="confirmPassword" name="confirmPassword" />
+					
+					@if(errors.confirmPasswordError.nonEmpty) {
+						<span class="help-block">@errors.confirmPasswordError.get</span>
+					}
 				</div>
 			</div>
 			<div class="row form-group">

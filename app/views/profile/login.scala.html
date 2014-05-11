@@ -6,11 +6,11 @@
 			<legend>Login</legend>
 
 			@if(errors.nonEmpty) {
-				<div class="alert alert-danger">
+				<ul class="alert alert-danger">
 					@for(error <- errors) {
-						<span class="error">@error</span>
+						<li class="error">@error</li>
 					}
-				</div>
+				</ul>
 			}
 
 			<div class="row form-group">
