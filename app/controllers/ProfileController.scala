@@ -5,6 +5,8 @@ import play.api.mvc._
 import components.ProfileComponentImpl
 import models.profile._
 import _root_.data._
+import models.FieldExtensions._
+import models.FormExtensions._
 
 object ProfileController extends Controller with Secured with ProvidesHeader with ProfileComponentImpl {
 	def login = Action { implicit request =>
@@ -14,8 +16,8 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
 	def performLogin = Action { implicit request =>
 		LoginForm().bindFromRequest.fold(
 			errors => {
-				val profileModel = ProfileModel(errors("username").value.getOrElse(""), "")
-				val errorMessages = errors.globalErrors.map(_.message)
+				val profileModel = ProfileModel(errors("username").formattedMessage._1, "")
+				val errorMessages = errors.formattedMessages
 
 				BadRequest(views.html.profile.login(profileModel, errorMessages))
 			},
