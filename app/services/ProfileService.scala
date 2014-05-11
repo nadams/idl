@@ -24,10 +24,7 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 			profileRepository.getByUsername(username)
 
 		override def authenticate(username: String, password: String) : Boolean =
-			getByUsername(username) match {
-				case Some(profile) => checkCredentials(profile, password)
-				case None => false
-			}
+			getByUsername(username).exists(checkCredentials(_, password))
 
 		private def checkCredentials(profile: Profile, givenPassword: String) =
 			hasher.validatePassword(givenPassword, profile.password)
