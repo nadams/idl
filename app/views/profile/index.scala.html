@@ -8,7 +8,7 @@
 			@if(errors.globalErrors.nonEmpty) {
 				<div class="alert alert-danger">
 					@for(error <- errors.globalErrors) {
-						<span class="error">@error</span>
+						<p class="error">@error</p>
 					}
 				</div>
 			}
