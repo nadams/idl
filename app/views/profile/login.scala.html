@@ -1,7 +1,7 @@
 @(model: ProfileModel, errors: Seq[String])
 
 @main("Login") {
-	<form method="post" action="@routes.ProfileController.post" role="form" class="panel panel-default">
+	<form method="post" action="@routes.ProfileController.performLogin" role="form" class="panel panel-default">
 		<fieldset class="panel-body">
 			<legend>Login</legend>
 

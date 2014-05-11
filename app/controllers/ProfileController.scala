@@ -7,11 +7,11 @@ import models.{ ProfileModel, LoginForm }
 import _root_.data._
 
 object ProfileController extends Controller with ProfileComponentImpl {
-	def get = Action {
+	def login = Action {
 		Ok(views.html.profile.login(ProfileModel(), Seq.empty[String]))
 	}
 
-	def post = Action { implicit request =>
+	def performLogin = Action { implicit request =>
 		LoginForm().bindFromRequest.fold(
 			errors => {
 				val profileModel = ProfileModel(errors("username").value.getOrElse(""), "")
