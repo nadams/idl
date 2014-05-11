@@ -1,4 +1,32 @@
 @(model: String)(implicit header: MenuModel)
+
 @main("Manage Profile") {
-	
+	<form method="post" action="@routes.ProfileController.updateProfile" class="panel panel-default" role="form">
+		<fieldset class="panel-body">
+			<legend>Change Password</legend>
+			<div class="row form-group">
+				<div class="col-xs-4">
+					<label for="currentPassword">Current Password</label>
+					<input type="password" class="form-control" id="currentPassword" name="currentPassword" />
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-4">
+					<label for="newPassword">New Password</label>
+					<input type="password" class="form-control" id="newPassword" name="newPassword" />
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-4">
+					<label for="confirmPassword">Confirm Password</label>
+					<input type="password" class="form-control" id="confirmPassword" name="confirmPassword" />
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-4">
+					<button type="submit" class="btn btn-primary">Update Password</button>
+				</div>
+			</div>
+		</fieldset>
+	</form>
 }

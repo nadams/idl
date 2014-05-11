@@ -29,6 +29,10 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
 		Ok(views.html.profile.index(""))
 	}
 
+	def updateProfile = IsAuthenticated { username => implicit request => 
+		Redirect(routes.ProfileController.index)
+	}
+
 	def logout = Action { implicit request =>
 		Redirect(routes.Application.index).withSession(session - SessionKeys.username)
 	}
