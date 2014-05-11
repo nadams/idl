@@ -22,4 +22,8 @@ object ProfileController extends Controller with ProfileComponentImpl {
 			user => Redirect(routes.Application.index).withSession(SessionKeys.username -> user.username)
 		)
 	}
+
+	def index = Action {
+		Ok(views.html.profile.index())
+	}
 }
