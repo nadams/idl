@@ -7,6 +7,7 @@ trait ProfileServiceComponent {
 
 	trait ProfileService {
 		def getByUsername(username: String) : Option[Profile]
+		def authenticate(username: String, password: String) : Boolean
 	}
 }
 
@@ -17,5 +18,7 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 	private class ProfileServiceImpl extends ProfileService {
 		override def getByUsername(username: String) : Option[Profile] =
 			profileRepository.getByUsername(username)
+
+		override def authenticate(username: String, password: String) : Boolean = true
 	}
 }
