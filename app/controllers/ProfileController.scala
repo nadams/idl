@@ -10,16 +10,16 @@ import models.FormExtensions._
 
 object ProfileController extends Controller with Secured with ProvidesHeader with ProfileComponentImpl {
 	def login = Action { implicit request =>
-		Ok(views.html.profile.login(ProfileModel(), Seq.empty[String]))
+		Ok(views.html.profile.login(LoginModel(), Seq.empty[String]))
 	}
 
 	def performLogin = Action { implicit request =>
 		LoginForm().bindFromRequest.fold(
 			errors => {
-				val profileModel = ProfileModel(errors("username").formattedMessage._1, "")
+				val loginModel = LoginModel(errors("username").formattedMessage._1, "")
 				val errorMessages = errors.formattedMessages
 
-				BadRequest(views.html.profile.login(profileModel, errorMessages))
+				BadRequest(views.html.profile.login(loginModel, errorMessages))
 			},
 			user => Redirect(routes.Application.index).withSession(SessionKeys.username -> user.username)
 		)
@@ -30,6 +30,7 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
 	}
 
 	def updateProfile = IsAuthenticated { username => implicit request => 
+
 		Redirect(routes.ProfileController.index)
 	}
 
