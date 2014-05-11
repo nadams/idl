@@ -34,7 +34,7 @@ object ChangePasswordForm extends ProfileComponentImpl {
         "newPassword" -> nonEmptyText(minLength = 6),
         "confirmPassword" -> nonEmptyText(minLength = 6)
       )(ProfileModel.apply)(ProfileModel.unapply)
-      verifying("New passwords do not match", result => result.newPassword == result.confirmPassword)
+      verifying("error.passwordsDoNotMatch", result => result.newPassword == result.confirmPassword)
     )
   }
 }
