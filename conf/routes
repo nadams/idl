@@ -3,12 +3,12 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                           controllers.HomeController.index
 
 GET		/login						controllers.ProfileController.login
 POST	/login						controllers.ProfileController.performLogin
 GET		/profile 					controllers.ProfileController.index
-POST	/profile				controllers.ProfileController.updateProfile
+POST	/profile				    controllers.ProfileController.updateProfile
 POST	/profile/logout				controllers.ProfileController.logout
 
 # Map static resources from the /public folder to the /assets URL path
