@@ -1,0 +1,22 @@
+@(model: models.ProfileModel)
+
+@main("Login") {
+	<form method="post">
+		<fieldset>
+			<legend>Login</legend>
+			<ul>
+				<li>
+					<label>Username (email address)</label>
+					<input type="text" id="email" value="@model.username" />
+				</li>
+				<li>
+					<label>Password<label>
+					<input type="text" id="password" />
+				</li>
+				<li>
+					<button type="submit">Log In</button>
+				</li>
+			</ul>
+		</fieldset>
+	</form>
+}
