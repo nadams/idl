@@ -6,8 +6,8 @@ import components.ProfileComponentImpl
 import models.{ ProfileModel, LoginForm }
 import _root_.data._
 
-object ProfileController extends Controller with Secured with ProfileComponentImpl {
-	def login = Action {
+object ProfileController extends Controller with Secured with ProvidesHeader with ProfileComponentImpl {
+	def login = Action { implicit request =>
 		Ok(views.html.profile.login(ProfileModel(), Seq.empty[String]))
 	}
 
@@ -24,7 +24,7 @@ object ProfileController extends Controller with Secured with ProfileComponentIm
 	}
 
 	def index = IsAuthenticated { username => implicit request =>
-		Ok(views.html.profile.index())
+		Ok(views.html.profile.index(""))
 	}
 
 	def logout = Action { implicit request =>

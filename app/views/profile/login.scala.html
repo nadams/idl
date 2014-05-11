@@ -1,4 +1,4 @@
-@(model: ProfileModel, errors: Seq[String])
+@(model: ProfileModel, errors: Seq[String])(implicit header: MenuModel)
 
 @main("Login") {
 	<form method="post" action="@routes.ProfileController.performLogin" role="form" class="panel panel-default">
