@@ -1,4 +1,4 @@
-@(model: String)(implicit header: MenuModel)
+@()(implicit header: MenuModel, flash: Flash)
 
 @main("Manage Profile") {
 	<form method="post" action="@routes.ProfileController.updateProfile" class="panel panel-default" role="form">

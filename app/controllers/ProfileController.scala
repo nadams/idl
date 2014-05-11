@@ -26,7 +26,7 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
 	}
 
 	def index = IsAuthenticated { username => implicit request =>
-		Ok(views.html.profile.index(""))
+		Ok(views.html.profile.index())
 	}
 
 	def updateProfile = IsAuthenticated { username => implicit request => 
