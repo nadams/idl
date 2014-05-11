@@ -16,6 +16,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     val tableName = "Profile"
     val profileId = "ProfileId"
     val email = "Email"
+    val displayName = "DisplayName"
     val password = "Password"
     val dateCreated = "DateCreated"
     val passwordExpired = "PasswordExpired"
@@ -50,6 +51,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
           UPDATE $tableName
           SET 
             $email = {email},
+            $displayName = {displayName},
             $password = {password},
             $dateCreated = {dateCreated},
             $passwordExpired = {passwordExpired},
@@ -59,6 +61,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       ).on(
         "profileId" -> profile.profileId,
         "email" -> profile.email,
+        "displayName" -> profile.displayName,
         "password" -> profile.password,
         "dateCreated" -> profile.dateCreated,
         "passwordExpired" -> profile.passwordExpired,
@@ -67,7 +70,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     }
 
     private def mapProfile(query: SimpleSql[Row])(implicit connection: Connection) : Option[Profile] = 
-      query.singleOpt(int(profileId) ~ str(email) ~ str(password) ~ bool(passwordExpired) ~ get[DateTime](dateCreated) ~ get[DateTime](lastLoginDate) map(flatten))
-      .map(x => Profile(x._1, x._2, x._3, x._4, x._5, x._6))
+      query.singleOpt(int(profileId) ~ str(email) ~ str(displayName) ~ str(password) ~ bool(passwordExpired) ~ get[DateTime](dateCreated) ~ get[DateTime](lastLoginDate) map(flatten))
+      .map(x => Profile(x._1, x._2, x._3, x._4, x._5, x._6, x._7))
   }
 }

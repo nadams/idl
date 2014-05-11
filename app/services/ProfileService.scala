@@ -32,6 +32,7 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
         val updatedProfile = Profile(
           profile.profileId, 
           profile.email, 
+          profile.displayName,
           hashPassword(password), 
           profile.passwordExpired, 
           profile.dateCreated, 
