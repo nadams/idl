@@ -13,8 +13,8 @@ object ProfileModel {
 object LoginForm extends ProfileComponentImpl {
   def apply() = Form(
     mapping(
-      "username" -> nonEmptyText,
-      "password" -> nonEmptyText
+      "username" -> text,
+      "password" -> text
     )(ProfileModel.apply)(ProfileModel.unapply)
     verifying("Invalid username/password", result => result match {
       case ProfileModel(email, password) => profileService.authenticate(email, password)
