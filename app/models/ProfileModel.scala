@@ -16,7 +16,7 @@ object LoginForm extends ProfileComponentImpl {
       "username" -> nonEmptyText,
       "password" -> nonEmptyText
     )(ProfileModel.apply)(ProfileModel.unapply)
-    verifying("error.invalidUsernamePassword", result => result match {
+    verifying("Invalid username/password", result => result match {
       case ProfileModel(email, password) => profileService.authenticate(email, password)
     })
   )

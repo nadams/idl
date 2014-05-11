@@ -19,6 +19,6 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 		override def getByUsername(username: String) : Option[Profile] =
 			profileRepository.getByUsername(username)
 
-		override def authenticate(username: String, password: String) : Boolean = true
+		override def authenticate(username: String, password: String) : Boolean = false
 	}
 }

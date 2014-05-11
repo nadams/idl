@@ -1,9 +1,15 @@
-@(model: ProfileModel)
+@(model: ProfileModel, errors: Seq[String])
 
 @main("Login") {
 	<form method="post" action="@routes.ProfileController.post()">
 		<fieldset>
 			<legend>Login</legend>
+			<ul>
+				@for(error <- errors) {
+					<li class="error">@error</li>
+				}
+			</ul>
+
 			<ul>
 				<li>
 					<label>Username (email address)</label>
