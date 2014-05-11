@@ -1,13 +1,13 @@
-package models
+package models.profile
 
 import play.api.data._
 import play.api.data.Forms._
 import components.ProfileComponentImpl
 
-case class ProfileModel(username: String, password: String)
+case class LoginModel(username: String, password: String)
 
-object ProfileModel {
-  def apply() : ProfileModel = ProfileModel("", "")
+object LoginModel {
+  def apply() : LoginModel = LoginModel("", "")
 }
 
 object LoginForm extends ProfileComponentImpl {
@@ -15,9 +15,9 @@ object LoginForm extends ProfileComponentImpl {
     mapping(
       "username" -> text,
       "password" -> text
-    )(ProfileModel.apply)(ProfileModel.unapply)
+    )(LoginModel.apply)(LoginModel.unapply)
     verifying("Invalid username/password", result => result match {
-      case ProfileModel(email, password) => profileService.authenticate(email, password)
+      case LoginModel(email, password) => profileService.authenticate(email, password)
     })
   )
 }

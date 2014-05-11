@@ -1,4 +1,4 @@
-@(model: ProfileModel, errors: Seq[String])
+@(model: models.profile.LoginModel, errors: Seq[String])(implicit header: MenuModel)
 
 @main("Login") {
 	<form method="post" action="@routes.ProfileController.performLogin" role="form" class="panel panel-default">
@@ -8,20 +8,20 @@
 			@if(errors.nonEmpty) {
 				<div class="alert alert-danger">
 					@for(error <- errors) {
-						<span class="error">@error</span>
+						<p class="error">@error</p>
 					}
 				</div>
 			}
 
 			<div class="row form-group">
 				<div class="col-xs-4">
-					<label>Username (email address)</label>
+					<label for="username">Username (email address)</label>
 					<input type="text" class="form-control" id="username" name="username" value="@model.username" />
 				</div>
 			</div>
 			<div class="row form-group">
 				<div class="col-xs-4">
-					<label>Password</label>
+					<label for="password">Password</label>
 					<input type="password" class="form-control" id="password" name="password" />
 				</div>
 			</div>

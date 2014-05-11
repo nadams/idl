@@ -5,6 +5,7 @@ trait ProfileRepositoryComponent {
 
 	trait ProfileRepository {
 		def getByUsername(username: String) : Option[Profile]
+		def updateProfile(profile: Profile) : Boolean
 	}
 }
 
@@ -41,6 +42,28 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 			.on("email" -> username)
 			
 		  mapProfile(profile)
+		}
+
+		override def updateProfile(profile: Profile) : Boolean = DB.withConnection { implicit connection =>
+			SQL(
+				f"""
+					UPDATE $tableName
+					SET 
+						$email = {email},
+						$password = {password},
+						$dateCreated = {dateCreated},
+						$passwordExpired = {passwordExpired},
+						$lastLoginDate = {lastLoginDate}
+					WHERE $profileId = {profileId}
+				"""
+			).on(
+				"profileId" -> profile.profileId,
+				"email" -> profile.email,
+				"password" -> profile.password,
+				"dateCreated" -> profile.dateCreated,
+				"passwordExpired" -> profile.passwordExpired,
+				"lastLoginDate" -> profile.lastLoginDate
+			).executeUpdate() > 0
 		}
 
 		private def mapProfile(query: SimpleSql[Row])(implicit connection: Connection) : Option[Profile] = 
