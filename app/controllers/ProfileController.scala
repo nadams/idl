@@ -3,7 +3,7 @@ package controllers
 import play.api._
 import play.api.mvc._
 import components.ProfileComponentImpl
-import models.{ ProfileModel, LoginForm }
+import models.profile._
 import _root_.data._
 
 object ProfileController extends Controller with Secured with ProvidesHeader with ProfileComponentImpl {
