@@ -11,3 +11,12 @@ trait ProfileComponentImpl
 extends ProfileRegistry
 with ProfileServiceComponentImpl
 with ProfileRepositoryComponentImpl
+
+trait NewsRegistry
+extends NewsServiceComponent
+with NewsRepositoryComponent
+
+trait NewsComponentImpl
+extends NewsRegistry
+with NewsServiceComponentImpl
+with NewsRepositoryComponentImpl
