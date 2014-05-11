@@ -16,6 +16,6 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 
 	private class ProfileServiceImpl extends ProfileService {
 		override def getByUsername(username: String) : Option[Profile] =
-			profileService.getByUsername(username)
+			profileRepository.getByUsername(username)
 	}
 }

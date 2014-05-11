@@ -8,7 +8,7 @@ trait ProfileRepositoryComponent {
 	}
 }
 
-class ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
+trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 	override val profileRepository : ProfileRepository = new ProfileRepositoryImpl
 
 	trait ProfileSchema {

@@ -2,3 +2,12 @@ package components
 
 import data._
 import services._
+
+trait ProfileRegistry
+extends ProfileServiceComponent
+with ProfileRepositoryComponent
+
+trait ProfileComponentImpl
+extends ProfileRegistry
+with ProfileServiceComponentImpl
+with ProfileRepositoryComponentImpl
