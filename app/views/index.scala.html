@@ -1,7 +1,7 @@
 @(message: String)(implicit header: MenuModel)
 
 @extraScripts = {
-	
+	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
 }
 
 @main("International Doom League", extraScripts = extraScripts) {
