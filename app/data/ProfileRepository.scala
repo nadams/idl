@@ -32,6 +32,8 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     import play.api.Play.current
     import AnormExtensions._
 
+    val profileParser = int(profileId) ~ str(email) ~ str(displayName) ~ str(password) ~ bool(passwordExpired) ~ get[DateTime](dateCreated) ~ get[DateTime](lastLoginDate) map(flatten)
+
     override def getByUsername(username: String) : Option[Profile] = DB.withConnection { implicit connection =>
       val profile = SQL(
         f"""
@@ -70,7 +72,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     }
 
     private def mapProfile(query: SimpleSql[Row])(implicit connection: Connection) : Option[Profile] = 
-      query.singleOpt(int(profileId) ~ str(email) ~ str(displayName) ~ str(password) ~ bool(passwordExpired) ~ get[DateTime](dateCreated) ~ get[DateTime](lastLoginDate) map(flatten))
+      query.singleOpt(profileParser)
       .map(Profile(_))
   }
 }
