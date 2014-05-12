@@ -36,7 +36,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 
     override def getByUsername(username: String) : Option[Profile] = DB.withConnection { implicit connection =>
       SQL(
-        f"""
+        s"""
           SELECT *
           FROM $tableName
           WHERE $email = {email}
@@ -49,7 +49,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 
     override def updateProfile(profile: Profile) : Boolean = DB.withConnection { implicit connection =>
       SQL(
-        f"""
+        s"""
           UPDATE $tableName
           SET 
             $email = {email},

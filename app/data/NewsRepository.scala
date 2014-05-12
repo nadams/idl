@@ -34,7 +34,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
     val newsParser = int(newsId) ~ str(subject) ~ get[DateTime](dateCreated) ~ get[DateTime](dateModified) ~ str(content) ~ int(postedByProfileId) map(flatten)
     val multiRowNewsParser = newsParser *
     val selectAllNewsSql = 
-      f"""
+      s"""
         SELECT 
           $newsId,
           $subject,
@@ -53,7 +53,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
 
     override def getPagedNews(currentPage: Int = 1, pageSize: Int = 15) = DB.withConnection { implicit connection => 
       SQL(
-        f"""
+        s"""
           $selectAllNewsSql
           ORDER BY $dateCreated
           LIMIT ${currentPage * pageSize}, $pageSize
