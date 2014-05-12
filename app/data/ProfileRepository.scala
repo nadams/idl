@@ -35,7 +35,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     val profileParser = int(profileId) ~ str(email) ~ str(displayName) ~ str(password) ~ bool(passwordExpired) ~ get[DateTime](dateCreated) ~ get[DateTime](lastLoginDate) map(flatten)
 
     override def getByUsername(username: String) : Option[Profile] = DB.withConnection { implicit connection =>
-      val profile = SQL(
+      SQL(
         f"""
           SELECT *
           FROM $tableName
@@ -43,8 +43,8 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
         """
       )
       .on("email" -> username)
-      
-      mapProfile(profile)
+      .singleOpt(profileParser)
+      .map(Profile(_))
     }
 
     override def updateProfile(profile: Profile) : Boolean = DB.withConnection { implicit connection =>
@@ -70,9 +70,5 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
         "lastLoginDate" -> profile.lastLoginDate
       ).executeUpdate() > 0
     }
-
-    private def mapProfile(query: SimpleSql[Row])(implicit connection: Connection) : Option[Profile] = 
-      query.singleOpt(profileParser)
-      .map(Profile(_))
   }
 }
