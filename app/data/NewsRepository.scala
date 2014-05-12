@@ -5,7 +5,7 @@ trait NewsRepositoryComponent {
 
   trait NewsRepository {
     def getAllNews() : Seq[News]
-    def getPagedNews(currentPage: Int = 1, pageSize: Int = 15) : Seq[News]
+    def getPagedNews(currentPage: Int, pageSize: Int) : Seq[News]
   }
 }
 
@@ -51,12 +51,12 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
       .map(News(_))
     }
 
-    override def getPagedNews(currentPage: Int = 1, pageSize: Int = 15) = DB.withConnection { implicit connection => 
+    override def getPagedNews(currentPage: Int, pageSize: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
           $selectAllNewsSql
           ORDER BY $dateCreated
-          LIMIT ${currentPage * pageSize}, $pageSize
+          LIMIT ${(currentPage - 1) * pageSize}, $pageSize
         """
       )
       .as(multiRowNewsParser)

@@ -1,9 +1,14 @@
-@(message: String)(implicit header: MenuModel)
+@(model: NewsModel)(implicit header: MenuModel)
 
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
 }
 
 @main("International Doom League", extraScripts = extraScripts) {
-	
+	@for(news <- model.newsItems) {
+		<div class="panel panel-default">
+			<div class="panel-heading">@news.subject</div>
+			<div class="panel-body">@news.content</div>
+		</div>
+	}
 }
