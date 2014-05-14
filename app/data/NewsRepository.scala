@@ -6,6 +6,7 @@ trait NewsRepositoryComponent {
   trait NewsRepository {
     def getAllNews() : Seq[News]
     def getPagedNews(currentPage: Int, pageSize: Int) : Seq[News]
+    def removeNewsItem(id: Int) : Boolean
   }
 }
 
@@ -61,6 +62,17 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
       )
       .as(multiRowNewsParser)
       .map(News(_))
+    }
+
+    override def removeNewsItem(id: Int) : Boolean = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          DELETE FROM $tableName
+          WHERE $newsId = {newsId}
+        """
+      )
+      .on("newsId" -> id)
+      .execute()
     }
   }
 }
