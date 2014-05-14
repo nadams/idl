@@ -11,7 +11,7 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
   }
 
   def create = IsAuthenticated { username => implicit request =>
-    Ok(views.html.news.edit())
+    Ok(views.html.news.edit(EditNews()))
   }
 
   def saveNew = IsAuthenticated { username => implicit request =>
@@ -23,7 +23,7 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
   }
 
   def edit(id: Int) = IsAuthenticated { username => implicit request =>
-    Ok(views.html.news.edit())
+    Ok(views.html.news.edit(EditNews()))
   }
 
   def remove(id: Int) = IsAuthenticated { username => implicit request =>

@@ -1,0 +1,9 @@
+@(model: models.news.EditNews)(implicit header: MenuModel)
+
+@import models.news.EditNews
+
+@defining(if(model == EditNews()) "Create News" else s"Edit News: $model.newsId") { title =>
+	@main(title) {
+		
+	}
+}
