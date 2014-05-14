@@ -1,4 +1,4 @@
-@(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""))(content: Html)(implicit header: MenuModel)
+@(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel)
 
 <!DOCTYPE html>
 
@@ -32,6 +32,8 @@
                         <li><a href="@routes.ProfileController.index">@header.username</a></li>
                     </ul>
                 }
+
+                @extraNavItems
             </div>
         </nav>
         <div class="container">
