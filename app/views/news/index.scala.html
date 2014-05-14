@@ -1,52 +1,37 @@
-@()(implicit header: MenuModel)
+@(model: models.news.AdminNews)(implicit header: MenuModel)
 
 @main("Manage News") {
-	<table class="table table-striped table-hover">
-		<thead>
-			<tr>
-				<th>Subject</th>
-				<th>Date Created</th>
-				<th>Date Modified</th>
-				<th>Posted by</th>
-				<th>Remove</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><a href="#">Test news item</a></td>
-				<td>now</td>
-				<td>now</td>
-				<td>Admin</td>
-				<td><button class="btn btn-danger">Remove</button></td>
-			</tr>
-			<tr>
-				<td><a href="#">Test news item</a></td>
-				<td>now</td>
-				<td>now</td>
-				<td>Admin</td>
-				<td><button class="btn btn-danger">Remove</button></td>
-			</tr>
-			<tr>
-				<td><a href="#">Test news item</a></td>
-				<td>now</td>
-				<td>now</td>
-				<td>Admin</td>
-				<td><button class="btn btn-danger">Remove</button></td>
-			</tr>
-			<tr>
-				<td><a href="#">Test news item</a></td>
-				<td>now</td>
-				<td>now</td>
-				<td>Admin</td>
-				<td><button class="btn btn-danger">Remove</button></td>
-			</tr>
-			<tr>
-				<td><a href="#">Test news item</a></td>
-				<td>now</td>
-				<td>now</td>
-				<td>Admin</td>
-				<td><button class="btn btn-danger">Remove</button></td>
-			</tr>
-		</tbody>
-	</table>
+
+	@if(model.newsItems.nonEmpty) {
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th>Subject</th>
+					<th>Date Created</th>
+					<th>Date Modified</th>
+					<th>Posted by</th>
+					<th>Remove</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+				</tr>
+				@for(newsItem <- model.newsItems) {
+					<td><a href="@routes.NewsController.edit(newsItem.newsId)">@newsItem.subject</a></td>
+					<td>@newsItem.dateCreated</td>
+					<td>@newsItem.dateModified</td>
+					<td>@newsItem.postedByUsername</td>
+					<td>
+						<form method="post" action="@routes.NewsController.remove(newsItem.newsId)">
+							<button type="submit" class="btn btn-danger">Remove</button>
+						</form>
+					</td>
+				}
+			</tbody>
+		</table>
+	} else {
+		<div class="jumbotron">
+			<h1>There are no news items yet.</h1>
+		</div>
+	}
 }

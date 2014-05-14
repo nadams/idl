@@ -2,10 +2,11 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import models.news._
 
 object NewsController extends Controller with ProvidesHeader with Secured {
   def index = IsAuthenticated { username => implicit request =>
-    Ok(views.html.news.index())
+    Ok(views.html.news.index(AdminNews(Seq.empty[AdminNewsListItem])))
   }
 
   def create = IsAuthenticated { username => implicit request =>
@@ -24,7 +25,7 @@ object NewsController extends Controller with ProvidesHeader with Secured {
     Ok("")
   }
 
-  def delete(id: Int) = IsAuthenticated { username => implicit request =>
+  def remove(id: Int) = IsAuthenticated { username => implicit request =>
     Ok("")
   }
 }
