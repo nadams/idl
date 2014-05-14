@@ -28,8 +28,9 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
 
   def remove(id: Int) = IsAuthenticated { username => implicit request =>
     newsService.removeNewsItem(id) match {
-      case true => Redirect("/")
-      case false => Redirect("/")
+      case true => Redirect(routes.NewsController.index)
+      //case false => Ok(views.html.news.edit(newsService.getNewsById(id)))
+      case false => InternalServerError("Could not remove news item")
     }
   }
 }

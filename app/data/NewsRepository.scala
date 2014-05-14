@@ -7,6 +7,8 @@ trait NewsRepositoryComponent {
     def getAllNews() : Seq[News]
     def getPagedNews(currentPage: Int, pageSize: Int) : Seq[News]
     def removeNewsItem(id: Int) : Boolean
+    def insertNews(news: News) : Int
+    def getNewsById(id: Int) : Option[News]
   }
 }
 
@@ -27,7 +29,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
     import java.sql._
     import anorm._ 
     import anorm.SqlParser._
-    import org.joda.time.DateTime
+    import org.joda.time.{ DateTime, DateTimeZone }
     import play.api.db.DB
     import play.api.Play.current
     import AnormExtensions._
@@ -43,36 +45,71 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
           $dateModified,
           $content,
           $postedByProfileId
-        FROM $tableName
+        FROM $tableName;
       """ 
 
-    override def getAllNews() : Seq[News] = DB.withConnection { implicit connection => 
+    def getAllNews() : Seq[News] = DB.withConnection { implicit connection => 
       SQL(selectAllNewsSql)
       .as(multiRowNewsParser)
       .map(News(_))
     }
 
-    override def getPagedNews(currentPage: Int, pageSize: Int) = DB.withConnection { implicit connection => 
+    def getPagedNews(currentPage: Int, pageSize: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
           $selectAllNewsSql
           ORDER BY $dateCreated
-          LIMIT ${(currentPage - 1) * pageSize}, $pageSize
+          LIMIT ${(currentPage - 1) * pageSize}, $pageSize;
         """
       )
       .as(multiRowNewsParser)
       .map(News(_))
     }
 
-    override def removeNewsItem(id: Int) : Boolean = DB.withConnection { implicit connection => 
+    def removeNewsItem(id: Int) : Boolean = DB.withConnection { implicit connection => 
       SQL(
         s"""
           DELETE FROM $tableName
+          WHERE $newsId = {newsId};
+        """
+      )
+      .on("newsId" -> id)
+      .execute
+    }
+
+    def insertNews(news: News) : Int = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          INSERT INTO $tableName ($subject, $dateCreated, $dateModified, $content, $postedByProfileId)
+          VALUES (
+            $subject = {subject}, 
+            $dateCreated = {dateCreated}, 
+            $dateModified = {dateModified}, 
+            $content = {content}, 
+            $postedByProfileId = {postedByProfileId}
+          );
+        """
+      )
+      .on(
+        "subject" -> news.subject,
+        "dateCreated" -> new DateTime(DateTimeZone.UTC),
+        "dateModified" -> new DateTime(DateTimeZone.UTC),
+        "content" -> news.content,
+        "postedByProfileId" -> news.postedByProfileId
+      )
+      .executeInsert(scalar[Int] single)
+    }
+
+    def getNewsById(id: Int) : Option[News] = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          $selectAllNewsSql
           WHERE $newsId = {newsId}
         """
       )
       .on("newsId" -> id)
-      .execute()
+      .singleOpt(newsParser)
+      .map(News(_))
     }
   }
 }
