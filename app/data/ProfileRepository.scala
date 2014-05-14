@@ -10,7 +10,7 @@ trait ProfileRepositoryComponent {
 }
 
 trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
-  override val profileRepository : ProfileRepository = new ProfileRepositoryImpl
+  val profileRepository : ProfileRepository = new ProfileRepositoryImpl
 
   trait ProfileSchema {
     val tableName = "Profile"
@@ -23,7 +23,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     val lastLoginDate = "LastLoginDate"
   }
 
-  private class ProfileRepositoryImpl extends ProfileRepository with ProfileSchema {
+  class ProfileRepositoryImpl extends ProfileRepository with ProfileSchema {
     import java.sql._
     import anorm._ 
     import anorm.SqlParser._
@@ -34,7 +34,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 
     val profileParser = int(profileId) ~ str(email) ~ str(displayName) ~ str(password) ~ bool(passwordExpired) ~ get[DateTime](dateCreated) ~ get[DateTime](lastLoginDate) map(flatten)
 
-    override def getByUsername(username: String) : Option[Profile] = DB.withConnection { implicit connection =>
+    def getByUsername(username: String) : Option[Profile] = DB.withConnection { implicit connection =>
       SQL(
         s"""
           SELECT *
@@ -47,7 +47,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       .map(Profile(_))
     }
 
-    override def updateProfile(profile: Profile) : Boolean = DB.withConnection { implicit connection =>
+    def updateProfile(profile: Profile) : Boolean = DB.withConnection { implicit connection =>
       SQL(
         s"""
           UPDATE $tableName
