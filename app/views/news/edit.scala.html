@@ -2,7 +2,7 @@
 
 @import models.news.EditNews
 
-@main(if(model.isNewNews) "Create News" else s"Edit News: $model.newsId") {
+@newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: $model.newsId") {
 	@defining(if(model.isNewNews) routes.NewsController.saveNew else routes.NewsController.saveExisting(model.newsId)) { route =>
 		<div class="panel panel-default">
 			<form method="post" action="@route" role="form">
