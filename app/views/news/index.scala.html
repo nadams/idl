@@ -13,18 +13,18 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-				</tr>
 				@for(newsItem <- model.newsItems) {
-					<td><a href="@routes.NewsController.edit(newsItem.newsId)">@newsItem.subject</a></td>
-					<td>@newsItem.dateCreated</td>
-					<td>@newsItem.dateModified</td>
-					<td>@newsItem.postedByUsername</td>
-					<td>
-						<form method="post" action="@routes.NewsController.remove(newsItem.newsId)">
-							<button type="submit" class="btn btn-danger">Remove</button>
-						</form>
-					</td>
+					<tr>
+						<td><a href="@routes.NewsController.edit(newsItem.newsId)">@newsItem.subject</a></td>
+						<td>@newsItem.dateCreated</td>
+						<td>@newsItem.dateModified</td>
+						<td>@newsItem.postedByUsername</td>
+						<td>
+							<form method="post" action="@routes.NewsController.remove(newsItem.newsId)">
+								<button type="submit" class="btn btn-danger">Remove</button>
+							</form>
+						</td>
+					</tr>
 				}
 			</tbody>
 		</table>
