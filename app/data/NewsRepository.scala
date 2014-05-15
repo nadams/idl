@@ -14,12 +14,12 @@ trait NewsRepositoryComponent {
 
 trait NewsSchema {
   val tableName = "News"
-  val newsId = "newsId"
-  val subject = "subject"
-  val dateCreated = "dateCreated"
-  val dateModified = "dateModified"
-  val content = "content"
-  val postedByProfileId = "postedByProfileId"
+  val newsId = "NewsId"
+  val subject = "Subject"
+  val dateCreated = "DateCreated"
+  val dateModified = "DateModified"
+  val content = "Content"
+  val postedByProfileId = "PostedByProfileId"
 }
 
 trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
@@ -45,7 +45,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
           $dateModified,
           $content,
           $postedByProfileId
-        FROM $tableName;
+        FROM $tableName
       """ 
 
     def getAllNews() : Seq[News] = DB.withConnection { implicit connection => 
@@ -59,7 +59,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
         s"""
           $selectAllNewsSql
           ORDER BY $dateCreated
-          LIMIT ${(currentPage - 1) * pageSize}, $pageSize;
+          LIMIT ${(currentPage - 1) * pageSize}, $pageSize
         """
       )
       .as(multiRowNewsParser)
@@ -70,7 +70,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
       SQL(
         s"""
           DELETE FROM $tableName
-          WHERE $newsId = {newsId};
+          WHERE $newsId = {newsId}
         """
       )
       .on("newsId" -> id)
@@ -78,26 +78,29 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
     }
 
     def insertNews(news: News) : Int = DB.withConnection { implicit connection => 
+      import play.Logger
+
       SQL(
         s"""
           INSERT INTO $tableName ($subject, $dateCreated, $dateModified, $content, $postedByProfileId)
           VALUES (
-            $subject = {subject}, 
-            $dateCreated = {dateCreated}, 
-            $dateModified = {dateModified}, 
-            $content = {content}, 
-            $postedByProfileId = {postedByProfileId}
-          );
+            {subject}, 
+            {dateCreated}, 
+            {dateModified}, 
+            {content}, 
+            {postedByProfileId}
+          )
         """
       )
       .on(
         "subject" -> news.subject,
-        "dateCreated" -> new DateTime(DateTimeZone.UTC),
-        "dateModified" -> new DateTime(DateTimeZone.UTC),
+        "dateCreated" -> news.dateCreated,
+        "dateModified" -> news.dateModified,
         "content" -> news.content,
         "postedByProfileId" -> news.postedByProfileId
       )
-      .executeInsert(scalar[Int] single)
+      .executeInsert(scalar[Long] single)
+      .toInt
     }
 
     def getNewsById(id: Int) : Option[News] = DB.withConnection { implicit connection => 

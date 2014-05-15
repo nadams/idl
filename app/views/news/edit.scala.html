@@ -1,4 +1,4 @@
-@(model: models.news.EditNews)(implicit header: MenuModel)
+@(model: models.news.EditNews, errors: models.news.EditNewsErrors)(implicit header: MenuModel)
 
 @import models.news.EditNews
 
@@ -6,17 +6,25 @@
 	@defining(if(model.isNewNews) routes.NewsController.saveNew else routes.NewsController.saveExisting(model.newsId)) { route =>
 		<div class="panel panel-default">
 			<form method="post" action="@route" role="form">
+				<input type="hidden" name="newsId" value="@model.newsId" />
+
 				<fieldset class="panel-body">
 					<div class="row form-group">
-						<div class="col-xs-4">
+						<div class="col-xs-4 @if(errors.subjectError.nonEmpty) { has-error }">
 							<label for="subject" class="control-label">Subject</label>
-							<input type="text" id="subject" name="subject" class="form-control" />
+							<input type="text" id="subject" name="subject" class="form-control" text="@model.subject" />
+							@if(errors.subjectError.nonEmpty) {
+								<span class="help-block">@errors.subjectError.get</span>
+							}
 						</div>
 					</div>
 					<div class="row form-group">
-						<div class="col-xs-4">
+						<div class="col-xs-4 @if(errors.contentError.nonEmpty) { has-error }">
 							<label for="content" class="control-label">Content</label>
 							<textarea type="text" id="content" name="content" class="form-control">@model.content</textarea>
+							@if(errors.contentError.nonEmpty) {
+								<span class="help-block">@errors.contentError.get</span>
+							}
 						</div>
 					</div>
 					<div class="row form-group">

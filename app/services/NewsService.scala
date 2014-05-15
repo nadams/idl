@@ -10,6 +10,7 @@ trait NewsServiceComponent {
     def getPagedNews(currentPage: Int = 1, pageSize: Int = 15) : Seq[News]
     def removeNewsItem(id: Int) : Boolean
     def getNewsById(id: Int) : Option[News]
+    def insertNews(news: News) : Int
   }
 }
 
@@ -22,6 +23,6 @@ trait NewsServiceComponentImpl extends NewsServiceComponent {
     def getPagedNews(currentPage: Int = 1, pageSize: Int = 15) = newsRepository.getPagedNews(currentPage, pageSize)
     def removeNewsItem(id: Int) = newsRepository.removeNewsItem(id)
     def getNewsById(id: Int) : Option[News] = newsRepository.getNewsById(id)
-
+    def insertNews(news: News) : Int = newsRepository.insertNews(news)
   }
 }

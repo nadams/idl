@@ -9,25 +9,26 @@ trait ProfileServiceComponent {
     def getByUsername(username: String) : Option[Profile]
     def authenticate(username: String, password: String) : Boolean
     def updateProfilePassword(username: String, password: String) : Boolean
+    def getProfileIdByUsername(username: String) : Option[Int]
   }
 }
 
 trait ProfileServiceComponentImpl extends ProfileServiceComponent {
   self: ProfileRepositoryComponent =>
-  override val profileService: ProfileService = new ProfileServiceImpl
+  val profileService: ProfileService = new ProfileServiceImpl
 
-  private class ProfileServiceImpl extends ProfileService {
+  class ProfileServiceImpl extends ProfileService {
     import io.github.nremond._
 
     val hasher = SecureHash(dkLength = 64)
 
-    override def getByUsername(username: String) : Option[Profile] =
+    def getByUsername(username: String) : Option[Profile] =
       profileRepository.getByUsername(username)
 
-    override def authenticate(username: String, password: String) : Boolean =
+    def authenticate(username: String, password: String) : Boolean =
       password != "" && getByUsername(username).exists(checkCredentials(_, password))
 
-    override def updateProfilePassword(username: String, password: String) : Boolean = 
+    def updateProfilePassword(username: String, password: String) : Boolean = 
       password != "" && getByUsername(username).exists { profile =>
         val updatedProfile = Profile(
           profile.profileId, 
@@ -42,10 +43,13 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
         profileRepository.updateProfile(updatedProfile)
       }
 
-    private def checkCredentials(profile: Profile, givenPassword: String) =
+    def getProfileIdByUsername(username: String) : Option[Int] =
+      getByUsername(username).map(_.profileId)
+
+    def checkCredentials(profile: Profile, givenPassword: String) =
       hasher.validatePassword(givenPassword, profile.password)
 
-    private def hashPassword(password: String) : String = 
+    def hashPassword(password: String) : String = 
       hasher.createHash(password)
   }
 }
