@@ -11,7 +11,7 @@ GET		/profile 					controllers.ProfileController.index
 POST	/profile				    controllers.ProfileController.updateProfile
 POST	/profile/logout				controllers.ProfileController.logout
 
-GET     /admin/news                 controllers.NewsController.index
+GET     /admin/news                 controllers.NewsController.index(page: Int = 1, size: Int = 15)
 GET     /admin/news/create          controllers.NewsController.create
 POST    /admin/news/create          controllers.NewsController.saveNew
 GET     /admin/news/edit/:id        controllers.NewsController.edit(id: Int)

@@ -74,7 +74,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
         """
       )
       .on("newsId" -> id)
-      .execute
+      .executeUpdate > 0
     }
 
     def insertNews(news: News) : Int = DB.withConnection { implicit connection => 

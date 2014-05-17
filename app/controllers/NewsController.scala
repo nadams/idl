@@ -10,7 +10,7 @@ import models.FormExtensions._
 import org.joda.time.{ DateTime, DateTimeZone }
 
 object NewsController extends Controller with ProvidesHeader with Secured with NewsComponentImpl  with ProfileComponentImpl {
-  def index = IsAuthenticated { username => implicit request =>
+  def index(page: Int = 1, size: Int = 15) = IsAuthenticated { username => implicit request =>
     Ok(views.html.news.index(AdminNews.toModels(newsService.getAllNews, username, routes.NewsController)))
   }
 
