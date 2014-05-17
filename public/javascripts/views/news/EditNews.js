@@ -27,11 +27,6 @@ admin.news.edit.EditModel = (function(ko) {
 })(ko, moment);
 
 (function($, ko, admin) {
-	$('#content').summernote({
-		height: 300,
-		focus: true
-	});
-
 	var model = new admin.news.edit.EditModel(admin.news.edit.data);
 	ko.applyBindings(model);
 })($, ko, admin);
