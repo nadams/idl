@@ -5,16 +5,16 @@ var admin = admin || {};
 admin.news = admin.news || {};
 admin.news.index = admin.news.index || {};
 
-admin.news.index.NewsIndexModel = (function (ko, _) {
-	var Model = function (data) {
+admin.news.index.NewsIndexModel = (function(ko, _) {
+	var Model = function(data) {
 		this.newsItems = [];
 
 		this.initialize(data);
 	};
 
 	ko.utils.extend(Model.prototype, {
-		initialize: function (data) {
-			this.newsItems = _.map(data.newsItems, function (item) {
+		initialize: function(data) {
+			this.newsItems = _.map(data.newsItems, function(item) {
 				return new admin.news.index.NewsListItemModel(item);
 			});
 		}
@@ -23,8 +23,8 @@ admin.news.index.NewsIndexModel = (function (ko, _) {
 	return Model;
 })(ko, _);
 
-admin.news.index.NewsListItemModel = (function (ko, moment) {
-	var Model = function (data) {
+admin.news.index.NewsListItemModel = (function(ko, moment) {
+	var Model = function(data) {
 		this.newsId = 0;
 		this.subject = ko.observable('');
 		this.dateModified = ko.observable();
@@ -45,7 +45,7 @@ admin.news.index.NewsListItemModel = (function (ko, moment) {
 	};
 
 	ko.utils.extend(Model.prototype, {
-		initialize: function (data) {
+		initialize: function(data) {
 			this.newsId = data.newsId;
 			this.subject(data.subject);
 			this.dateModified(data.dateModified);
@@ -54,7 +54,7 @@ admin.news.index.NewsListItemModel = (function (ko, moment) {
 			this.editUrl = data.editUrl;
 			this.removeUrl = data.removeUrl;
 		},
-		niceDate: function (date) {
+		niceDate: function(date) {
 			return moment.utc(date).local().calendar();
 		}
 	});
@@ -62,7 +62,7 @@ admin.news.index.NewsListItemModel = (function (ko, moment) {
 	return Model;
 })(ko, moment);
 
-(function (admin, ko) {
+(function(admin, ko) {
 	var model = new admin.news.index.NewsIndexModel(admin.news.index.data);
 
 	ko.applyBindings(model);
