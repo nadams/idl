@@ -2,15 +2,26 @@
 
 @import models.news.EditNews
 
-@newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: $model.newsId") {
+@extraCss = {
+	<link rel="stylesheet" media="screen" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("summernote/summernote.css")" />
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("summernote/summernote-bs3.css")" />
+}
+
+@extraScripts = {
+	<script src="@routes.Assets.at("summernote/summernote.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/views/news/EditNews.js")"></script>
+}
+
+@newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: $model.newsId", extraScripts = extraScripts, extraCss = extraCss) {
 	@defining(if(model.isNewNews) routes.NewsController.saveNew else routes.NewsController.saveExisting(model.newsId)) { route =>
 		<div class="panel panel-default">
-			<form method="post" action="@route" role="form">
+			<form method="post" action="@route" role="form" class="panel-body edit-news-container">
 				<input type="hidden" name="newsId" value="@model.newsId" />
 
-				<fieldset class="panel-body">
+				<fieldset>
 					<div class="row form-group">
-						<div class="col-xs-4 @if(errors.subjectError.nonEmpty) { has-error }">
+						<div class="@if(errors.subjectError.nonEmpty) { has-error }">
 							<label for="subject" class="control-label">Subject</label>
 							<input type="text" id="subject" name="subject" class="form-control" text="@model.subject" />
 							@if(errors.subjectError.nonEmpty) {
@@ -19,9 +30,8 @@
 						</div>
 					</div>
 					<div class="row form-group">
-						<div class="col-xs-4 @if(errors.contentError.nonEmpty) { has-error }">
-							<label for="content" class="control-label">Content</label>
-							<textarea type="text" id="content" name="content" class="form-control">@model.content</textarea>
+						<div class="@if(errors.contentError.nonEmpty) { has-error }">
+							<div id="content"></div>
 							@if(errors.contentError.nonEmpty) {
 								<span class="help-block">@errors.contentError.get</span>
 							}
@@ -36,5 +46,6 @@
 				</fieldset>
 			</form>
 		</div>
+
 	}
 }
