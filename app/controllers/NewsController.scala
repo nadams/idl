@@ -15,7 +15,7 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
   }
 
   def create = IsAuthenticated { username => implicit request =>
-    Ok(views.html.news.edit(EditNews(), EditNewsErrors()))
+    Ok(views.html.news.edit(EditNews.empty, EditNewsErrors()))
   }
 
   def saveNew = IsAuthenticated { username => implicit request =>
@@ -49,7 +49,7 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
 
   def edit(id: Int) = IsAuthenticated { username => implicit request =>
     newsService.getNewsById(id) match {
-      case Some(x) => Ok(views.html.news.edit(EditNews(x), EditNewsErrors()))
+      case Some(x) => Ok(views.html.news.edit(EditNews.toModel(x), EditNewsErrors()))
       case None => Redirect(routes.NewsController.create)
     }
   }

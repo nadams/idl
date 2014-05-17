@@ -4,6 +4,8 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 import _root_.data.News
 import components.{ NewsComponentImpl, ProfileComponentImpl }
 
@@ -12,8 +14,10 @@ case class EditNews(newsId: Int, subject: String, content: String) {
 }
 
 object EditNews {
-  def apply() : EditNews = EditNews(0, "", "")
-  def apply(news: News) : EditNews = EditNews(news.newsId, news.subject, news.content)
+  implicit val writesEditNews = Json.writes[EditNews]
+
+  def toModel(news: News) = EditNews(news.newsId, news.subject, news.content)
+  def empty = EditNews(0, "", "")
 }
 
 object EditNewsForm {

@@ -1,5 +1,6 @@
 @(model: models.news.EditNews, errors: models.news.EditNewsErrors)(implicit header: MenuModel)
 
+@import play.api.libs.json.Json
 @import models.news.EditNews
 
 @extraCss = {
@@ -9,11 +10,21 @@
 }
 
 @extraScripts = {
+	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("summernote/summernote.min.js")"></script>
+	<script>
+		var admin = admin || {};
+		admin.news = admin.news || {};
+		admin.news.edit = admin.news.edit || {};
+		admin.news.edit = {
+			data: @Html(Json.toJson(model).toString) || {}
+		};
+	</script>
 	<script src="@routes.Assets.at("javascripts/views/news/EditNews.js")"></script>
 }
 
-@newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: $model.newsId", extraScripts = extraScripts, extraCss = extraCss) {
+@newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: ${model.newsId}", extraScripts = extraScripts, extraCss = extraCss) {
 	@defining(if(model.isNewNews) routes.NewsController.saveNew else routes.NewsController.saveExisting(model.newsId)) { route =>
 		<div class="panel panel-default">
 			<form method="post" action="@route" role="form" class="panel-body edit-news-container">
@@ -23,7 +34,7 @@
 					<div class="row form-group">
 						<div class="@if(errors.subjectError.nonEmpty) { has-error }">
 							<label for="subject" class="control-label">Subject</label>
-							<input type="text" id="subject" name="subject" class="form-control" text="@model.subject" />
+							<input type="text" id="subject" name="subject" class="form-control" value="@model.subject" />
 							@if(errors.subjectError.nonEmpty) {
 								<span class="help-block">@errors.subjectError.get</span>
 							}
@@ -31,7 +42,7 @@
 					</div>
 					<div class="row form-group">
 						<div class="@if(errors.contentError.nonEmpty) { has-error }">
-							<div id="content"></div>
+							<div id="content">@model.content</div>
 							@if(errors.contentError.nonEmpty) {
 								<span class="help-block">@errors.contentError.get</span>
 							}
