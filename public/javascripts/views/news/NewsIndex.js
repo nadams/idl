@@ -1,4 +1,4 @@
-/* global ko, moment, _ */
+/* global ko, moment, _, $ */
 
 'use strict';
 var admin = admin || {};
@@ -62,8 +62,10 @@ admin.news.index.NewsListItemModel = (function(ko, moment) {
 	return Model;
 })(ko, moment);
 
-(function(admin, ko) {
+(function(admin, ko, $) {
+	$('#newsList').tooltip();
+
 	var model = new admin.news.index.NewsIndexModel(admin.news.index.data);
 
 	ko.applyBindings(model);
-})(admin, ko);
+})(admin, ko, $);
