@@ -11,7 +11,7 @@ import org.joda.time.{ DateTime, DateTimeZone }
 
 object NewsController extends Controller with ProvidesHeader with Secured with NewsComponentImpl  with ProfileComponentImpl {
   def index = IsAuthenticated { username => implicit request =>
-    Ok(views.html.news.index(AdminNews.toModels(newsService.getAllNews, routes.NewsController)))
+    Ok(views.html.news.index(AdminNews.toModels(newsService.getAllNews, username, routes.NewsController)))
   }
 
   def create = IsAuthenticated { username => implicit request =>

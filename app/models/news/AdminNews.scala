@@ -13,7 +13,7 @@ object AdminNews {
   implicit val adminNewsListItemWrites = Json.writes[AdminNewsListItem]
   implicit val adminNewsWrites = Json.writes[AdminNews]
 
-  def toModels(newsItems: Seq[News], routes: controllers.ReverseNewsController) = 
+  def toModels(newsItems: Seq[News], username: String, routes: controllers.ReverseNewsController) = 
     AdminNews(
       newsItems.map(
         x => AdminNewsListItem(
@@ -21,7 +21,7 @@ object AdminNews {
           x.subject, 
           x.dateCreated, 
           x.dateModified, 
-          "",
+          username,
           routes.edit(x.newsId).url,
           routes.remove(x.newsId).url
         )
