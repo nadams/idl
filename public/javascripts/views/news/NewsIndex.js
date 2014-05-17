@@ -7,7 +7,7 @@ admin.news.index = admin.news.index || {};
 
 admin.news.index.NewsIndexModel = (function(ko, _) {
 	var Model = function(data) {
-		this.newsItems = [];
+		this.newsItems = ko.observableArray([]);
 
 		this.initialize(data);
 	};
