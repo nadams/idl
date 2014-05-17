@@ -25,7 +25,7 @@
 	<script src="@routes.Assets.at("javascripts/views/news/EditNews.js")"></script>
 }
 
-@newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: ${model.newsId}", extraScripts = extraScripts, extraCss = extraCss) {
+@newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: ${model.subject}", extraScripts = extraScripts, extraCss = extraCss) {
 	@defining(if(model.isNewNews) routes.NewsController.saveNew else routes.NewsController.saveExisting(model.newsId)) { route =>
 		<div class="panel panel-default">
 			<form method="post" action="@route" role="form" class="panel-body edit-news-container">
