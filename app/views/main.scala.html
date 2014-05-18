@@ -1,4 +1,4 @@
-@(title: String)(content: Html)(implicit header: MenuModel)
+@(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel)
 
 <!DOCTYPE html>
 
@@ -7,16 +7,18 @@
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")" />
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap-theme.min.css")" />
+        @extraCss
+
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")" />
-        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/jquery.min.js")"></script>
         <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")"></script>
     </head>
     <body>
-    	<nav class="navbar navbar-inverse" role="navigation">
-    		<div class="container-fluid">
-    			<div class="navbar-header">
-    				<a class="navbar-brand" href="@routes.Application.index">IDL</a>
-    			</div>
+        <nav class="navbar navbar-inverse" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="@routes.HomeController.index">IDL</a>
+                </div>
 
                 @if(header.username.isEmpty) {
                     <ul class="nav navbar-nav navbar-right">
@@ -30,10 +32,14 @@
                         <li><a href="@routes.ProfileController.index">@header.username</a></li>
                     </ul>
                 }
-    		</div>
-    	</nav>
-    	<div class="container">
-        	@content
+
+                @extraNavItems
+            </div>
+        </nav>
+        <div class="container">
+            @content
+
+            @extraScripts
         </div>
     </body>
 </html>

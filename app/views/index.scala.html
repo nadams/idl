@@ -1,5 +1,28 @@
-@(message: String)(implicit header: MenuModel)
+@(model: NewsModel)(implicit header: MenuModel)
 
-@main("Welcome to Play") {
-	
+@extraScripts = {
+	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+	<script>
+		var dateToUtc = function(date) {
+			return moment.utc(date).calendar();
+		};
+	</script>
+}
+
+@main("International Doom League", extraScripts = extraScripts) {
+	@if(model.newsItems.isEmpty) {
+		<div class="jumbotron">
+			<h1>There are no news items yet.</h1>
+			<p>
+				Head to the <a href="@routes.NewsController.index">news page</a> to add some articles.
+			</p>
+		</div>
+	}
+
+	@for(news <- model.newsItems) {
+		<div class="panel panel-default">
+			<div class="panel-heading">@news.subject</div>
+			<div class="panel-body">@Html(news.content)</div>
+		</div>
+	}
 }
