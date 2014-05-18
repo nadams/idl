@@ -43,7 +43,7 @@
 					</div>
 					<div class="row form-group">
 						<div class="@if(errors.contentError.nonEmpty) { has-error }">
-							<div id="content" data-bind="summernote: content"></div>
+							<textarea id="content" name="content" data-bind="summernote: content"></textarea>
 							@if(errors.contentError.nonEmpty) {
 								<span class="help-block">@errors.contentError.get</span>
 							}

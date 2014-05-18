@@ -7,8 +7,9 @@ trait NewsRepositoryComponent {
     def getAllNews() : Seq[News]
     def getPagedNews(currentPage: Int, pageSize: Int) : Seq[News]
     def removeNewsItem(id: Int) : Boolean
-    def insertNews(news: News) : Int
+    def insertNews(news: News) : Boolean
     def getNewsById(id: Int) : Option[News]
+    def updateNews(news: News) : Boolean
   }
 }
 
@@ -77,7 +78,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
       .executeUpdate > 0
     }
 
-    def insertNews(news: News) : Int = DB.withConnection { implicit connection => 
+    def insertNews(news: News) : Boolean = DB.withConnection { implicit connection => 
       import play.Logger
 
       SQL(
@@ -99,8 +100,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
         "content" -> news.content,
         "postedByProfileId" -> news.postedByProfileId
       )
-      .executeInsert(scalar[Long] single)
-      .toInt
+      .executeInsert(scalar[Long] single) > 0
     }
 
     def getNewsById(id: Int) : Option[News] = DB.withConnection { implicit connection => 
@@ -113,6 +113,30 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
       .on("newsId" -> id)
       .singleOpt(newsParser)
       .map(News(_))
+    }
+
+    def updateNews(news: News) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          UPDATE $tableName
+          SET
+            $subject = {subject},
+            $dateCreated = {dateCreated},
+            $dateModified = {dateModified},
+            $content = {content},
+            $postedByProfileId = {postedByProfileId}
+          WHERE $newsId = {newsId}
+        """
+      )
+      .on(
+        "newsId" -> news.newsId,
+        "subject" -> news.subject,
+        "dateCreated" -> news.dateCreated,
+        "dateModified" -> news.dateModified,
+        "content" -> news.content,
+        "postedByProfileId" -> news.postedByProfileId
+      )
+      .executeUpdate > 0
     }
   }
 }
