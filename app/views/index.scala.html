@@ -22,7 +22,7 @@
 	@for(news <- model.newsItems) {
 		<div class="panel panel-default">
 			<div class="panel-heading">@news.subject</div>
-			<div class="panel-body">@news.content</div>
+			<div class="panel-body">@Html(news.content)</div>
 		</div>
 	}
 }
