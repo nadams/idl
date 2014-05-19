@@ -1,11 +1,6 @@
 @(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel)
 
 @extraNavItemsTemplate = {
-	<ul class="nav navbar-nav navbar-right nav-actions">
-		<li><a href="@routes.NewsController.create">Add</a></li>
-		<li><a href="@routes.NewsController.index">News List</a></li>
-	</ul>
-
 	@extraNavItems
 }
 
@@ -19,6 +14,6 @@
 	@extraScripts
 }
 
-@views.html.admin.adminTemplate(title, extraCssTemplate, extraScriptsTemplate, extraNavItemsTemplate) {
+@main(title, extraCssTemplate, extraScriptsTemplate, extraNavItemsTemplate) {
 	@content
 }
