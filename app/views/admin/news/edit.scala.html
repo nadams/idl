@@ -22,7 +22,7 @@
 		};
 	</script>
 	<script src="@routes.Assets.at("javascripts/ko-bindings/summernote.bindings.js")"></script>
-	<script src="@routes.Assets.at("javascripts/views/news/EditNews.js")"></script>
+	<script src="@routes.Assets.at("javascripts/views/admin/news/EditNews.js")"></script>
 }
 
 @newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: ${model.subject}", extraScripts = extraScripts, extraCss = extraCss) {
