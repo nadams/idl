@@ -19,6 +19,8 @@ POST    /admin/news/edit/:id/save   controllers.NewsController.saveExisting(id: 
 POST    /admin/news/remove/:id      controllers.NewsController.remove(id: Int)
 
 GET     /admin/teams                controllers.TeamsController.index
+
+GET     /admin/seasons              controllers.SeasonsController.index
         
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
