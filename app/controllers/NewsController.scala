@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import components._
 import _root_.data.News
-import models.news._
+import models.admin.news._
 import models.FieldExtensions._
 import models.FormExtensions._
 import org.joda.time.{ DateTime, DateTimeZone }

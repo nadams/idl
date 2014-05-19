@@ -1,7 +1,7 @@
-@(model: models.news.AdminNews)(implicit header: MenuModel)
+@(model: models.admin.news.AdminNews)(implicit header: MenuModel)
 
 @import play.api.libs.json.Json
-@import models.news._
+@import models.admin.news._
 
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
