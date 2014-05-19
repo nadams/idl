@@ -13,11 +13,11 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
   val couldNotUpdateNewsItem = InternalServerError("Could not create news item")
 
   def index(page: Int = 1, size: Int = 15) = IsAuthenticated { username => implicit request =>
-    Ok(views.html.news.index(AdminNews.toModels(newsService.getAllNews, username, routes.NewsController)))
+    Ok(views.html.admin.news.index(AdminNews.toModels(newsService.getAllNews, username, routes.NewsController)))
   }
 
   def create = IsAuthenticated { username => implicit request =>
-    Ok(views.html.news.edit(EditNews.empty, EditNewsErrors()))
+    Ok(views.html.admin.news.edit(EditNews.empty, EditNewsErrors()))
   }
 
   def saveNew = IsAuthenticated { username => implicit request =>
@@ -32,7 +32,7 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
 
   def edit(id: Int) = IsAuthenticated { username => implicit request =>
     newsService.getNewsById(id) match {
-      case Some(x) => Ok(views.html.news.edit(EditNews.toModel(x), EditNewsErrors()))
+      case Some(x) => Ok(views.html.admin.news.edit(EditNews.toModel(x), EditNewsErrors()))
       case None => Redirect(routes.NewsController.create)
     }
   }
@@ -52,7 +52,7 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
         val editNewsModel = EditNews(0, subjectError._1, contentError._1)
         val errorsModel = EditNewsErrors(subjectError._2, contentError._2) 
 
-        BadRequest(views.html.news.edit(editNewsModel, errorsModel))
+        BadRequest(views.html.admin.news.edit(editNewsModel, errorsModel))
       },
       news => {
         profileService.getProfileIdByUsername(username) match {
