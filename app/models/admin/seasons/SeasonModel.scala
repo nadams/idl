@@ -2,13 +2,21 @@ package models.admin.seasons
 
 import play.api.libs.json._
 import org.joda.time.DateTime
+import data.Season
 
-case class Season(seasonId: Int, name: String, startDate: DateTime, endDate: DateTime)
-case class Seasons(seasons: Seq[Season])
+case class SeasonModel(seasonId: Int, name: String, startDate: DateTime, endDate: DateTime, editLink: String, removeLink: String)
 
-object Seasons {
-  implicit val writesSeason = Json.writes[Season]
-  implicit val writesSeasons = Json.writes[Seasons]
+object SeasonModel {
+  implicit val writesSeason = Json.writes[SeasonModel]
 
-  val empty = Seasons(Seq.empty[Season])
+  def toModels(seasons: Seq[Season], routes: controllers.ReverseSeasonsController) = seasons.map { season => 
+    SeasonModel(
+      season.seasonId,
+      season.name,
+      season.startDate,
+      season.endDate,
+      routes.edit(season.seasonId).url,
+      routes.remove(season.seasonId).url
+    )
+  }
 }

@@ -1,4 +1,4 @@
-@(model: models.admin.seasons.Seasons)(implicit header: MenuModel)
+@(model: Seq[models.admin.seasons.SeasonModel])(implicit header: MenuModel)
 
 @import play.api.libs.json.Json
 
@@ -17,7 +17,7 @@
 }
 
 @main("Manage Seasons", extraScripts = extraScripts) {
-	@if(model.seasons.nonEmpty) {
+	@if(model.nonEmpty) {
 		<table class="table table-striped table-hover" style="display: none;" data-bind="visible: true">
 			<thead>
 				<tr>
