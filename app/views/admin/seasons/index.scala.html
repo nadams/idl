@@ -3,6 +3,14 @@
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+	<script>
+		var admin = admin || {};
+		admin.seasons = admin.seasons || {};
+		admin.seasons.index = admin.seasons.index || {};
+		admin.seasons.index = {
+			data: @Html(Json.toJson(model).toString) || {}
+		};
+	</script>
 	<script src="@routes.Assets.at("javascripts/views/admin/seasons/Seasons.js")"></script>
 }
 
