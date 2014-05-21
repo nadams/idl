@@ -1,5 +1,7 @@
 @(model: models.admin.seasons.Seasons)(implicit header: MenuModel)
 
+@import play.api.libs.json.Json
+
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
