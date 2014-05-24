@@ -1,13 +1,25 @@
 @(model: models.admin.seasons.EditSeasonModel, errors: models.admin.seasons.EditSeasonModelErrors)(implicit header: MenuModel)
 
+@import play.api.libs.json.Json
+
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
-	<script src="@routes.Assets.at("datepicker/js/bootstrap-datepicker.js")"></script>
+	<script src="@routes.Assets.at("datetimepicker/js/bootstrap-datetimepicker.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/ko-bindings/datetimepicker.binding.js")"></script>
+	<script>
+		var admin = admin || {};
+		admin.seasons = admin.seasons || {};
+		admin.seasons.edit = admin.seasons.edit || {};
+		admin.seasons.edit = {
+			data: @Html(Json.toJson(model).toString) || {}
+		};
+	</script>
+	<script src="@routes.Assets.at("javascripts/views/admin/seasons/EditSeason.js")"></script>
 }
 
 @extraCss = {
-	<link rel="stylesheet" href="@routes.Assets.at("datepicker/css/datepicker.css")" />
+	<link rel="stylesheet" href="@routes.Assets.at("datetimepicker/css/bootstrap-datetimepicker.min.css")" />
 }
 
 @title() = {
@@ -31,7 +43,7 @@
 				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
 						<label for="name" class="control-label">Name</label>
-						<input type="text" id="name" name="name" class="form-control" />
+						<input type="text" id="name" name="name" class="form-control" data-bind="value: name" />
 						@if(errors.nameError.nonEmpty) {
 							<span class="help-block">@errors.nameError.get</span>
 						}
@@ -40,7 +52,12 @@
 				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.startDateError.nonEmpty) { has-error }">
 						<label for="startDate" class="control-label">Start Date</label>
-						<input type="text" id="startDate" name="startDate" class="form-control" />
+						<div class="input-group date">
+							<input type="text" class="form-control" data-bind="datetimepicker: startDate"></input>
+							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+						</div>
+
+						<!--<input type="text" id="startDate" name="startDate" class="form-control" data-bind="datetimepicker: startDate" />-->
 						@if(errors.startDateError.nonEmpty) {
 							<span class="help-block">@errors.startDateError.get</span>
 						}
@@ -49,7 +66,10 @@
 				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.endDateError.nonEmpty) { has-error }">
 						<label for="endDate" class="control-label">End Date</label>
-						<input type="text" id="endDate" name="endDate" class="form-control" />
+						<div class="input-group date">
+							<input type="text" class="form-control" data-bind="datetimepicker: endDate"></input>
+							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+						</div>
 						@if(errors.endDateError.nonEmpty) {
 							<span class="help-block">@errors.endDateError.get</span>
 						}
@@ -63,5 +83,6 @@
 				</div>
 			</fieldset>
 		</form>
+		<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 	</div>
 }
