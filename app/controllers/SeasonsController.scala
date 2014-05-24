@@ -11,6 +11,18 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
     Ok(views.html.admin.seasons.index(SeasonModel.toModels(seasonService.getAllSeasons, routes.SeasonsController)))
   }
 
+  def create = IsAuthenticated { username => implicit request => 
+    Ok(views.html.admin.seasons.edit(EditSeasonModel.empty, EditSeasonModelErrors.empty))
+  }
+
+  def saveNew = IsAuthenticated { username => implicit request => 
+    Ok("Temp")
+  }
+
+  def saveExisting(id: Int) = IsAuthenticated { username => implicit request => 
+    Ok("Temp")
+  }
+
   def edit(id: Int) = TODO
   def remove(id: Int) = TODO
 }
