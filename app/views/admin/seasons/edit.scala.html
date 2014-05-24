@@ -18,17 +18,13 @@
 	}
 }
 
-@route() = {
-	@if(model.isNewSeason) {
-		@routes.SeasonsController.saveNew 
-	} else { 
-		@routes.SeasonsController.saveExisting(model.seasonId)
-	}
-}
-
 @main(title.toString, extraScripts = extraScripts, extraCss = extraCss) {
 	<div class="panel panel-default">
-		<form method="post" action="@route.toString" role="form" class="panel-body">
+		<form 
+			method="post" 
+			action="@if(model.isNewSeason) {@routes.SeasonsController.saveNew} else {@routes.SeasonsController.saveExisting(model.seasonId)}" 
+			role="form" 
+			class="panel-body">
 			<input type="hidden" name="seasonId" value="@model.seasonId" />
 
 			<fieldset>
