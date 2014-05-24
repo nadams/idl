@@ -9,7 +9,7 @@
 				datetimepicker = $(element).parent().datetimepicker(options);
 
 			ko.utils.registerEventHandler(datetimepicker, 'dp.change', function() {
-				valueAccessor()(datetimepicker.datetimepicker().data('DateTimePicker').getDate());
+				valueAccessor()(datetimepicker.datetimepicker().data('DateTimePicker').getDate().toISOString());
 			});
 
 			return datetimepicker;

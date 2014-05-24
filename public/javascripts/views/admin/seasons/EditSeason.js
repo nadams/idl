@@ -7,8 +7,6 @@ admin.seasons.edit = admin.seasons.edit || {};
 
 admin.seasons.edit.EditSeasonModel = (function(ko) {
 	var Model = function(data) {
-		this.seasonId = 0;
-		this.name = ko.observable('');
 		this.startDate = ko.observable('');
 		this.endDate = ko.observable('');
 
@@ -17,8 +15,6 @@ admin.seasons.edit.EditSeasonModel = (function(ko) {
 
 	ko.utils.extend(Model.prototype, {
 		initialize: function(data) {
-			this.seasonId = data.seasonId;
-			this.name(data.name);
 			this.startDate(data.startDate);
 			this.endDate(data.endDate);
 		}

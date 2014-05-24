@@ -38,12 +38,14 @@
 			role="form" 
 			class="panel-body">
 			<input type="hidden" name="seasonId" value="@model.seasonId" />
+			<input type="hidden" name="startDate" data-bind="value: startDate" />
+			<input type="hidden" name="endDate" data-bind="value: endDate" />
 
 			<fieldset>
 				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
 						<label for="name" class="control-label">Name</label>
-						<input type="text" id="name" name="name" class="form-control" data-bind="value: name" />
+						<input type="text" id="name" name="name" class="form-control" value="@model.name" />
 						@if(errors.nameError.nonEmpty) {
 							<span class="help-block">@errors.nameError.get</span>
 						}
@@ -52,12 +54,11 @@
 				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.startDateError.nonEmpty) { has-error }">
 						<label for="startDate" class="control-label">Start Date</label>
-						<div class="input-group date">
-							<input type="text" class="form-control" data-bind="datetimepicker: startDate"></input>
+						<div class="input-group date" id="startDateTimePicker">
+							<input type="text" class="form-control" data-bind="datetimepicker: startDate" />
 							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 						</div>
 
-						<!--<input type="text" id="startDate" name="startDate" class="form-control" data-bind="datetimepicker: startDate" />-->
 						@if(errors.startDateError.nonEmpty) {
 							<span class="help-block">@errors.startDateError.get</span>
 						}
@@ -66,10 +67,11 @@
 				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.endDateError.nonEmpty) { has-error }">
 						<label for="endDate" class="control-label">End Date</label>
-						<div class="input-group date">
-							<input type="text" class="form-control" data-bind="datetimepicker: endDate"></input>
+						<div class="input-group date" id="endDateTimePicker">
+							<input type="text" class="form-control" data-bind="datetimepicker: endDate" />
 							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 						</div>
+
 						@if(errors.endDateError.nonEmpty) {
 							<span class="help-block">@errors.endDateError.get</span>
 						}
