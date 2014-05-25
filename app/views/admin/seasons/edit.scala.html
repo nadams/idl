@@ -42,6 +42,14 @@
 			<input type="hidden" name="endDate" data-bind="value: endDate" />
 
 			<fieldset>
+				@if(errors.globalErrors.nonEmpty) {
+					<div class="alert alert-danger">
+						@for(error <- errors.globalErrors) {
+							<p class="error">@error</p>
+						}
+					</div>
+				}
+
 				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
 						<label for="name" class="control-label">Name</label>

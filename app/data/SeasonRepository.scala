@@ -5,6 +5,7 @@ trait SeasonRepositoryComponent {
 
   trait SeasonRepository {
     def getAllSeasons() : Seq[Season]
+    def insertSeason(season: Season) : Boolean
   }
 }
 
@@ -44,6 +45,25 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
       SQL(selectAllNewsSql)
       .as(multiRowParser)
       .map(Season(_))
+    }
+
+    def insertSeason(season: Season) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          INSERT INTO $tableName ($name, $startDate, $endDate)
+          VALUES (
+            {name},
+            {startDate},
+            {endDate}
+          )
+        """
+      )
+      .on(
+        "name" -> season.name,
+        "startDate" -> season.startDate,
+        "endDate" -> season.endDate
+      )
+      .executeInsert(scalar[Long] single) > 0
     }
   }
 }
