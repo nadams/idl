@@ -18,6 +18,13 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
     Ok(views.html.admin.seasons.edit(EditSeasonModel.empty, EditSeasonModelErrors.empty))
   }
 
+  def edit(id: Int) = IsAuthenticated { username => implicit request => 
+    seasonService.getSeasonById(id) match {
+      case Some(x) => Ok(views.html.admin.seasons.edit(EditSeasonModel.toModel(x), EditSeasonModelErrors.empty))
+      case None => Redirect(routes.SeasonsController.create)
+    }
+  }
+
   def saveNew = IsAuthenticated { username => implicit request => 
     EditSeasonModelForm().bindFromRequest.fold(
       content => {
@@ -43,6 +50,5 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
     Ok("Temp")
   }
 
-  def edit(id: Int) = TODO
   def remove(id: Int) = TODO
 }

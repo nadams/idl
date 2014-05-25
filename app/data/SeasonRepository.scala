@@ -5,6 +5,7 @@ trait SeasonRepositoryComponent {
 
   trait SeasonRepository {
     def getAllSeasons() : Seq[Season]
+    def getSeasonById(id: Int) : Option[Season]
     def insertSeason(season: Season) : Boolean
   }
 }
@@ -44,6 +45,18 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
     def getAllSeasons() : Seq[Season] = DB.withConnection { implicit connection => 
       SQL(selectAllNewsSql)
       .as(multiRowParser)
+      .map(Season(_))
+    }
+
+    def getSeasonById(id: Int) : Option[Season] = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          $selectAllNewsSql
+          WHERE $seasonId = {seasonId}
+        """
+      )
+      .on("seasonId" -> id)
+      .singleOpt(seasonParser)
       .map(Season(_))
     }
 

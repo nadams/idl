@@ -2,13 +2,14 @@ package models.admin.seasons
 
 import play.api.data._
 import play.api.data.Forms._
+import play.api.data.format._
+import play.api.data.format.Formats._
 import play.api.libs.json._
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.joda.time.format.ISODateTimeFormat
 import com.github.nscala_time.time.Imports._
 import formatters.DateTimeFormatter
-import play.api.data.format.Formats._
-import play.api.data.format._
+import data._
 
 case class EditSeasonModel(seasonId: Int, name: String, startDate: DateTime, endDate: DateTime) {
   val isNewSeason = seasonId == 0
@@ -19,6 +20,9 @@ object EditSeasonModel {
 
   lazy val now = new DateTime(DateTimeZone.UTC)
   lazy val empty = EditSeasonModel(0, "", now, now)
+
+  def toModel(season: Season) = 
+    EditSeasonModel(season.seasonId, season.name, season.startDate, season.endDate)
 }
 
 case class EditSeasonModelErrors(nameError: Option[String], startDateError: Option[String], endDateError: Option[String], globalErrors: Seq[String])
