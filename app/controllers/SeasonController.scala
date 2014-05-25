@@ -10,9 +10,9 @@ import models.FieldExtensions._
 import models.FormExtensions._
 import extensions.DateTimeExtensions._
 
-object SeasonsController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl {
+object SeasonController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl {
   def index = IsAuthenticated { username => implicit request => 
-    Ok(views.html.admin.seasons.index(SeasonModel.toModels(seasonService.getAllSeasons, routes.SeasonsController)))
+    Ok(views.html.admin.seasons.index(SeasonModel.toModels(seasonService.getAllSeasons, routes.SeasonController)))
   }
 
   def create = IsAuthenticated { username => implicit request => 
@@ -22,7 +22,7 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
   def edit(id: Int) = IsAuthenticated { username => implicit request => 
     seasonService.getSeasonById(id) match {
       case Some(x) => Ok(views.html.admin.seasons.edit(EditSeasonModel.toModel(x), EditSeasonModelErrors.empty))
-      case None => Redirect(routes.SeasonsController.create)
+      case None => Redirect(routes.SeasonController.create)
     }
   }
 
@@ -36,8 +36,8 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
 
   def remove(id: Int) = IsAuthenticated { username => implicit request => 
     seasonService.removeSeason(id) match {
-      case true => Redirect(routes.SeasonsController.index)
-      case false => Redirect(routes.SeasonsController.index).flashing("couldNotRemoveSeason" -> "Could not remove season")
+      case true => Redirect(routes.SeasonController.index)
+      case false => Redirect(routes.SeasonController.index).flashing("couldNotRemoveSeason" -> "Could not remove season")
     }
   }
 
@@ -55,7 +55,7 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
         BadRequest(views.html.admin.seasons.edit(editSeasonModel, errorsModel))
       },
       season => saveAction(season) match {
-        case true => Redirect(routes.SeasonsController.index)
+        case true => Redirect(routes.SeasonController.index)
         case false => InternalServerError("Could not save season")
       }
     )

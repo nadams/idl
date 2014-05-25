@@ -34,7 +34,7 @@
 	<div class="panel panel-default">
 		<form 
 			method="post" 
-			action="@if(model.isNewSeason) {@routes.SeasonsController.saveNew} else {@routes.SeasonsController.saveExisting(model.seasonId)}" 
+			action="@if(model.isNewSeason) {@routes.SeasonController.saveNew} else {@routes.SeasonController.saveExisting(model.seasonId)}" 
 			role="form" 
 			class="panel-body">
 			<input type="hidden" name="seasonId" value="@model.seasonId" />
@@ -88,7 +88,7 @@
 				<div class="row form-group">
 					<div class="col-xs-4">
 						<button type="submit" class="btn btn-primary">Save</button>
-						<a class="btn btn-default" href="@routes.SeasonsController.index">Cancel</a>
+						<a class="btn btn-default" href="@routes.SeasonController.index">Cancel</a>
 					</div>
 				</div>
 			</fieldset>

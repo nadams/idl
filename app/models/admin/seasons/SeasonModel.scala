@@ -10,7 +10,7 @@ case class SeasonModel(seasonId: Int, name: String, startDate: DateTime, endDate
 object SeasonModel {
   implicit val writesSeason = Json.writes[SeasonModel]
 
-  def toModels(seasons: Seq[Season], routes: controllers.ReverseSeasonsController) = seasons.map { season => 
+  def toModels(seasons: Seq[Season], routes: controllers.ReverseSeasonController) = seasons.map { season => 
     SeasonModel(
       season.seasonId,
       season.name,
