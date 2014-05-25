@@ -3,6 +3,13 @@
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+	<script>
+		var admin = admin || {};
+		admin.teams = admin.teams || {};
+		admin.teams.index = admin.teams.index || {};
+		admin.teams.index.data = {};
+	</script>
+	<script src="@routes.Assets.at("javascripts/views/admin/teams/Teams.js")"></script>
 }
 
 @main("Manage Teams", extraScripts = extraScripts) {
