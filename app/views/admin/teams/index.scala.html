@@ -1,5 +1,10 @@
 @()(implicit header: MenuModel)
 
-@main("Manage Teams") {
+@extraScripts = {
+	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+}
+
+@main("Manage Teams", extraScripts = extraScripts) {
 	
 }
