@@ -2,12 +2,12 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import org.joda.time.{ DateTime, DateTimeZone }
 import components._
 import _root_.data._
 import models.admin.seasons._
 import models.FieldExtensions._
 import models.FormExtensions._
-import org.joda.time.{ DateTime, DateTimeZone }
 
 object SeasonsController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl {
   def index = IsAuthenticated { username => implicit request => 
@@ -26,6 +26,16 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
   }
 
   def saveNew = IsAuthenticated { username => implicit request => 
+    updateSeason(season => seasonService.insertSeason(Season(season.seasonId, season.name, season.startDate, season.endDate)))
+  }
+
+  def saveExisting(id: Int) = IsAuthenticated { username => implicit request => 
+    updateSeason(season => seasonService.updateSeason(season.seasonId, season.name, season.startDate, season.endDate))
+  }
+
+  def remove(id: Int) = TODO
+
+  def updateSeason(saveAction: EditSeasonModel => Boolean)(implicit request: Request[AnyContent]) : Result = 
     EditSeasonModelForm().bindFromRequest.fold(
       content => {
         val seasonIdError = content("seasonId").formattedMessage
@@ -39,16 +49,9 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
 
         BadRequest(views.html.admin.seasons.edit(editSeasonModel, errorsModel))
       },
-      season => seasonService.insertSeason(Season(season.seasonId, season.name, season.startDate, season.endDate)) match {
+      season => saveAction(season) match {
         case true => Redirect(routes.SeasonsController.index)
         case false => InternalServerError("Could not save season")
       }
     )
-  }
-
-  def saveExisting(id: Int) = IsAuthenticated { username => implicit request => 
-    Ok("Temp")
-  }
-
-  def remove(id: Int) = TODO
 }

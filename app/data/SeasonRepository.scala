@@ -7,6 +7,7 @@ trait SeasonRepositoryComponent {
     def getAllSeasons() : Seq[Season]
     def getSeasonById(id: Int) : Option[Season]
     def insertSeason(season: Season) : Boolean
+    def updateSeason(season: Season) : Boolean
   }
 }
 
@@ -77,6 +78,26 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
         "endDate" -> season.endDate
       )
       .executeInsert(scalar[Long] single) > 0
+    }
+
+    def updateSeason(season: Season) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          UPDATE $tableName
+          SET
+            $name = {name},
+            $startDate = {startDate},
+            $endDate = {endDate}
+          WHERE $seasonId = {seasonId}
+        """
+      )
+      .on(
+        "seasonId" -> season.seasonId,
+        "name" -> season.name,
+        "startDate" -> season.startDate,
+        "endDate" -> season.endDate
+      )
+      .executeUpdate > 0
     }
   }
 }

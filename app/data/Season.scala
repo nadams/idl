@@ -2,7 +2,10 @@ package data
 
 import org.joda.time.DateTime
 
-case class Season(seasonId: Int, name: String, startDate: DateTime, endDate: DateTime)
+case class Season(seasonId: Int, name: String, startDate: DateTime, endDate: DateTime) {
+  def update(newName: String, newStartDate: DateTime, newEndDate: DateTime) =
+    Season(seasonId, newName, newStartDate, newEndDate)
+}
 
 object Season {
   def apply(x: (Int, String, DateTime, DateTime)) : Season = 
