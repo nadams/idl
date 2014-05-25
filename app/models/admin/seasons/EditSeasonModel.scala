@@ -15,7 +15,6 @@ case class EditSeasonModel(seasonId: Int, name: String, startDate: DateTime, end
 }
 
 object EditSeasonModel {
-
   implicit val writes = Json.writes[EditSeasonModel]
 
   lazy val now = new DateTime(DateTimeZone.UTC)

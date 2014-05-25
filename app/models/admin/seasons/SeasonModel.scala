@@ -2,6 +2,7 @@ package models.admin.seasons
 
 import play.api.libs.json._
 import org.joda.time.DateTime
+import formatters.DateTimeFormatter._
 import data.Season
 
 case class SeasonModel(seasonId: Int, name: String, startDate: DateTime, endDate: DateTime, editLink: String, removeLink: String)
