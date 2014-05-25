@@ -7,7 +7,7 @@ admin.teams.index = admin.teams.index || {};
 
 admin.teams.index.IndexModel = (function(ko, _) {
 	var Model = function(data) {
-		this.seasons = [];
+		this.availableSeasons = [];
 		this.selectedSeason = ko.observable();
 
 		this.initialize(data);
@@ -15,7 +15,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
 
 	ko.utils.extend(Model.prototype, {
 		initialize: function(data) {
-			this.seasons = _.map(data.seasons, function(seasonData) {
+			this.availableSeasons = _.map(data.seasons, function(seasonData) {
 				return new admin.teams.index.SeasonModel(seasonData);
 			}, this);
 		}

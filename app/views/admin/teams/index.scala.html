@@ -20,9 +20,17 @@
 			<div class="form-group">
 				<label for="seasonSelection" class="col-sm-1 form-label">Season</label>
 				<div class="col-sm-4">
-					<select id="seasonSelection" class="form-control"></select>
+					<select 
+						id="seasonSelection" 
+						class="form-control" 
+						data-bind="options: availableSeasons, 
+							optionsText: 'seasonName', 
+							value: selectedSeason, 
+							optionsCaption: 'Select a season'"></select>
 				</div>
 			</div>
+
+			<!-- ko if: selectedSeason() -->
 			<div class="form-group">
 				<label for="teamSelection" class="col-sm-1 form-label">Team</label>
 				<div class="col-sm-4">
@@ -40,6 +48,7 @@
 					</div>
 				</div>
 			</div>
+			<!-- /ko -->
 			<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 		</div>
 	</div>
