@@ -34,7 +34,12 @@ object SeasonsController extends Controller with ProvidesHeader with Secured wit
     updateSeason(season => seasonService.updateSeason(season.seasonId, season.name, season.startDate, season.endDate))
   }
 
-  def remove(id: Int) = TODO
+  def remove(id: Int) = IsAuthenticated { username => implicit request => 
+    seasonService.removeSeason(id) match {
+      case true => Redirect(routes.SeasonsController.index)
+      case false => Redirect(routes.SeasonsController.index).flashing("couldNotRemoveSeason" -> "Could not remove season")
+    }
+  }
 
   def updateSeason(saveAction: EditSeasonModel => Boolean)(implicit request: Request[AnyContent]) : Result = 
     EditSeasonModelForm().bindFromRequest.fold(

@@ -1,4 +1,4 @@
-@(model: Seq[models.admin.seasons.SeasonModel])(implicit header: MenuModel)
+@(model: Seq[models.admin.seasons.SeasonModel])(implicit header: MenuModel, flash: Flash)
 
 @import play.api.libs.json.Json
 
@@ -18,6 +18,12 @@
 }
 
 @views.html.admin.seasons.seasonsTemplate("Manage Seasons", extraScripts = extraScripts) {
+	@if(flash.data.contains("couldNotRemoveSeason")) {
+		<div class="alert alert-danger">
+			<p class="error">@flash("couldNotRemoveSeason")</p>
+		</div>
+	}
+	
 	@if(model.nonEmpty) {
 		<table class="table table-striped table-hover" style="display: none;" data-bind="visible: true">
 			<thead>

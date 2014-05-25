@@ -11,6 +11,7 @@ trait SeasonServiceComponent {
     def getSeasonById(id: Int) : Option[Season]
     def insertSeason(season: Season): Boolean
     def updateSeason(seasonId: Int, name: String, startDate: DateTime, endDate: DateTime) : Boolean
+    def removeSeason(seasonId: Int) : Boolean
   }
 }
 
@@ -22,6 +23,7 @@ trait SeasonServiceComponentImpl extends SeasonServiceComponent {
     def getAllSeasons() = seasonRepository.getAllSeasons
     def insertSeason(season: Season) = seasonRepository.insertSeason(season)
     def getSeasonById(id: Int) = seasonRepository.getSeasonById(id)
+    def removeSeason(id: Int) = seasonRepository.removeSeason(id)
     def updateSeason(seasonId: Int, name: String, startDate: DateTime, endDate: DateTime) = 
       getSeasonById(seasonId).exists(season => seasonRepository.updateSeason(season.update(name, startDate, endDate)))
   }

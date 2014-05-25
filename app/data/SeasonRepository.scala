@@ -8,6 +8,7 @@ trait SeasonRepositoryComponent {
     def getSeasonById(id: Int) : Option[Season]
     def insertSeason(season: Season) : Boolean
     def updateSeason(season: Season) : Boolean
+    def removeSeason(id: Int) : Boolean
   }
 }
 
@@ -97,6 +98,17 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
         "startDate" -> season.startDate,
         "endDate" -> season.endDate
       )
+      .executeUpdate > 0
+    }
+
+    def removeSeason(id: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          DELETE FROM $tableName
+          WHERE $seasonId = {seasonId}
+        """
+      )
+      .on("seasonId" -> id)
       .executeUpdate > 0
     }
   }
