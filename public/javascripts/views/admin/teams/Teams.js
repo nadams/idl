@@ -15,7 +15,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
 
 	ko.utils.extend(Model.prototype, {
 		initialize: function(data) {
-			this.seasons = _.map(data, function(seasonData) {
+			this.seasons = _.map(data.seasons, function(seasonData) {
 				return new admin.teams.index.SeasonModel(seasonData);
 			}, this);
 		}

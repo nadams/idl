@@ -1,4 +1,6 @@
-@()(implicit header: MenuModel)
+@(model: models.admin.teams.TeamIndexModel)(implicit header: MenuModel)
+
+@import play.api.libs.json.Json
 
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
@@ -7,7 +9,7 @@
 		var admin = admin || {};
 		admin.teams = admin.teams || {};
 		admin.teams.index = admin.teams.index || {};
-		admin.teams.index.data = {};
+		admin.teams.index.data = @Html(Json.toJson(model).toString) || {};
 	</script>
 	<script src="@routes.Assets.at("javascripts/views/admin/teams/Teams.js")"></script>
 }
