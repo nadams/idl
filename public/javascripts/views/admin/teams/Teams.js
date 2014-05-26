@@ -90,6 +90,12 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			this.availableSeasons = _.map(data.seasons, function(seasonData) {
 				return new admin.teams.index.SeasonModel(seasonData);
 			}, this);
+		},
+		assignPlayersToCurrentTeam: function() {
+
+		},
+		removePlayersFromCurrentTeam: function() {
+
 		}
 	});
 
