@@ -37,31 +37,32 @@
 				</div>
 			</div>
 
-			<!-- ko if: selectedSeason() -->
-			<div class="form-group">
-				<label for="teamSelection" class="col-sm-1 form-label">Team</label>
-				<div class="col-sm-4">
-					<select 
-						id="teamSelection" 
-						class="form-control" 
-						data-bind="options: availableTeams,
-							optionsText: 'teamName',
-							value: selectedTeam,
-							optionsCaption: 'Select a team...'"></select>
+			<div data-bind="if: selectedSeason()">
+				<div class="form-group">
+					<label for="teamSelection" class="col-sm-1 form-label">Team</label>
+					<div class="col-sm-4">
+						<select 
+							id="teamSelection" 
+							class="form-control" 
+							data-bind="options: availableTeams,
+								optionsText: 'teamName',
+								value: selectedTeam,
+								optionsCaption: 'Select a team...'"></select>
+					</div>
 				</div>
-			</div>
-			<div class="form-group" data-bind="if: selectedTeam()">
-				<div class="col-sm-offset-1 col-sm-10">
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-4">arst</div>
-							<div class="col-md-4">arst</div>
-							<div class="col-md-4">arst</div>
+				<div class="form-group" data-bind="if: selectedTeam()">
+					<div class="col-sm-offset-1 col-sm-10">
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-md-4">arst</div>
+								<div class="col-md-4">arst</div>
+								<div class="col-md-4">arst</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<!-- /ko -->
+			
 			<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 		</div>
 	</div>
