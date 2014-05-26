@@ -59,7 +59,11 @@
 						<div class="container-fluid">
 							<div class="row">
 								<div class="col-md-4">
+									<div>
+										<label for="teamPlayers">Players In <span data-bind="text: selectedTeam().teamName"></span></label>
+									</div>
 									<select 
+										id="teamPlayers"
 										multiple="multiple" 
 										size="5"
 										data-bind="options: playersInCurrentTeam,
@@ -68,7 +72,11 @@
 								</div>
 								<div class="col-md-4">arst</div>
 								<div class="col-md-4">
+									<div>
+										<label for="unassignedPlayers">Unassigned Players</label>
+									</div>
 									<select 
+										id="unassignedPlayers"
 										multiple="multiple" 
 										size="5"
 										data-bind="options: unassignedPlayers,
