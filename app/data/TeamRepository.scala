@@ -42,23 +42,39 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
     def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) = DB.withConnection { implicit connection =>
       SQL(
         s"""
-          INSERT INTO ${TeamPlayerSchema.tableName} (
-            ${TeamPlayerSchema.teamId},
-            ${TeamPlayerSchema.playerId}, 
-            ${TeamPlayerSchema.isCaptain}
-          ) VALUES(
-            {teamId}, 
-            {playerId}, 
-            {isCaptain}
-          )
+          SELECT COUNT(*) AS Results
+          FROM ${TeamPlayerSchema.tableName}
+          WHERE
+            ${TeamPlayerSchema.playerId} = {playerId} AND
+            ${TeamPlayerSchema.teamId} = {teamId}
         """
       )
       .on(
-        'teamId -> teamId,
         'playerId -> playerId,
-        'isCaptain -> isCaptain
+        'teamId -> teamId
       )
-      .executeUpdate > 0
+      .as(scalar[Long] single) match {
+        case x if x == 0 => SQL(
+          s"""
+            INSERT INTO ${TeamPlayerSchema.tableName} (
+              ${TeamPlayerSchema.teamId},
+              ${TeamPlayerSchema.playerId}, 
+              ${TeamPlayerSchema.isCaptain}
+            ) VALUES(
+              {teamId}, 
+              {playerId}, 
+              {isCaptain}
+            )
+          """
+        )
+        .on(
+          'teamId -> teamId,
+          'playerId -> playerId,
+          'isCaptain -> isCaptain
+        )
+        .executeUpdate > 0
+        case _ => false
+      }
     }
 
     def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean = DB.withConnection { implicit collection => 
@@ -67,7 +83,8 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
           DELETE FROM 
             ${TeamPlayerSchema.tableName}
           WHERE 
-            ${TeamPlayerSchema.playerId} = {playerId} AND ${TeamPlayerSchema.teamId} = {teamId}
+            ${TeamPlayerSchema.playerId} = {playerId} AND 
+            ${TeamPlayerSchema.teamId} = {teamId}
         """
       )
       .on(
