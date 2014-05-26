@@ -9,15 +9,28 @@ admin.teams.index.IndexModel = (function(ko, _) {
 	var Model = function(data, repository) {
 		this.availableSeasons = [];
 		this.selectedSeason = ko.observable();
+		this.availableTeams = ko.observableArray([]);
+		this.selectedTeam = ko.observable();
 
 		this.initialize(data);
 
 		this.selectedSeason.subscribe(function(newSeason) {
-			var promise = repository.getTeamList(newSeason.seasonId, this);
-			promise.success(function() {
-				console.log('success');
-			});
-		});
+			this.availableTeams.removeAll();
+			this.selectedTeam(undefined);
+
+			if (this.selectedSeason()) {
+				var promise = repository.getTeamList(newSeason.seasonId, this);
+				promise.success(function(data) {
+					var availableTeams = this.availableTeams();
+
+					_.each(data.teams, function(item) {
+						availableTeams.push(new admin.teams.index.TeamModel(item));
+					}, this);
+
+					this.availableTeams.valueHasMutated();
+				});
+			}
+		}, this);
 	};
 
 	ko.utils.extend(Model.prototype, {
@@ -30,6 +43,24 @@ admin.teams.index.IndexModel = (function(ko, _) {
 
 	return Model;
 })(ko, _);
+
+admin.teams.index.TeamModel = (function(ko) {
+	var Model = function(data) {
+		this.teamId = 0;
+		this.teamName = '';
+
+		this.initialize(data);
+	};
+
+	ko.utils.extend(Model.prototype, {
+		initialize: function(data) {
+			this.teamId = data.teamId;
+			this.teamName = data.teamName;
+		}
+	});
+
+	return Model;
+})(ko);
 
 admin.teams.index.SeasonModel = (function(ko) {
 	var Model = function(data) {
