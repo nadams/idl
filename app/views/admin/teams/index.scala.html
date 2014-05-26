@@ -15,7 +15,8 @@
 
 	@helper.javascriptRouter("routes")(
 		routes.javascript.TeamController.getTeamList,
-		routes.javascript.TeamController.getPlayers
+		routes.javascript.TeamController.getPlayers,
+		routes.javascript.TeamController.assignPlayers
 	)
 
 	<script src="@routes.Assets.at("javascripts/views/admin/teams/TeamsRepository.js")"></script>

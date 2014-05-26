@@ -25,4 +25,8 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   def getPlayers = IsAuthenticated { username => implicit request => 
     Ok(Json.toJson(PlayersModel.toModel(teamService.getAllPlayers)))
   }
+
+  def assignPlayers = IsAuthenticated { username => implicit request => 
+    Ok("")
+  }
 }

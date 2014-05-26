@@ -7,6 +7,8 @@ admin.teams.index = admin.teams.index || {};
 
 admin.teams.index.IndexModel = (function(ko, _) {
 	var Model = function(data, repository) {
+		this.repository = repository;
+
 		this.availableSeasons = [];
 		this.selectedSeason = ko.observable();
 
@@ -41,7 +43,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			if (this.selectedSeason()) {
 				this.isLoadingTeams(true);
 
-				var promise = repository.getTeamList(newSeason.seasonId, this);
+				var promise = this.repository.getTeamList(newSeason.seasonId, this);
 
 				promise.success(function(data) {
 					var availableTeams = this.availableTeams();
@@ -67,7 +69,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			if (this.selectedTeam()) {
 				this.isLoadingPlayers(true);
 
-				var promise = repository.getPlayers(this);
+				var promise = this.repository.getPlayers(this);
 				promise.success(function(data) {
 					var availablePlayers = this.availablePlayers();
 
@@ -92,7 +94,16 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			}, this);
 		},
 		assignPlayersToCurrentTeam: function() {
+			var selectedSeasonId = this.selectedSeason().seasonId,
+				selectedTeamId = this.selectedTeam().teamId,
+				selectedPlayerIds = _.map(this.selectedAvailablePlayers(), function(player) {
+					return player.playerId;
+				}, this);
 
+			var promise = this.repository.assignPlayersToTeam(selectedSeasonId, selectedTeamId, selectedPlayerIds, this);
+			promise.success(function(data) {
+
+			});
 		},
 		removePlayersFromCurrentTeam: function() {
 
