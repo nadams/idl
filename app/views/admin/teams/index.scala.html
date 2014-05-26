@@ -77,19 +77,19 @@
 								</div>
 								<div class="col-md-4">
 									<div class="visible-xs visible-sm">
-										<button class="btn btn-default" data-bind="enable: selectedAvailablePlayers().length > 0, click: assignPlayersToCurrentTeam">
+										<button class="btn btn-default" data-bind="enable: canAssignPlayers(), click: assignPlayersToCurrentTeam">
 											<span class="glyphicon glyphicon-arrow-up"></span>
 										</button>
-										<button class="btn btn-default" data-bind="enable: selectedTeamPlayers().length > 0, click: removePlayersFromCurrentTeam">
+										<button class="btn btn-default" data-bind="enable: canRemovePlayers(), click: removePlayersFromCurrentTeam">
 											<span class="glyphicon glyphicon-arrow-down"></span>
 										</button>
 									</div>
 
 									<div class="visible-md visible-lg">
-										<button class="btn btn-default" data-bind="enable: selectedAvailablePlayers().length > 0, click: assignPlayersToCurrentTeam">
+										<button class="btn btn-default" data-bind="enable: canAssignPlayers(), click: assignPlayersToCurrentTeam">
 											<span class="glyphicon glyphicon-arrow-left"></span>
 										</button>
-										<button class="btn btn-default" data-bind="enable: selectedTeamPlayers().length > 0, click: removePlayersFromCurrentTeam">
+										<button class="btn btn-default" data-bind="enable: canRemovePlayers(), click: removePlayersFromCurrentTeam">
 											<span class="glyphicon glyphicon-arrow-right"></span>
 										</button>
 									</div>

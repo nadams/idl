@@ -21,6 +21,8 @@ admin.teams.index.IndexModel = (function(ko, _) {
 
 		this.isLoadingTeams = ko.observable(false);
 		this.isLoadingPlayers = ko.observable(false);
+		this.isAssigningPlayersToTeam = ko.observable(false);
+		this.isRemovingPlayersFromTeam = ko.observable(false);
 
 		this.initialize(data);
 
@@ -34,6 +36,14 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			return _.filter(this.availablePlayers(), function(item) {
 				return item.teamId() === this.selectedTeam().teamId;
 			}, this);
+		}, this);
+
+		this.canAssignPlayers = ko.computed(function() {
+			return this.selectedAvailablePlayers().length > 0 && !this.isAssigningPlayersToTeam();
+		}, this);
+
+		this.canRemovePlayers = ko.computed(function() {
+			return this.selectedTeamPlayers().length > 0 && !this.isRemovingPlayersFromTeam();
 		}, this);
 
 		this.selectedSeason.subscribe(function(newSeason) {
@@ -94,12 +104,14 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			}, this);
 		},
 		assignPlayersToCurrentTeam: function() {
+			this.isAssigningPlayersToTeam(true);
 			var selectedTeamId = this.selectedTeam().teamId,
 				selectedPlayerIds = _.map(this.selectedAvailablePlayers(), function(player) {
 					return player.playerId;
 				}, this);
 
 			var promise = this.repository.assignPlayersToTeam(selectedTeamId, selectedPlayerIds, this);
+
 			promise.done(function(assignedPlayerIds) {
 				var assignedPlayers = _.filter(this.availablePlayers(), function(item) {
 					return _.contains(assignedPlayerIds, item.playerId);
@@ -111,14 +123,21 @@ admin.teams.index.IndexModel = (function(ko, _) {
 					player.teamId(currentTeamId);
 				}, this);
 			});
+
+			promise.always(function() {
+				this.isAssigningPlayersToTeam(false);
+			});
 		},
 		removePlayersFromCurrentTeam: function() {
+			this.isRemovingPlayersFromTeam(true);
+
 			var selectedTeamId = this.selectedTeam().teamId,
 				selectedPlayerIds = _.map(this.selectedTeamPlayers(), function(player) {
 					return player.playerId;
 				}, this);
 
 			var promise = this.repository.removePlayersFromTeam(selectedTeamId, selectedPlayerIds, this);
+
 			promise.done(function(assignedPlayerIds) {
 				var assignedPlayers = _.filter(this.availablePlayers(), function(item) {
 					return _.contains(assignedPlayerIds, item.playerId);
@@ -127,6 +146,10 @@ admin.teams.index.IndexModel = (function(ko, _) {
 				_.forEach(assignedPlayers, function(player) {
 					player.teamId(undefined);
 				}, this);
+			});
+
+			promise.always(function() {
+				this.isRemovingPlayersFromTeam(false);
 			});
 		}
 	});
