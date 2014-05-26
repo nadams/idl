@@ -22,6 +22,7 @@ GET     /admin/teams                        controllers.TeamController.index
 GET     /admin/teams/teamList/:seasonId     controllers.TeamController.getTeamList(seasonId: Int)
 GET     /admin/teams/players                controllers.TeamController.getPlayers
 POST    /admin/teams/assignPlayers          controllers.TeamController.assignPlayers
+POST    /admin/teams/removePlayers          controllers.TeamController.removePlayers
 
 GET     /admin/seasons                      controllers.SeasonController.index
 GET     /admin/seasons/create               controllers.SeasonController.create

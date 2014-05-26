@@ -19,7 +19,11 @@ trait TeamServiceComponentImpl extends TeamServiceComponent {
   class TeamServiceImpl extends TeamService {
     def getTeamsForSeason(seasonId: Int) = teamRepository.getTeamsForSeason(seasonId)
     def getAllPlayers() = playerRepository.getAllPlayers
+    
     def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) =
       playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId) }
+
+    def removePlayersFromTeam(teamId: Int, playerIds: Seq[Int]) =
+      playerIds.filter { playerId => teamRepository.removePlayerFromTeam(playerId, teamId) }
   }
 }

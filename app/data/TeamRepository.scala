@@ -6,6 +6,7 @@ trait TeamRepositoryComponent {
   trait TeamRepository {
     def getTeamsForSeason(seasonId: Int) : Seq[Team]
     def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) : Boolean
+    def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean
   }
 }
 
@@ -56,6 +57,22 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         'teamId -> teamId,
         'playerId -> playerId,
         'isCaptain -> isCaptain
+      )
+      .executeUpdate > 0
+    }
+
+    def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean = DB.withConnection { implicit collection => 
+      SQL(
+        s"""
+          DELETE FROM 
+            ${TeamPlayerSchema.tableName}
+          WHERE 
+            ${TeamPlayerSchema.playerId} = {playerId} AND ${TeamPlayerSchema.teamId} = {teamId}
+        """
+      )
+      .on(
+        'playerId -> playerId,
+        'teamId -> teamId
       )
       .executeUpdate > 0
     }

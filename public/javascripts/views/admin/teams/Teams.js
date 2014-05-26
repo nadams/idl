@@ -113,7 +113,21 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			});
 		},
 		removePlayersFromCurrentTeam: function() {
+			var selectedTeamId = this.selectedTeam().teamId,
+				selectedPlayerIds = _.map(this.selectedTeamPlayers(), function(player) {
+					return player.playerId;
+				}, this);
 
+			var promise = this.repository.removePlayersFromTeam(selectedTeamId, selectedPlayerIds, this);
+			promise.done(function(assignedPlayerIds) {
+				var assignedPlayers = _.filter(this.availablePlayers(), function(item) {
+					return _.contains(assignedPlayerIds, item.playerId);
+				}, this);
+
+				_.forEach(assignedPlayers, function(player) {
+					player.teamId(undefined);
+				}, this);
+			});
 		}
 	});
 

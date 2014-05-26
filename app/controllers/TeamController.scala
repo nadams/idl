@@ -7,6 +7,8 @@ import components._
 import models.admin.teams._
 
 object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
+  lazy val invalidJsonFormat = BadRequest("Invalid json format")
+  
   def index = IsAuthenticated { username => implicit request =>
     Ok(views.html.admin.teams.index(
       TeamIndexModel(
@@ -29,16 +31,22 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   def assignPlayers = IsAuthenticated { username => implicit request => 
     import models.admin.teams.AssignPlayersToTeamModel._
 
-    lazy val invalidJsonFormat = BadRequest("Invalid json format")
+    handleJsonPost[AssignPlayersToTeamModel](x => Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.playerIds)))
+  }
 
-    request.body.asJson match {
-      case Some(jsValue) => {
-        Json.fromJson[AssignPlayersToTeamModel](jsValue).asOpt match {
-          case Some(x) => Ok(Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.playerIds)))
-          case None => invalidJsonFormat
-        }
+  def removePlayers = IsAuthenticated { username => implicit request =>
+    import models.admin.teams.RemovePlayersFromTeamModel._
+
+    handleJsonPost[RemovePlayersFromTeamModel](x => Json.toJson(teamService.removePlayersFromTeam(x.teamId, x.playerIds)))
+  }
+
+  private def handleJsonPost[T](action: T => JsValue)(implicit reads: Reads[T], request: Request[AnyContent]) = request.body.asJson match {
+    case Some(jsValue) => {
+      Json.fromJson[T](jsValue).asOpt match {
+        case Some(x) => Ok(action(x))
+        case None => invalidJsonFormat
       }
-      case None => invalidJsonFormat
     }
+    case None => invalidJsonFormat
   }
 }

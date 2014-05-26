@@ -41,6 +41,15 @@ admin.teams.TeamRepository = (function($, routes) {
 
 			return this.post(routes.controllers.TeamController.assignPlayers().url, data, context);
 		};
+
+		this.removePlayersFromTeam = function(teamId, playerIds, context) {
+			var data = {
+				teamId: teamId,
+				playerIds: playerIds
+			};
+
+			return this.post(routes.controllers.TeamController.removePlayers().url, data, context);
+		};
 	};
 
 	return Repository;
