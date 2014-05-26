@@ -11,34 +11,23 @@ trait PlayerRepositoryComponent {
 trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
   val playerRepository = new PlayerRepositoryImpl
 
-  trait PlayerSchema {
-    val tableName = "Player"
-    val playerId = "PlayerId"
-    val name = "Name"
-    val isActive = "IsActive"
-
-    val teamPlayerTableName = "TeamPlayer"
-    val teamPlayerTeamId = "TeamId"
-    val teamPlayerPlayerId = "PlayerId"
-  }
-
-  class PlayerRepositoryImpl extends PlayerRepository with PlayerSchema {
+  class PlayerRepositoryImpl extends PlayerRepository {
     import anorm._ 
     import anorm.SqlParser._
     import play.api.db.DB
     import play.api.Play.current
 
-    val singleRowParser = int(playerId) ~ str(name) ~ bool(isActive) ~ get[Option[Int]](teamPlayerTeamId) map flatten
+    val singleRowParser = int(PlayerSchema.playerId) ~ str(PlayerSchema.name) ~ bool(PlayerSchema.isActive) ~ get[Option[Int]](TeamPlayerSchema.teamId) map flatten
     val multiRowParser = singleRowParser *
     val selectAllPlayersSql = 
       s"""
         SELECT 
-          p.$playerId,
-          p.$name,
-          p.$isActive,
-          tp.$teamPlayerTeamId
-        FROM $tableName AS p
-          LEFT OUTER JOIN $teamPlayerTableName AS tp ON p.$playerId = tp.$teamPlayerPlayerId
+          p.${PlayerSchema.playerId},
+          p.${PlayerSchema.name},
+          p.${PlayerSchema.isActive},
+          tp.${TeamPlayerSchema.teamId}
+        FROM ${PlayerSchema.tableName} AS p
+          LEFT OUTER JOIN ${TeamPlayerSchema.tableName} AS tp ON p.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
       """
 
     def getAllPlayers() : Seq[Player] = DB.withConnection { implicit connection => 

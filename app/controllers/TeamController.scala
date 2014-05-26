@@ -34,7 +34,7 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
     request.body.asJson match {
       case Some(jsValue) => {
         Json.fromJson[AssignPlayersToTeamModel](jsValue).asOpt match {
-          case Some(x) => Ok(Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.seasonId, x.playerIds)))
+          case Some(x) => Ok(Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.playerIds)))
           case None => invalidJsonFormat
         }
       }

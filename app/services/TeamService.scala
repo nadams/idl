@@ -8,7 +8,7 @@ trait TeamServiceComponent {
   trait TeamService {
     def getTeamsForSeason(seasonId: Int) : Seq[Team]
     def getAllPlayers() : Seq[Player]
-    def assignPlayersToTeam(teamId: Int, seasonId: Int, playerIds: Seq[Int]) : Seq[Int]
+    def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) : Seq[Int]
   }
 }
 
@@ -19,7 +19,7 @@ trait TeamServiceComponentImpl extends TeamServiceComponent {
   class TeamServiceImpl extends TeamService {
     def getTeamsForSeason(seasonId: Int) = teamRepository.getTeamsForSeason(seasonId)
     def getAllPlayers() = playerRepository.getAllPlayers
-    def assignPlayersToTeam(teamId: Int, seasonId: Int, playerIds: Seq[Int]) =
-      playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId, seasonId) }
+    def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) =
+      playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId) }
   }
 }

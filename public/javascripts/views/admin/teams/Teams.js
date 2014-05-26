@@ -94,13 +94,12 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			}, this);
 		},
 		assignPlayersToCurrentTeam: function() {
-			var selectedSeasonId = this.selectedSeason().seasonId,
-				selectedTeamId = this.selectedTeam().teamId,
+			var selectedTeamId = this.selectedTeam().teamId,
 				selectedPlayerIds = _.map(this.selectedAvailablePlayers(), function(player) {
 					return player.playerId;
 				}, this);
 
-			var promise = this.repository.assignPlayersToTeam(selectedSeasonId, selectedTeamId, selectedPlayerIds, this);
+			var promise = this.repository.assignPlayersToTeam(selectedTeamId, selectedPlayerIds, this);
 			promise.done(function(assignedPlayerIds) {
 				var assignedPlayers = _.filter(this.availablePlayers(), function(item) {
 					return _.contains(assignedPlayerIds, item.playerId);

@@ -5,44 +5,32 @@ trait TeamRepositoryComponent {
 
   trait TeamRepository {
     def getTeamsForSeason(seasonId: Int) : Seq[Team]
-    def assignPlayerToTeam(playerId: Int, teamId: Int, seasonId: Int, isCaptain: Boolean = false) : Boolean
+    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) : Boolean
   }
 }
 
 trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
-  trait TeamSchema {
-    val tableName = "Team"
-    val teamId = "TeamId"
-    val name = "Name"
-    val isActive = "IsActive"
-    val teamPlayerTableName = "TeamPlayer"
-    val teamPlayerPlayerId = "PlayerId"
-    val teamPlayerSeasonId = "SeasonId"
-    val teamPlayerTeamId = "TeamId"
-    val teamPlayerIsCaptain = "IsCaptain"
-  }
-
   val teamRepository = new TeamRepositoryImpl
 
-  class TeamRepositoryImpl extends TeamRepository with TeamSchema {
+  class TeamRepositoryImpl extends TeamRepository {
     import anorm._ 
     import anorm.SqlParser._
     import play.api.db.DB
     import play.api.Play.current
 
-    val teamParser = int(teamId) ~ str(name) ~ bool(isActive) map flatten
+    val teamParser = int(TeamSchema.teamId) ~ str(TeamSchema.name) ~ bool(TeamSchema.isActive) map flatten
     val multiRowParser = teamParser *
 
     def getTeamsForSeason(seasonId: Int) = DB.withConnection { implicit connection =>
       SQL(
         s"""
           SELECT
-            t.$teamId,
-            t.$name,
-            t.$isActive 
-          FROM $tableName AS t
-            INNER JOIN $teamPlayerTableName AS tp ON t.$teamId = tp.$teamPlayerPlayerId
-          WHERE $teamPlayerSeasonId = {seasonId}
+            t.${TeamSchema.teamId},
+            t.${TeamSchema.name},
+            t.${TeamSchema.isActive} 
+          FROM ${TeamSchema.tableName} AS t
+            INNER JOIN ${TeamSeasonSchema.tableName} AS tp ON t.${TeamSchema.teamId} = tp.${TeamSeasonSchema.teamId}
+          WHERE ${TeamSeasonSchema.seasonId} = {seasonId}
         """
       )
       .on('seasonId -> seasonId)
@@ -50,18 +38,16 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       .map(Team(_))
     }
 
-    def assignPlayerToTeam(playerId: Int, teamId: Int, seasonId: Int, isCaptain: Boolean = false) = DB.withConnection { implicit connection =>
+    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) = DB.withConnection { implicit connection =>
       SQL(
         s"""
-          INSERT INTO $teamPlayerTableName (
-            $teamPlayerTeamId, 
-            $teamPlayerPlayerId, 
-            $teamPlayerSeasonId, 
-            $teamPlayerIsCaptain
+          INSERT INTO ${TeamPlayerSchema.tableName} (
+            ${TeamPlayerSchema.teamId},
+            ${TeamPlayerSchema.playerId}, 
+            ${TeamPlayerSchema.isCaptain}
           ) VALUES(
             {teamId}, 
             {playerId}, 
-            {seasonId}, 
             {isCaptain}
           )
         """
@@ -69,7 +55,6 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       .on(
         'teamId -> teamId,
         'playerId -> playerId,
-        'seasonId -> seasonId,
         'isCaptain -> isCaptain
       )
       .executeUpdate > 0

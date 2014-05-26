@@ -33,9 +33,8 @@ admin.teams.TeamRepository = (function($, routes) {
 			return this.get(routes.controllers.TeamController.getPlayers().url, context);
 		};
 
-		this.assignPlayersToTeam = function(seasonId, teamId, playerIds, context) {
+		this.assignPlayersToTeam = function(teamId, playerIds, context) {
 			var data = {
-				seasonId: seasonId,
 				teamId: teamId,
 				playerIds: playerIds
 			};
