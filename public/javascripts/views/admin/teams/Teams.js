@@ -6,11 +6,18 @@ admin.teams = admin.teams || {};
 admin.teams.index = admin.teams.index || {};
 
 admin.teams.index.IndexModel = (function(ko, _) {
-	var Model = function(data) {
+	var Model = function(data, repository) {
 		this.availableSeasons = [];
 		this.selectedSeason = ko.observable();
 
 		this.initialize(data);
+
+		this.selectedSeason.subscribe(function(newSeason) {
+			var promise = repository.getTeamList(newSeason.seasonId, this);
+			promise.success(function() {
+				console.log('success');
+			});
+		});
 	};
 
 	ko.utils.extend(Model.prototype, {
@@ -43,7 +50,7 @@ admin.teams.index.SeasonModel = (function(ko) {
 })(ko);
 
 (function(ko) {
-	var model = new admin.teams.index.IndexModel(admin.teams.index.data);
+	var model = new admin.teams.index.IndexModel(admin.teams.index.data, new admin.teams.TeamRepository());
 
 	ko.applyBindings(model);
 })(ko);

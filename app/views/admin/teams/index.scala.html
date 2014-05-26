@@ -1,4 +1,4 @@
-@(model: models.admin.teams.TeamIndexModel)(implicit header: MenuModel)
+@(model: models.admin.teams.TeamIndexModel)(implicit header: MenuModel, req: RequestHeader)
 
 @import play.api.libs.json.Json
 
@@ -10,7 +10,14 @@
 		admin.teams = admin.teams || {};
 		admin.teams.index = admin.teams.index || {};
 		admin.teams.index.data = @Html(Json.toJson(model).toString) || {};
+
 	</script>
+
+	@helper.javascriptRouter("routes")(
+		routes.javascript.TeamController.getTeamList
+	)
+
+	<script src="@routes.Assets.at("javascripts/views/admin/teams/TeamsRepository.js")"></script>
 	<script src="@routes.Assets.at("javascripts/views/admin/teams/Teams.js")"></script>
 }
 

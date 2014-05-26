@@ -11,8 +11,13 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
       TeamIndexModel(
         seasonService.getAllSeasons.map { season => 
           SeasonModel(season.seasonId, season.name)
-        }
+        },
+        Map.empty[String, String]
       )
     ))
+  }
+
+  def getTeamList(seasonId: Int) = IsAuthenticated { username => implicit request => 
+    Ok("")
   }
 }
