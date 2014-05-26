@@ -1,0 +1,11 @@
+package components
+
+import data._
+
+trait PlayerRegistry
+extends PlayerRepositoryComponent
+with TeamRepositoryComponent
+
+trait PlayerComponentImpl
+extends PlayerRegistry
+with PlayerRepositoryComponentImpl

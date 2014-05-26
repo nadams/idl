@@ -6,8 +6,10 @@ import services._
 trait TeamRegistry
 extends TeamServiceComponent
 with TeamRepositoryComponent
+with PlayerRepositoryComponent
 
 trait TeamComponentImpl
 extends TeamRegistry
 with TeamServiceComponentImpl
 with TeamRepositoryComponentImpl
+with PlayerRepositoryComponentImpl

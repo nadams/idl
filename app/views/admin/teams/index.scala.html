@@ -14,7 +14,8 @@
 	</script>
 
 	@helper.javascriptRouter("routes")(
-		routes.javascript.TeamController.getTeamList
+		routes.javascript.TeamController.getTeamList,
+		routes.javascript.TeamController.getPlayers
 	)
 
 	<script src="@routes.Assets.at("javascripts/views/admin/teams/TeamsRepository.js")"></script>
@@ -34,7 +35,7 @@
 							optionsText: 'seasonName', 
 							value: selectedSeason, 
 							optionsCaption: 'Select a season...'"></select>
-				</div>
+				</div> 
 				<div class="col-sm-1" data-bind="if: isLoadingTeams()">
 					<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." />
 				</div>

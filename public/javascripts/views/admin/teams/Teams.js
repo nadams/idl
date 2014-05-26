@@ -9,10 +9,15 @@ admin.teams.index.IndexModel = (function(ko, _) {
 	var Model = function(data, repository) {
 		this.availableSeasons = [];
 		this.selectedSeason = ko.observable();
+
 		this.availableTeams = ko.observableArray([]);
 		this.selectedTeam = ko.observable();
 
-		this.isLoadingTeams = ko.observable();
+		this.availablePlayers = ko.observableArray([]);
+		this.selectedPlayers = ko.observableArray([]);
+
+		this.isLoadingTeams = ko.observable(false);
+		this.isLoadingPlayers = ko.observable(false);
 
 		this.initialize(data);
 
@@ -40,6 +45,30 @@ admin.teams.index.IndexModel = (function(ko, _) {
 				});
 			}
 		}, this);
+
+		this.selectedTeam.subscribe(function() {
+			this.availablePlayers.removeAll();
+			this.selectedPlayers.removeAll();
+
+			if (this.selectedTeam()) {
+				this.isLoadingPlayers(true);
+
+				var promise = repository.getPlayers(this);
+				promise.success(function(data) {
+					var availablePlayers = this.availablePlayers();
+
+					_.each(data.players, function(item) {
+						availablePlayers.push(new admin.teams.index.PlayerModel(item));
+					}, this);
+
+					this.availablePlayers.valueHasMutated();
+				});
+
+				promise.always(function() {
+					this.isLoadingPlayers(false);
+				});
+			}
+		}, this);
 	};
 
 	ko.utils.extend(Model.prototype, {
@@ -52,6 +81,26 @@ admin.teams.index.IndexModel = (function(ko, _) {
 
 	return Model;
 })(ko, _);
+
+admin.teams.index.PlayerModel = (function(ko) {
+	var Model = function(data) {
+		this.playerId = 0;
+		this.playerName = '';
+		this.teamId = ko.observable();
+
+		this.initialize(data);
+	};
+
+	ko.utils.extend(Model.prototype, {
+		initialize: function(data) {
+			this.playerId = data.playerId;
+			this.playerName = data.playerName;
+			this.teamId(data.teamId);
+		}
+	});
+
+	return Model;
+})(ko);
 
 admin.teams.index.TeamModel = (function(ko) {
 	var Model = function(data) {
