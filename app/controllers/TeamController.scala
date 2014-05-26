@@ -2,7 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import play.api.libs.json.Json
+import play.api.libs.json._
 import components._
 import models.admin.teams._
 
@@ -27,6 +27,18 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   }
 
   def assignPlayers = IsAuthenticated { username => implicit request => 
-    Ok("")
+    import models.admin.teams.AssignPlayersToTeamModel._
+
+    lazy val invalidJsonFormat = BadRequest("Invalid json format")
+
+    request.body.asJson match {
+      case Some(jsValue) => {
+        Json.fromJson[AssignPlayersToTeamModel](jsValue).asOpt match {
+          case Some(x) => Ok(Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.seasonId, x.playerIds)))
+          case None => invalidJsonFormat
+        }
+      }
+      case None => invalidJsonFormat
+    }
   }
 }

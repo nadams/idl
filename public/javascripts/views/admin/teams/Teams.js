@@ -45,7 +45,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
 
 				var promise = this.repository.getTeamList(newSeason.seasonId, this);
 
-				promise.success(function(data) {
+				promise.done(function(data) {
 					var availableTeams = this.availableTeams();
 
 					_.each(data.teams, function(item) {
@@ -70,7 +70,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
 				this.isLoadingPlayers(true);
 
 				var promise = this.repository.getPlayers(this);
-				promise.success(function(data) {
+				promise.done(function(data) {
 					var availablePlayers = this.availablePlayers();
 
 					_.each(data.players, function(item) {
@@ -101,8 +101,16 @@ admin.teams.index.IndexModel = (function(ko, _) {
 				}, this);
 
 			var promise = this.repository.assignPlayersToTeam(selectedSeasonId, selectedTeamId, selectedPlayerIds, this);
-			promise.success(function(data) {
+			promise.done(function(assignedPlayerIds) {
+				var assignedPlayers = _.filter(this.availablePlayers(), function(item) {
+					return _.contains(assignedPlayerIds, item.playerId);
+				}, this);
 
+				var currentTeamId = this.selectedTeam().teamId;
+
+				_.forEach(assignedPlayers, function(player) {
+					player.teamId(currentTeamId);
+				}, this);
 			});
 		},
 		removePlayersFromCurrentTeam: function() {

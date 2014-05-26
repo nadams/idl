@@ -5,6 +5,7 @@ trait TeamRepositoryComponent {
 
   trait TeamRepository {
     def getTeamsForSeason(seasonId: Int) : Seq[Team]
+    def assignPlayerToTeam(playerId: Int, teamId: Int, seasonId: Int, isCaptain: Boolean = false) : Boolean
   }
 }
 
@@ -17,6 +18,8 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
     val teamPlayerTableName = "TeamPlayer"
     val teamPlayerPlayerId = "PlayerId"
     val teamPlayerSeasonId = "SeasonId"
+    val teamPlayerTeamId = "TeamId"
+    val teamPlayerIsCaptain = "IsCaptain"
   }
 
   val teamRepository = new TeamRepositoryImpl
@@ -45,6 +48,31 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       .on('seasonId -> seasonId)
       .as(multiRowParser)
       .map(Team(_))
+    }
+
+    def assignPlayerToTeam(playerId: Int, teamId: Int, seasonId: Int, isCaptain: Boolean = false) = DB.withConnection { implicit connection =>
+      SQL(
+        s"""
+          INSERT INTO $teamPlayerTableName (
+            $teamPlayerTeamId, 
+            $teamPlayerPlayerId, 
+            $teamPlayerSeasonId, 
+            $teamPlayerIsCaptain
+          ) VALUES(
+            {teamId}, 
+            {playerId}, 
+            {seasonId}, 
+            {isCaptain}
+          )
+        """
+      )
+      .on(
+        'teamId -> teamId,
+        'playerId -> playerId,
+        'seasonId -> seasonId,
+        'isCaptain -> isCaptain
+      )
+      .executeUpdate > 0
     }
   }
 }
