@@ -14,12 +14,25 @@ admin.teams.index.IndexModel = (function(ko, _) {
 		this.selectedTeam = ko.observable();
 
 		this.availablePlayers = ko.observableArray([]);
-		this.selectedPlayers = ko.observableArray([]);
+		this.selectedTeamPlayers = ko.observableArray([]);
+		this.selectedAvailablePlayers = ko.observableArray([]);
 
 		this.isLoadingTeams = ko.observable(false);
 		this.isLoadingPlayers = ko.observable(false);
 
 		this.initialize(data);
+
+		this.unassignedPlayers = ko.computed(function() {
+			return _.filter(this.availablePlayers(), function(item) {
+				return item.teamId() === undefined;
+			}, this);
+		}, this);
+
+		this.playersInCurrentTeam = ko.computed(function() {
+			return _.filter(this.availablePlayers(), function(item) {
+				return item.teamId() === this.selectedTeam().teamId;
+			}, this);
+		}, this);
 
 		this.selectedSeason.subscribe(function(newSeason) {
 			this.availableTeams.removeAll();
@@ -48,7 +61,8 @@ admin.teams.index.IndexModel = (function(ko, _) {
 
 		this.selectedTeam.subscribe(function() {
 			this.availablePlayers.removeAll();
-			this.selectedPlayers.removeAll();
+			this.selectedTeamPlayers.removeAll();
+			this.selectedAvailablePlayers.removeAll();
 
 			if (this.selectedTeam()) {
 				this.isLoadingPlayers(true);

@@ -58,15 +58,22 @@
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="container-fluid">
 							<div class="row">
-								<div class="col-md-4">arst</div>
+								<div class="col-md-4">
+									<select 
+										multiple="multiple" 
+										size="5"
+										data-bind="options: playersInCurrentTeam,
+											optionsText: 'playerName',
+											selectedOptions: selectedTeamPlayers"></select>
+								</div>
 								<div class="col-md-4">arst</div>
 								<div class="col-md-4">
 									<select 
 										multiple="multiple" 
 										size="5"
-										data-bind="options: availablePlayers,
+										data-bind="options: unassignedPlayers,
 											optionsText: 'playerName',
-											selectedOptions: selectedPlayers"></select>
+											selectedOptions: selectedAvailablePlayers"></select>
 								</div>
 							</div>
 						</div>
