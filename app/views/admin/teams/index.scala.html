@@ -60,7 +60,14 @@
 							<div class="row">
 								<div class="col-md-4">arst</div>
 								<div class="col-md-4">arst</div>
-								<div class="col-md-4">arst</div>
+								<div class="col-md-4">
+									<select 
+										multiple="multiple" 
+										size="5"
+										data-bind="options: availablePlayers,
+											optionsText: 'playerName',
+											selectedOptions: selectedPlayers"></select>
+								</div>
 							</div>
 						</div>
 					</div>
