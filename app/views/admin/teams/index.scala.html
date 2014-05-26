@@ -35,6 +35,9 @@
 							value: selectedSeason, 
 							optionsCaption: 'Select a season...'"></select>
 				</div>
+				<div class="col-sm-1" data-bind="if: isLoadingTeams()">
+					<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." />
+				</div>
 			</div>
 
 			<div data-bind="if: selectedSeason()">
@@ -62,7 +65,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 			<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 		</div>
 	</div>

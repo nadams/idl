@@ -12,6 +12,8 @@ admin.teams.index.IndexModel = (function(ko, _) {
 		this.availableTeams = ko.observableArray([]);
 		this.selectedTeam = ko.observable();
 
+		this.isLoadingTeams = ko.observable();
+
 		this.initialize(data);
 
 		this.selectedSeason.subscribe(function(newSeason) {
@@ -19,7 +21,10 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			this.selectedTeam(undefined);
 
 			if (this.selectedSeason()) {
+				this.isLoadingTeams(true);
+
 				var promise = repository.getTeamList(newSeason.seasonId, this);
+
 				promise.success(function(data) {
 					var availableTeams = this.availableTeams();
 
@@ -28,6 +33,10 @@ admin.teams.index.IndexModel = (function(ko, _) {
 					}, this);
 
 					this.availableTeams.valueHasMutated();
+				});
+
+				promise.always(function() {
+					this.isLoadingTeams(false);
 				});
 			}
 		}, this);
