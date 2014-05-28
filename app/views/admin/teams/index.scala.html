@@ -59,7 +59,7 @@
 						<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." />
 					</div>
 				</div>
-				<div class="form-group" data-bind="if: availablePlayers().length > 0">
+				<div class="form-group" data-bind="if: selectedTeam()">
 					<div class="col-sm-offset-1 col-sm-10">
 						<div class="container-fluid">
 							<div class="row">
@@ -108,11 +108,6 @@
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-				<div data-bind="ifnot: availablePlayers().length === 0 && !selectedTeam()">
-					<div class="jumbotron">
-						<p>There are no players to manage, please add some and try again.</p>
 					</div>
 				</div>
 			</div>
