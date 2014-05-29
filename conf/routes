@@ -19,8 +19,9 @@ POST    /admin/news/edit/:id/save           controllers.NewsController.saveExist
 POST    /admin/news/remove/:id              controllers.NewsController.remove(id: Int)
 
 GET     /admin/teams                        controllers.TeamController.index
+GET     /admin/teams/players                controllers.TeamController.players
 GET     /admin/teams/teamList/:seasonId     controllers.TeamController.getTeamList(seasonId: Int)
-GET     /admin/teams/players                controllers.TeamController.getPlayers
+GET     /admin/teams/players/list           controllers.TeamController.getPlayers
 POST    /admin/teams/assignPlayers          controllers.TeamController.assignPlayers
 POST    /admin/teams/removePlayers          controllers.TeamController.removePlayers
 

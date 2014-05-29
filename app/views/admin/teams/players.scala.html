@@ -1,0 +1,116 @@
+@(model: models.admin.teams.TeamIndexModel)(implicit header: MenuModel, req: RequestHeader)
+
+@import play.api.libs.json.Json
+
+@extraScripts = {
+	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+	<script>
+		var admin = admin || {};
+		admin.teams = admin.teams || {};
+		admin.teams.index = admin.teams.index || {};
+		admin.teams.index.data = @Html(Json.toJson(model).toString) || {};
+
+	</script>
+
+	@helper.javascriptRouter("routes")(
+		routes.javascript.TeamController.getTeamList,
+		routes.javascript.TeamController.getPlayers,
+		routes.javascript.TeamController.assignPlayers,
+		routes.javascript.TeamController.removePlayers
+	)
+
+	<script src="@routes.Assets.at("javascripts/views/admin/teams/TeamsRepository.js")"></script>
+	<script src="@routes.Assets.at("javascripts/views/admin/teams/Teams.js")"></script>
+}
+
+@main("Manage Team Players", extraScripts = extraScripts) {
+	<div class="panel panel-default">
+		<div class="panel-body form-horizontal">
+			<div class="form-group">
+				<label for="seasonSelection" class="col-sm-1 form-label">Season</label>
+				<div class="col-sm-4">
+					<select 
+						id="seasonSelection" 
+						class="form-control" 
+						data-bind="options: availableSeasons, 
+							optionsText: 'seasonName', 
+							value: selectedSeason, 
+							optionsCaption: 'Select a season...'"></select>
+				</div> 
+				<div class="col-sm-1" data-bind="if: isLoadingTeams()">
+					<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." />
+				</div>
+			</div>
+
+			<div data-bind="if: selectedSeason()">
+				<div class="form-group">
+					<label for="teamSelection" class="col-sm-1 form-label">Team</label>
+					<div class="col-sm-4">
+						<select 
+							id="teamSelection" 
+							class="form-control" 
+							data-bind="options: availableTeams,
+								optionsText: 'teamName',
+								value: selectedTeam,
+								optionsCaption: 'Select a team...'"></select>
+					</div>
+					<div class="col-sm-1" data-bind="if: isLoadingPlayers()">
+						<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." />
+					</div>
+				</div>
+				<div class="form-group" data-bind="if: selectedTeam()">
+					<div class="col-sm-offset-1 col-sm-10">
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-md-4">
+									<div>
+										<label for="teamPlayers">Players In <span data-bind="text: selectedTeam().teamName"></span></label>
+									</div>
+									<select 
+										id="teamPlayers"
+										multiple="multiple" 
+										size="5"
+										data-bind="options: playersInCurrentTeam,
+											optionsText: 'playerName',
+											selectedOptions: selectedTeamPlayers"></select>
+								</div>
+								<div class="col-md-4">
+									<div class="visible-xs visible-sm">
+										<button class="btn btn-default" data-bind="enable: canAssignPlayers(), click: assignPlayersToCurrentTeam">
+											<span class="glyphicon glyphicon-arrow-up"></span>
+										</button>
+										<button class="btn btn-default" data-bind="enable: canRemovePlayers(), click: removePlayersFromCurrentTeam">
+											<span class="glyphicon glyphicon-arrow-down"></span>
+										</button>
+									</div>
+
+									<div class="visible-md visible-lg">
+										<button class="btn btn-default" data-bind="enable: canAssignPlayers(), click: assignPlayersToCurrentTeam">
+											<span class="glyphicon glyphicon-arrow-left"></span>
+										</button>
+										<button class="btn btn-default" data-bind="enable: canRemovePlayers(), click: removePlayersFromCurrentTeam">
+											<span class="glyphicon glyphicon-arrow-right"></span>
+										</button>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div>
+										<label for="unassignedPlayers">Unassigned Players</label>
+									</div>
+									<select 
+										id="unassignedPlayers"
+										multiple="multiple" 
+										size="5"
+										data-bind="options: unassignedPlayers,
+											optionsText: 'playerName',
+											selectedOptions: selectedAvailablePlayers"></select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}

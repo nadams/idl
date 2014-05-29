@@ -8,8 +8,12 @@ import models.admin.teams._
 
 object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
   
-  def index = IsAuthenticated { username => implicit request =>
-    Ok(views.html.admin.teams.index(
+  def index = IsAuthenticated { username => implicit request => 
+    Ok(views.html.admin.teams.index())
+  }
+
+  def players = IsAuthenticated { username => implicit request =>
+    Ok(views.html.admin.teams.players(
       TeamIndexModel(
         seasonService.getAllSeasons.map { season => 
           SeasonModel(season.seasonId, season.name)
