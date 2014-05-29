@@ -1,4 +1,4 @@
-@(model: models.admin.teams.TeamIndexModel)(implicit header: MenuModel, req: RequestHeader)
+@(model: models.admin.teams.TeamPlayersModel)(implicit header: MenuModel, req: RequestHeader)
 
 @import play.api.libs.json.Json
 
@@ -24,7 +24,7 @@
 	<script src="@routes.Assets.at("javascripts/views/admin/teams/Teams.js")"></script>
 }
 
-@main("Manage Team Players", extraScripts = extraScripts) {
+@views.html.admin.teams.teamsTemplate("Manage Team Players", extraScripts = extraScripts) {
 	<div class="panel panel-default">
 		<div class="panel-body form-horizontal">
 			<div class="form-group">

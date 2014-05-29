@@ -14,7 +14,7 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
 
   def players = IsAuthenticated { username => implicit request =>
     Ok(views.html.admin.teams.players(
-      TeamIndexModel(
+      TeamPlayersModel(
         seasonService.getAllSeasons.map { season => 
           SeasonModel(season.seasonId, season.name)
         },
