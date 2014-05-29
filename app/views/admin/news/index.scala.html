@@ -20,30 +20,33 @@
 
 @newsTemplate("Manage News", extraScripts = extraScripts) {
 	@if(model.newsItems.nonEmpty) {
-		<table class="table table-striped table-hover" id="newsList" style="display: none;" data-bind="visible: true">
-			<thead>
-				<tr>
-					<th>Subject</th>
-					<th>Date Created</th>
-					<th>Date Modified</th>
-					<th>Posted by</th>
-					<th>Remove</th>
-				</tr>
-			</thead>
-			<tbody data-bind="foreach: newsItems">
-				<tr>
-					<td><a data-bind="attr: { href: editUrl }, text: subject"></a></td>
-					<td data-bind="text: niceDateCreated"></td>
-					<td data-bind="text: niceDateModified"></td>
-					<td data-bind="text: postedByUsername"></td>
-					<td>
-						<form method="post" data-bind="attr: { action: removeUrl }">
-							<button type="submit" class="btn btn-danger">Remove</button>
-						</form>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="panel panel-default">
+			<div class="panel-heading"><h4>News</h4></div>
+			<table class="panel-body table table-striped table-hover" id="newsList" style="display: none;" data-bind="visible: true">
+				<thead>
+					<tr>
+						<th>Subject</th>
+						<th>Date Created</th>
+						<th>Date Modified</th>
+						<th>Posted by</th>
+						<th>Remove</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: newsItems">
+					<tr>
+						<td><a data-bind="attr: { href: editUrl }, text: subject"></a></td>
+						<td data-bind="text: niceDateCreated"></td>
+						<td data-bind="text: niceDateModified"></td>
+						<td data-bind="text: postedByUsername"></td>
+						<td>
+							<form method="post" data-bind="attr: { action: removeUrl }">
+								<button type="submit" class="btn btn-danger">Remove</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	} else {
 		<div class="jumbotron">
 			<h1>There are no news items yet.</h1>

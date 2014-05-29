@@ -32,6 +32,7 @@
 
 @views.html.admin.seasons.seasonsTemplate(title.toString, extraScripts = extraScripts, extraCss = extraCss) {
 	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Create/Edit Season</h4></div>
 		<form 
 			method="post" 
 			action="@if(model.isNewSeason) {@routes.SeasonController.saveNew} else {@routes.SeasonController.saveExisting(model.seasonId)}" 
