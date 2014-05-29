@@ -7,7 +7,6 @@ import components._
 import models.admin.teams._
 
 object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
-  lazy val invalidJsonFormat = BadRequest("Invalid json format")
   
   def index = IsAuthenticated { username => implicit request =>
     Ok(views.html.admin.teams.index(
@@ -38,15 +37,5 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
     import models.admin.teams.RemovePlayersFromTeamModel._
 
     handleJsonPost[RemovePlayersFromTeamModel](x => Json.toJson(teamService.removePlayersFromTeam(x.teamId, x.playerIds)))
-  }
-
-  private def handleJsonPost[T](action: T => JsValue)(implicit reads: Reads[T], request: Request[AnyContent]) = request.body.asJson match {
-    case Some(jsValue) => {
-      Json.fromJson[T](jsValue).asOpt match {
-        case Some(x) => Ok(action(x))
-        case None => invalidJsonFormat
-      }
-    }
-    case None => invalidJsonFormat
   }
 }
