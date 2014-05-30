@@ -26,3 +26,26 @@ object TeamSeasonSchema {
   val teamId = "TeamId"
   val seasonId = "SeasonId"
 }
+
+object ProfileSchema {
+  val tableName = "Profile"
+  val profileId = "ProfileId"
+  val email = "Email"
+  val displayName = "DisplayName"
+  val password = "Password"
+  val dateCreated = "DateCreated"
+  val passwordExpired = "PasswordExpired"
+  val lastLoginDate = "LastLoginDate"
+}
+
+object RoleSchema {
+  val tableName = "Role"
+  val roleId = "RoleId"
+  val roleName = "RoleName"
+}
+
+object ProfileRoleSchema {
+  val tableName = "ProfileRole"
+  val roleId = "RoleId"
+  val profileId = "ProfileId"
+}
