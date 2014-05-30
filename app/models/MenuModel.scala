@@ -1,7 +1,7 @@
 package models
 
-case class MenuModel(username: Option[String])
+case class MenuModel(username: Option[String], canSeeAdminMenu: Boolean)
 
 object MenuModel {
-  def apply() : MenuModel = MenuModel(None)
+  def apply() : MenuModel = MenuModel(None, false)
 }
