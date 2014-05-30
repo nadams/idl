@@ -15,15 +15,7 @@ trait SeasonRepositoryComponent {
 trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
   val seasonRepository: SeasonRepository = new SeasonRepositoryImpl
 
-  trait SeasonSchema {
-    val tableName = "Season"
-    val seasonId = "SeasonId"
-    val name = "Name"
-    val startDate = "StartDate"
-    val endDate = "EndDate"
-  }
-
-  class SeasonRepositoryImpl extends SeasonRepository with SeasonSchema {
+  class SeasonRepositoryImpl extends SeasonRepository {
     import java.sql._
     import anorm._ 
     import anorm.SqlParser._
@@ -32,16 +24,20 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
     import play.api.Play.current
     import AnormExtensions._
 
-    val seasonParser = int(seasonId) ~ str(name) ~ get[DateTime](startDate) ~ get[DateTime](endDate) map flatten
+    val seasonParser = int(SeasonSchema.seasonId) ~ 
+      str(SeasonSchema.name) ~ 
+      get[DateTime](SeasonSchema.startDate) ~ 
+      get[DateTime](SeasonSchema.endDate) map flatten
+      
     val multiRowParser = seasonParser *
     val selectAllNewsSql = 
       s"""
         SELECT
-          $seasonId,
-          $name,
-          $startDate,
-          $endDate
-        FROM $tableName
+          ${SeasonSchema.seasonId},
+          ${SeasonSchema.name},
+          ${SeasonSchema.startDate},
+          ${SeasonSchema.endDate}
+        FROM ${SeasonSchema.tableName}
       """
 
     def getAllSeasons() : Seq[Season] = DB.withConnection { implicit connection => 
@@ -54,10 +50,10 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
       SQL(
         s"""
           $selectAllNewsSql
-          WHERE $seasonId = {seasonId}
+          WHERE ${SeasonSchema.seasonId} = {seasonId}
         """
       )
-      .on("seasonId" -> id)
+      .on('seasonId -> id)
       .singleOpt(seasonParser)
       .map(Season(_))
     }
@@ -65,8 +61,11 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
     def insertSeason(season: Season) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          INSERT INTO $tableName ($name, $startDate, $endDate)
-          VALUES (
+          INSERT INTO ${SeasonSchema.tableName} (
+            ${SeasonSchema.name}, 
+            ${SeasonSchema.startDate}, 
+            ${SeasonSchema.endDate}
+          ) VALUES (
             {name},
             {startDate},
             {endDate}
@@ -74,9 +73,9 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
         """
       )
       .on(
-        "name" -> season.name,
-        "startDate" -> season.startDate,
-        "endDate" -> season.endDate
+        'name -> season.name,
+        'startDate -> season.startDate,
+        'endDate -> season.endDate
       )
       .executeInsert(scalar[Long] single) > 0
     }
@@ -84,19 +83,19 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
     def updateSeason(season: Season) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          UPDATE $tableName
+          UPDATE ${SeasonSchema.tableName}
           SET
-            $name = {name},
-            $startDate = {startDate},
-            $endDate = {endDate}
-          WHERE $seasonId = {seasonId}
+            ${SeasonSchema.name} = {name},
+            ${SeasonSchema.startDate} = {startDate},
+            ${SeasonSchema.endDate} = {endDate}
+          WHERE ${SeasonSchema.seasonId} = {seasonId}
         """
       )
       .on(
-        "seasonId" -> season.seasonId,
-        "name" -> season.name,
-        "startDate" -> season.startDate,
-        "endDate" -> season.endDate
+        'seasonId -> season.seasonId,
+        'name -> season.name,
+        'startDate -> season.startDate,
+        'endDate -> season.endDate
       )
       .executeUpdate > 0
     }
@@ -104,11 +103,11 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
     def removeSeason(id: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          DELETE FROM $tableName
-          WHERE $seasonId = {seasonId}
+          DELETE FROM ${SeasonSchema.tableName}
+          WHERE ${SeasonSchema.seasonId} = {seasonId}
         """
       )
-      .on("seasonId" -> id)
+      .on('seasonId -> id)
       .executeUpdate > 0
     }
   }

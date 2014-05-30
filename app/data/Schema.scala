@@ -49,3 +49,11 @@ object ProfileRoleSchema {
   val roleId = "RoleId"
   val profileId = "ProfileId"
 }
+
+object SeasonSchema {
+  val tableName = "Season"
+  val seasonId = "SeasonId"
+  val name = "Name"
+  val startDate = "StartDate"
+  val endDate = "EndDate"
+}
