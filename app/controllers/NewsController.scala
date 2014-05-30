@@ -7,12 +7,13 @@ import _root_.data.News
 import models.admin.news._
 import models.FieldExtensions._
 import models.FormExtensions._
+import security.Roles
 import org.joda.time.{ DateTime, DateTimeZone }
 
 object NewsController extends Controller with ProvidesHeader with Secured with NewsComponentImpl with ProfileComponentImpl {
   val couldNotUpdateNewsItem = InternalServerError("Could not create news item")
 
-  def index(page: Int = 1, size: Int = 15) = IsAuthenticated { username => implicit request =>
+  def index(page: Int = 1, size: Int = 15) = IsAuthenticated(Roles.Admin) { username => implicit request =>
     Ok(views.html.admin.news.index(AdminNews.toModels(newsService.getAllNews, username, routes.NewsController)))
   }
 
