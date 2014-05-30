@@ -57,3 +57,13 @@ object SeasonSchema {
   val startDate = "StartDate"
   val endDate = "EndDate"
 }
+
+object NewsSchema {
+  val tableName = "News"
+  val newsId = "NewsId"
+  val subject = "Subject"
+  val dateCreated = "DateCreated"
+  val dateModified = "DateModified"
+  val content = "Content"
+  val postedByProfileId = "PostedByProfileId"
+}
