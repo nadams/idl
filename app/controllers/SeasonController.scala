@@ -9,39 +9,40 @@ import models.admin.seasons._
 import models.FieldExtensions._
 import models.FormExtensions._
 import extensions.DateTimeExtensions._
+import security.Roles
 
 object SeasonController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl {
-  def index = IsAuthenticated { username => implicit request => 
+  def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(views.html.admin.seasons.index(SeasonModel.toModels(seasonService.getAllSeasons, routes.SeasonController)))
   }
 
-  def create = IsAuthenticated { username => implicit request => 
+  def create = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(views.html.admin.seasons.edit(EditSeasonModel.empty, EditSeasonModelErrors.empty))
   }
 
-  def edit(id: Int) = IsAuthenticated { username => implicit request => 
+  def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     seasonService.getSeasonById(id) match {
       case Some(x) => Ok(views.html.admin.seasons.edit(EditSeasonModel.toModel(x), EditSeasonModelErrors.empty))
       case None => Redirect(routes.SeasonController.create)
     }
   }
 
-  def saveNew = IsAuthenticated { username => implicit request => 
+  def saveNew = IsAuthenticated(Roles.Admin) { username => implicit request => 
     updateSeason(season => seasonService.insertSeason(Season(season.seasonId, season.name, season.startDate, season.endDate)))
   }
 
-  def saveExisting(id: Int) = IsAuthenticated { username => implicit request => 
+  def saveExisting(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     updateSeason(season => seasonService.updateSeason(season.seasonId, season.name, season.startDate, season.endDate))
   }
 
-  def remove(id: Int) = IsAuthenticated { username => implicit request => 
+  def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     seasonService.removeSeason(id) match {
       case true => Redirect(routes.SeasonController.index)
       case false => Redirect(routes.SeasonController.index).flashing("couldNotRemoveSeason" -> "Could not remove season")
     }
   }
 
-  def updateSeason(saveAction: EditSeasonModel => Boolean)(implicit request: Request[AnyContent]) : Result = 
+  private def updateSeason(saveAction: EditSeasonModel => Boolean)(implicit request: Request[AnyContent]) : Result = 
     EditSeasonModelForm().bindFromRequest.fold(
       content => {
         val seasonIdError = content("seasonId").formattedMessage

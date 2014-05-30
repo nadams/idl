@@ -5,14 +5,14 @@ import play.api.mvc._
 import play.api.libs.json._
 import components._
 import models.admin.teams._
+import security.Roles
 
 object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
-  
-  def index = IsAuthenticated { username => implicit request => 
+  def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(views.html.admin.teams.index())
   }
 
-  def players = IsAuthenticated { username => implicit request =>
+  def players = IsAuthenticated(Roles.Admin) { username => implicit request =>
     Ok(views.html.admin.teams.players(
       TeamPlayersModel(
         seasonService.getAllSeasons.map { season => 
@@ -23,21 +23,21 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
     ))
   }
 
-  def getTeamList(seasonId: Int) = IsAuthenticated { username => implicit request => 
+  def getTeamList(seasonId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(Json.toJson(TeamsModel.toModel(teamService.getTeamsForSeason(seasonId))))
   }
 
-  def getPlayers = IsAuthenticated { username => implicit request => 
+  def getPlayers = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(Json.toJson(PlayersModel.toModel(teamService.getAllPlayers)))
   }
 
-  def assignPlayers = IsAuthenticated { username => implicit request => 
+  def assignPlayers = IsAuthenticated(Roles.Admin) { username => implicit request => 
     import models.admin.teams.AssignPlayersToTeamModel._
 
     handleJsonPost[AssignPlayersToTeamModel](x => Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.playerIds)))
   }
 
-  def removePlayers = IsAuthenticated { username => implicit request =>
+  def removePlayers = IsAuthenticated(Roles.Admin) { username => implicit request =>
     import models.admin.teams.RemovePlayersFromTeamModel._
 
     handleJsonPost[RemovePlayersFromTeamModel](x => Json.toJson(teamService.removePlayersFromTeam(x.teamId, x.playerIds)))
