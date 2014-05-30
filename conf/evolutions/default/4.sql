@@ -27,6 +27,16 @@ WHERE NOT EXISTS (
 	WHERE r.RoleName = 'SuperAdmin'
 ) LIMIT 1; 
 
+INSERT INTO Role (RoleId, RoleName)
+SELECT * FROM ( 
+	SELECT 2, 'Admin'
+) AS t
+WHERE NOT EXISTS (
+	SELECT RoleId 
+	FROM Role AS r 
+	WHERE r.RoleName = 'Admin'
+) LIMIT 1; 
+
 SET @AdminProfileId = (
 	SELECT ProfileId 
 	FROM Profile AS p
