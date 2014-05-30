@@ -1,6 +1,7 @@
 package services
 
 import data._
+import security._
 
 trait ProfileServiceComponent {
   val profileService: ProfileService
@@ -10,6 +11,7 @@ trait ProfileServiceComponent {
     def authenticate(username: String, password: String) : Boolean
     def updateProfilePassword(username: String, password: String) : Boolean
     def getProfileIdByUsername(username: String) : Option[Int]
+    def profileIsInRole(username: String, role: Roles.Role): Boolean
   }
 }
 
@@ -51,5 +53,10 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 
     def hashPassword(password: String) : String = 
       hasher.createHash(password)
+
+    def profileIsInRole(username: String, role: Roles.Role): Boolean = 
+      profileRepository.getRolesForUsername(username).exists { profileRole => 
+        profileRole == Roles.SuperAdmin || profileRole == role
+      }
   }
 }

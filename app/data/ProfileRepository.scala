@@ -1,11 +1,14 @@
 package data
 
+import security._
+
 trait ProfileRepositoryComponent {
   val profileRepository: ProfileRepository
 
   trait ProfileRepository {
     def getByUsername(username: String) : Option[Profile]
     def updateProfile(profile: Profile) : Boolean
+    def getRolesForUsername(username: String) : Seq[Roles.Role]
   }
 }
 
@@ -42,7 +45,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
           WHERE $email = {email}
         """
       )
-      .on("email" -> username)
+      .on('email -> username)
       .singleOpt(profileParser)
       .map(Profile(_))
     }
@@ -61,14 +64,31 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
           WHERE $profileId = {profileId}
         """
       ).on(
-        "profileId" -> profile.profileId,
-        "email" -> profile.email,
-        "displayName" -> profile.displayName,
-        "password" -> profile.password,
-        "dateCreated" -> profile.dateCreated,
-        "passwordExpired" -> profile.passwordExpired,
-        "lastLoginDate" -> profile.lastLoginDate
+        'profileId -> profile.profileId,
+        'email -> profile.email,
+        'displayName -> profile.displayName,
+        'password -> profile.password,
+        'dateCreated -> profile.dateCreated,
+        'passwordExpired -> profile.passwordExpired,
+        'lastLoginDate -> profile.lastLoginDate
       ).executeUpdate() > 0
+    }
+
+    def getRolesForUsername(username: String) : Seq[Roles.Role] = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT 
+            pr.RoleId 
+          FROM Profile AS p 
+            INNER JOIN ProfileRole AS pr ON p.ProfileId = pr.ProfileId 
+          WHERE p.Email = {username}
+        """
+      )
+      .on(
+        'username -> username
+      )
+      .as(scalar[Int] *)
+      .map(Roles(_))
     }
   }
 }
