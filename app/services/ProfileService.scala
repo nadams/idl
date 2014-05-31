@@ -12,6 +12,7 @@ trait ProfileServiceComponent {
     def updateProfilePassword(username: String, password: String) : Boolean
     def getProfileIdByUsername(username: String) : Option[Int]
     def profileIsInRole(username: String, role: Roles.Role): Boolean
+    def profileIsInAnyRole(username: String, roles: Set[Roles.Role]): Boolean
   }
 }
 
@@ -58,5 +59,11 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
       profileRepository.getRolesForUsername(username).exists { profileRole => 
         profileRole == Roles.SuperAdmin || profileRole == role
       }
+
+    def profileIsInAnyRole(username: String, roles: Set[Roles.Role]): Boolean = {
+      val profileRoles = profileRepository.getRolesForUsername(username) toSet
+
+      profileRoles(Roles.SuperAdmin) || roles.intersect(profileRoles).nonEmpty
+    }
   }
 }

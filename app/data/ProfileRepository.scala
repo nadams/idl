@@ -73,11 +73,11 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     def getRolesForUsername(username: String) : Seq[Roles.Role] = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          SELECT 
-            pr.${RoleSchema.roleId}
+          SELECT pr.${RoleSchema.roleId}
           FROM ${ProfileSchema.tableName} AS p 
             INNER JOIN ${ProfileRoleSchema.tableName} AS pr ON p.${ProfileSchema.profileId} = pr.${ProfileRoleSchema.profileId} 
           WHERE p.${ProfileSchema.email} = {username}
+          ORDER BY p.${ProfileSchema.profileId} ASC
         """
       )
       .on('username -> username)
