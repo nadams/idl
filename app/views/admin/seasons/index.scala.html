@@ -42,9 +42,19 @@
 						<td data-bind="text: niceStartDate"></td>
 						<td data-bind="text: niceEndDate"></td>
 						<td>
-							<form method="post" data-bind="attr: { action: removeLink }">
-								<button type="submit" class="btn btn-danger">Remove</button>
-							</form>
+							<button class="btn btn-danger" data-bind="click: showRemoveConfirmation">Remove</button>
+						</td>
+					</tr>
+					<tr data-bind="if: confirmationShown">
+						<td colspan="4" class="danger">
+							<button type="button" class="close" aria-hidden="true" data-bind="click: hideRemoveConfirmation">&times;</button>
+							<div class="danger-row">
+								<p class="text-danger">Are you sure you want to remove this season? It will remove all records associated with it.</p>
+								<div>
+									<button class="btn btn-primary" data-bind="click: hideRemoveConfirmation">No</button>
+									<button class="btn btn-danger" data-bind="click: removeSeason">Yes</button>
+								</div>
+							</div>
 						</td>
 					</tr>
 				</tbody>

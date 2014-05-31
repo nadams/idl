@@ -13,6 +13,7 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 		this.endDate = ko.observable();
 		this.editLink = '';
 		this.removeLink = '';
+		this.confirmationShown = ko.observable(false);
 
 		this.initialize(data);
 
@@ -36,6 +37,15 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 		},
 		niceDate: function(date) {
 			return moment.utc(date).local().format('LLL');
+		},
+		showRemoveConfirmation: function() {
+			this.confirmationShown(true);
+		},
+		hideRemoveConfirmation: function() {
+			this.confirmationShown(false);
+		},
+		removeSeason: function() {
+
 		}
 	});
 
@@ -44,16 +54,16 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 
 admin.seasons.index.IndexModel = (function(ko, _) {
 	var Model = function(data) {
-		this.seasons = [];
+		this.seasons = ko.observableArray([]);
 
 		this.initialize(data);
 	};
 
 	ko.utils.extend(Model.prototype, {
 		initialize: function(data) {
-			this.seasons = _.map(data, function(item) {
+			this.seasons(_.map(data, function(item) {
 				return new admin.seasons.index.SeasonModel(item);
-			}, this);
+			}, this));
 		}
 	});
 
