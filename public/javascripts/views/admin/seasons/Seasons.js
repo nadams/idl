@@ -57,9 +57,11 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 			});
 
 			promise.done(function(data) {
-				parent.seasons(_.remove(parent.seasons(), function(item) {
+				var seasonToRemove = _.find(parent.seasons(), function(item) {
 					return item.seasonId === data;
-				}, this));
+				});
+
+				parent.seasons.remove(seasonToRemove);
 			});
 
 			promise.fail(function(result) {

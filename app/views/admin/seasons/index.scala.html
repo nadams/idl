@@ -25,8 +25,16 @@
 }
 
 @views.html.admin.seasons.seasonsTemplate("Manage Seasons", extraScripts = extraScripts) {
-	@if(model.nonEmpty) {
-		<div class="panel panel-default" style="display: none;" data-bind="visible: true">
+	<div style="display: none;" data-bind="visible: true">
+		
+		<!-- ko if: seasons().length === 0 -->
+		<div class="jumbotron">
+			<h1>There are no seasons yet.</h1>
+		</div>
+		<!-- /ko -->
+
+		<!-- ko if: seasons().length > 0 -->
+		<div class="panel panel-default">
 			<div class="panel-heading"><h4>Seasons</h4></div>
 
 			<!-- ko if: errorMessageShown -->
@@ -83,9 +91,7 @@
 				</tbody>
 			</table>
 		</div>
-	} else {
-		<div class="jumbotron">
-			<h1>There are no seasons yet.</h1>
-		</div>
-	}
+		<!-- /ko -->
+		
+	</div>
 }
