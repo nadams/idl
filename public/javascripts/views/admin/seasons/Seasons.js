@@ -6,7 +6,9 @@ admin.seasons = admin.seasons || {};
 admin.seasons.index = admin.seasons.index || {};
 
 admin.seasons.index.SeasonModel = (function(ko, moment) {
-	var Model = function(data) {
+	var Model = function(data, repository) {
+		this.repository = repository;
+
 		this.seasonId = 0;
 		this.name = '';
 		this.startDate = ko.observable();
@@ -45,8 +47,24 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 		hideRemoveConfirmation: function() {
 			this.confirmationShown(false);
 		},
-		removeSeason: function() {
+		removeSeason: function(parent) {
 			this.isRemovingSeason(true);
+			var promise = this.repository.removeSeason(this.seasonId, this);
+
+			promise.always(function() {
+				this.isRemovingSeason(false);
+				this.confirmationShown(false);
+			});
+
+			promise.done(function(data) {
+				_.remove(parent.seasons, function(item) {
+					return item.seasonId === data;
+				}, this);
+			});
+
+			promise.fail(function(result) {
+				parent.errorMessage(result.responseText);
+			});
 		}
 	});
 
@@ -54,17 +72,25 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 })(ko, moment);
 
 admin.seasons.index.IndexModel = (function(ko, _) {
-	var Model = function(data) {
+	var Model = function(data, repository) {
 		this.seasons = ko.observableArray([]);
+		this.errorMessage = ko.observable('');
 
-		this.initialize(data);
+		this.initialize(data, repository);
+
+		this.errorMessageShown = ko.computed(function() {
+			return this.errorMessage().length > 0;
+		}, this);
 	};
 
 	ko.utils.extend(Model.prototype, {
-		initialize: function(data) {
+		initialize: function(data, repository) {
 			this.seasons(_.map(data, function(item) {
-				return new admin.seasons.index.SeasonModel(item);
+				return new admin.seasons.index.SeasonModel(item, repository);
 			}, this));
+		},
+		clearErrorMessage: function() {
+			this.errorMessage('');
 		}
 	});
 
@@ -72,7 +98,7 @@ admin.seasons.index.IndexModel = (function(ko, _) {
 })(ko, _);
 
 (function(ko) {
-	var model = new admin.seasons.index.IndexModel(admin.seasons.index.data);
+	var model = new admin.seasons.index.IndexModel(admin.seasons.index.data, new admin.seasons.SeasonsRepository());
 
 	ko.applyBindings(model);
 })(ko);

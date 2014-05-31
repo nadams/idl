@@ -1,4 +1,4 @@
-@(model: Seq[models.admin.seasons.SeasonModel])(implicit header: MenuModel, flash: Flash)
+@(model: Seq[models.admin.seasons.SeasonModel])(implicit header: MenuModel, req: RequestHeader)
 
 @import play.api.libs.json.Json
 
@@ -6,6 +6,11 @@
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+
+	@helper.javascriptRouter("routes")(
+		routes.javascript.SeasonController.remove
+	)
+
 	<script>
 		var admin = admin || {};
 		admin.seasons = admin.seasons || {};
@@ -15,19 +20,27 @@
 		};
 	</script>
 	<script src="@routes.Assets.at("javascripts/ajax.js")"></script>
+	<script src="@routes.Assets.at("javascripts/views/admin/seasons/SeasonsRepository.js")"></script>
 	<script src="@routes.Assets.at("javascripts/views/admin/seasons/Seasons.js")"></script>
 }
 
 @views.html.admin.seasons.seasonsTemplate("Manage Seasons", extraScripts = extraScripts) {
-	@if(flash.data.contains("couldNotRemoveSeason")) {
-		<div class="alert alert-danger">
-			<p class="error">@flash("couldNotRemoveSeason")</p>
-		</div>
-	}
-	
 	@if(model.nonEmpty) {
 		<div class="panel panel-default">
 			<div class="panel-heading"><h4>Seasons</h4></div>
+
+			<div data-bind="if: errorMessageShown">
+				<div class="alert alert-danger alert-dismissable">
+					<button 
+						type="button" 
+						class="close" 
+						data-dismiss="alert" 
+						aria-hidden="true"
+						data-bind="click: clearErrorMessage">&times;</button>
+					<p data-bind="text: errorMessage"></p>
+				</div>
+			</div>
+
 			<table class="panel-body table table-striped table-hover" style="display: none;" data-bind="visible: true">
 				<thead>
 					<tr>
@@ -53,8 +66,8 @@
 								<p class="text-danger">Are you sure you want to remove this season? It will remove all records associated with it.</p>
 								<div>
 									<button class="btn btn-primary" data-bind="click: hideRemoveConfirmation">No</button>
-									<button class="btn btn-danger" data-bind="click: removeSeason">Yes</button>
-									<span data-bind="if: isRemovingSeason()">
+									<button class="btn btn-danger" data-bind="click: function() { removeSeason($parent); }">Yes</button>
+									<span data-bind="if: isRemovingSeason">
 										<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
 									</span>
 								</div>

@@ -101,14 +101,18 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
     }
 
     def removeSeason(id: Int) = DB.withConnection { implicit connection => 
-      SQL(
-        s"""
-          DELETE FROM ${SeasonSchema.tableName}
-          WHERE ${SeasonSchema.seasonId} = {seasonId}
-        """
-      )
-      .on('seasonId -> id)
-      .executeUpdate > 0
+      try {
+        SQL(
+          s"""
+            DELETE FROM ${SeasonSchema.tableName}
+            WHERE ${SeasonSchema.seasonId} = {seasonId}
+          """
+        )
+        .on('seasonId -> id)
+        .executeUpdate > 0
+      } catch {
+        case _: Throwable => false
+      }
     }
   }
 }

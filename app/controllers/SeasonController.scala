@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import play.api.libs.json._
 import org.joda.time.{ DateTime, DateTimeZone }
 import components._
 import _root_.data._
@@ -37,8 +38,8 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
 
   def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     seasonService.removeSeason(id) match {
-      case true => Redirect(routes.SeasonController.index)
-      case false => Redirect(routes.SeasonController.index).flashing("couldNotRemoveSeason" -> "Could not remove season")
+      case true => Ok(Json.toJson(id))
+      case false => InternalServerError("Could not remove season")
     }
   }
 
