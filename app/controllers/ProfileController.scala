@@ -21,7 +21,10 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
 
         BadRequest(views.html.profile.login(loginModel, errorMessages))
       },
-      user => Redirect(routes.HomeController.index).withSession(SessionKeys.username -> user.username)
+      user => (request.queryString.get(Secured.returnUrl) match {
+        case Some(x) => Redirect(x.head)
+        case None => Redirect(routes.HomeController.index)
+      }) withSession(SessionKeys.username -> user.username)
     )
   }
 
