@@ -14,6 +14,7 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 		this.editLink = '';
 		this.removeLink = '';
 		this.confirmationShown = ko.observable(false);
+		this.isRemovingSeason = ko.observable(false);
 
 		this.initialize(data);
 
@@ -45,7 +46,7 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 			this.confirmationShown(false);
 		},
 		removeSeason: function() {
-
+			this.isRemovingSeason(true);
 		}
 	});
 

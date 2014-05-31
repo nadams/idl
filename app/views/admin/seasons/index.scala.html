@@ -54,6 +54,9 @@
 								<div>
 									<button class="btn btn-primary" data-bind="click: hideRemoveConfirmation">No</button>
 									<button class="btn btn-danger" data-bind="click: removeSeason">Yes</button>
+									<span data-bind="if: isRemovingSeason()">
+										<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
+									</span>
 								</div>
 							</div>
 						</td>
