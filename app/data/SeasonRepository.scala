@@ -100,19 +100,26 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
       .executeUpdate > 0
     }
 
-    def removeSeason(id: Int) = DB.withConnection { implicit connection => 
-      try {
-        SQL(
-          s"""
-            DELETE FROM ${SeasonSchema.tableName}
-            WHERE ${SeasonSchema.seasonId} = {seasonId}
-          """
-        )
-        .on('seasonId -> id)
-        .executeUpdate > 0
-      } catch {
-        case _: Throwable => false
-      }
+    def removeSeason(id: Int) = DB.withTransaction { implicit connection => 
+      val removeFromTeamSeason= SQL(
+        s"""
+          DELETE FROM ${TeamSeasonSchema.tableName}
+          WHERE ${TeamSeasonSchema.seasonId} = {seasonId};
+        """
+      )
+      .on('seasonId -> id)
+      .executeUpdate > 0
+      
+      val removeFromSeason = SQL(
+        s"""
+          DELETE FROM ${SeasonSchema.tableName}
+          WHERE ${SeasonSchema.seasonId} = {seasonId};
+        """
+      )
+      .on('seasonId -> id)
+      .executeUpdate > 0
+
+      removeFromTeamSeason || removeFromSeason
     }
   }
 }
