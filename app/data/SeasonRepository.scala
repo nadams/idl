@@ -41,7 +41,12 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
       """
 
     def getAllSeasons() : Seq[Season] = DB.withConnection { implicit connection => 
-      SQL(selectAllNewsSql)
+      SQL(
+        s"""
+          ${selectAllNewsSql}
+          ORDER BY ${SeasonSchema.startDate}, ${SeasonSchema.endDate} DESC
+        """
+      )
       .as(multiRowParser)
       .map(Season(_))
     }
