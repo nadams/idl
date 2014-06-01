@@ -71,11 +71,15 @@
 									</div>
 									<select 
 										id="teamPlayers"
+										class="player-select-list"
 										multiple="multiple" 
 										size="5"
 										data-bind="options: playersInCurrentTeam,
 											optionsText: 'playerName',
 											selectedOptions: selectedTeamPlayers"></select>
+									<div class="captain-button">
+										<button class="btn btn-primary">Make Captain</button>
+									</div>
 								</div>
 								<div class="col-md-4">
 									<div class="visible-xs visible-sm">
@@ -102,6 +106,7 @@
 									</div>
 									<select 
 										id="unassignedPlayers"
+										class="player-select-list"
 										multiple="multiple" 
 										size="5"
 										data-bind="options: unassignedPlayers,
