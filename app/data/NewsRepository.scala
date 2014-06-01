@@ -113,7 +113,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
         """
       )
       .on('newsId -> id)
-      .singleOpt(newsParser)
+      .as(newsParser singleOpt)
       .map(News(_))
     }
 

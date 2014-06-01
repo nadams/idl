@@ -42,7 +42,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
         """
       )
       .on('email -> username)
-      .singleOpt(profileParser)
+      .as(profileParser singleOpt)
       .map(Profile(_))
     }
 

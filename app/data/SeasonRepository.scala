@@ -59,7 +59,7 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
         """
       )
       .on('seasonId -> id)
-      .singleOpt(seasonParser)
+      .as(seasonParser singleOpt)
       .map(Season(_))
     }
 

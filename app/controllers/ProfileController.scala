@@ -42,13 +42,13 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
         BadRequest(views.html.profile.index(ProfileModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
       },
       result => profileService.updateProfilePassword(username, result.newPassword) match {
-        case true => Redirect(routes.ProfileController.login).withSession(session - SessionKeys.username)
+        case true => Redirect(routes.ProfileController.login).withSession(request.session - SessionKeys.username)
         case false => InternalServerError("Could not update password")
       }
     )
   }
 
   def logout = Action { implicit request =>
-    Redirect(routes.HomeController.index).withSession(session - SessionKeys.username)
+    Redirect(routes.HomeController.index).withSession(request.session - SessionKeys.username)
   }
 }
