@@ -33,9 +33,13 @@ admin.teams.index.IndexModel = (function(ko, _) {
 		}, this);
 
 		this.playersInCurrentTeam = ko.computed(function() {
+			var that = this;
+
 			return _.filter(this.availablePlayers(), function(item) {
 				return item.teamId() === this.selectedTeam().teamId;
-			}, this);
+			}, this).sort(function(left, right) {
+				return that.sortStrings(right.playerName, left.playerName);
+			});
 		}, this);
 
 		this.canAssignPlayers = ko.computed(function() {
@@ -151,6 +155,11 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			promise.always(function() {
 				this.isRemovingPlayersFromTeam(false);
 			});
+		},
+		sortStrings: function(lName, rName) {
+			lName = lName.toUpperCase();
+			rName = rName.toUpperCase();
+			return lName === rName ? 0 : (lName < rName ? -1 : 1);
 		}
 	});
 
