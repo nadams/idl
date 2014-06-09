@@ -15,6 +15,7 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 		this.endDate = ko.observable();
 		this.editLink = '';
 		this.removeLink = '';
+		this.manageTeamsLink = '';
 		this.confirmationShown = ko.observable(false);
 		this.isRemovingSeason = ko.observable(false);
 
@@ -37,6 +38,7 @@ admin.seasons.index.SeasonModel = (function(ko, moment) {
 			this.endDate(data.endDate);
 			this.editLink = data.editLink;
 			this.removeLink = data.removeLink;
+			this.manageTeamsLink = data.manageTeamsLink;
 		},
 		niceDate: function(date) {
 			return moment.utc(date).local().format('LLL');

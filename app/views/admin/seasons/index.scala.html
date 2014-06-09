@@ -57,6 +57,7 @@
 						<th>Name</th>
 						<th>Start Date</th>
 						<th>End Date</th>
+						<th>Teams</th>
 						<th>Remove</th>
 					</tr>
 				</thead>
@@ -65,6 +66,7 @@
 						<td><a data-bind="text: name, attr: { href: editLink }"></a></td>
 						<td data-bind="text: niceStartDate"></td>
 						<td data-bind="text: niceEndDate"></td>
+						<td><a data-bind="attr: { href: manageTeamsLink }">Manage Teams</a></td>
 						<td>
 							<button class="btn btn-danger" data-bind="click: showRemoveConfirmation">Remove</button>
 						</td>

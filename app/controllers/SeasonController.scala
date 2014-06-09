@@ -43,6 +43,10 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
     }
   }
 
+  def teamSeasons(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request =>
+    Ok(views.html.admin.seasons.teamSeason())
+  }
+
   private def updateSeason(saveAction: EditSeasonModel => Boolean)(implicit request: Request[AnyContent]) : Result = 
     EditSeasonModelForm().bindFromRequest.fold(
       content => {
