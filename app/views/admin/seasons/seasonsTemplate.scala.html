@@ -1,4 +1,4 @@
-@(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel)
+@(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel, req: RequestHeader)
 
 @extraNavItemsTemplate = {
 	<ul class="nav navbar-nav navbar-right nav-actions">
@@ -16,6 +16,20 @@
 }
 
 @extraScriptsTemplate = { 
+	@helper.javascriptRouter("routes")(
+		routes.javascript.SeasonController.remove
+	)
+
+	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/ajax.js")"></script>
+	<script>
+		var admin = admin || {};
+		admin.seasons = admin.seasons || {};
+	</script>
+	<script src="@routes.Assets.at("javascripts/views/admin/seasons/SeasonsRepository.js")"></script>
+
 	@extraScripts
 }
 

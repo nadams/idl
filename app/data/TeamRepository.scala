@@ -8,6 +8,7 @@ trait TeamRepositoryComponent {
     def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) : Boolean
     def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean
     def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean
+    def getAllActiveTeams() : Seq[Team]
   }
 }
 
@@ -20,17 +21,21 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
     import play.api.db.DB
     import play.api.Play.current
 
+    val selectAllTeamsSql = 
+      s"""
+        SELECT
+          t.${TeamSchema.teamId},
+          t.${TeamSchema.name},
+          t.${TeamSchema.isActive} 
+        FROM ${TeamSchema.tableName} AS t
+      """
     val teamParser = int(TeamSchema.teamId) ~ str(TeamSchema.name) ~ bool(TeamSchema.isActive) map flatten
     val multiRowParser = teamParser *
 
     def getTeamsForSeason(seasonId: Int) = DB.withConnection { implicit connection =>
       SQL(
         s"""
-          SELECT
-            t.${TeamSchema.teamId},
-            t.${TeamSchema.name},
-            t.${TeamSchema.isActive} 
-          FROM ${TeamSchema.tableName} AS t
+          $selectAllTeamsSql
             INNER JOIN ${TeamSeasonSchema.tableName} AS tp ON t.${TeamSchema.teamId} = tp.${TeamSeasonSchema.teamId}
           WHERE ${TeamSeasonSchema.seasonId} = {seasonId}
         """
@@ -111,6 +116,17 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         'isCaptain -> isCaptain
       )
       .executeUpdate > 0
+    }
+
+    def getAllActiveTeams() : Seq[Team] = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          $selectAllTeamsSql
+          WHERE t.${TeamSchema.isActive} = 1
+        """
+      )
+      .as(multiRowParser)
+      .map(Team(_))
     }
   }
 }

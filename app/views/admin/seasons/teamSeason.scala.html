@@ -1,7 +1,15 @@
-@()(implicit header: MenuModel, req: RequestHeader)
+@(model: models.admin.seasons.TeamSeasonsModel)(implicit header: MenuModel, req: RequestHeader)
+
+@import play.api.libs.json.Json
 
 @extraScripts = {
-	
+	<script>
+		admin.seasons.teamSeasons = admin.seasons.teamSeasons || {};
+		admin.seasons.teamSeasons = {
+			data: @Html(Json.toJson(model).toString) || {}
+		};
+	</script>
+	<script src="@routes.Assets.at("javascripts/views/admin/seasons/TeamSeasons.js")"></script>
 }
 
 @views.html.admin.seasons.seasonsTemplate("Manage Teams Seasons", extraScripts = extraScripts) {
