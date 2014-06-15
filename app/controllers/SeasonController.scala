@@ -12,7 +12,7 @@ import models.FormExtensions._
 import extensions.DateTimeExtensions._
 import security.Roles
 
-object SeasonController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl {
+object SeasonController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
   def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(views.html.admin.seasons.index(SeasonModel.toModels(seasonService.getAllSeasons, routes.SeasonController)))
   }
@@ -44,7 +44,20 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
   }
 
   def teamSeasons(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request =>
-    Ok(views.html.admin.seasons.teamSeason(TeamSeasonsModel(Seq.empty[TeamSeasonModel])))
+    seasonService.getSeasonById(id) match {
+      case None => NotFound(s"Season $id not found")
+      case Some(season) => Ok(views.html.admin.seasons.teamSeason(
+        TeamSeasonsModel.toModel(season, teamService.getAllEligibleTeams, teamService.getTeamsForSeason(id))
+      ))
+    }
+  }
+
+  def assignTeamsToSeason(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    handleJsonPost[Seq[Int]](teamIds => Json.toJson(seasonService.assignTeamsToSeason(id, teamIds)))
+  }
+
+  def removeTeamsFromSeason(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    handleJsonPost[Seq[Int]](teamIds => Json.toJson(seasonService.removeTeamsFromSeason(id, teamIds)))
   }
 
   private def updateSeason(saveAction: EditSeasonModel => Boolean)(implicit request: Request[AnyContent]) : Result = 

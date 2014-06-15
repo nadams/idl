@@ -17,7 +17,9 @@
 
 @extraScriptsTemplate = { 
 	@helper.javascriptRouter("routes")(
-		routes.javascript.SeasonController.remove
+		routes.javascript.SeasonController.remove,
+		routes.javascript.SeasonController.removeTeamsFromSeason,
+		routes.javascript.SeasonController.assignTeamsToSeason
 	)
 
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>

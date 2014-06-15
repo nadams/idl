@@ -9,6 +9,8 @@ trait SeasonRepositoryComponent {
     def insertSeason(season: Season) : Boolean
     def updateSeason(season: Season) : Boolean
     def removeSeason(id: Int) : Boolean
+    def removeTeamFromSeason(seasonId: Int, teamId: Int) : Boolean
+    def assignTeamToSeason(seasonId: Int, teamId: Int) : Boolean
   }
 }
 
@@ -106,7 +108,7 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
     }
 
     def removeSeason(id: Int) = DB.withTransaction { implicit connection => 
-      val removeFromTeamSeason= SQL(
+      val removeFromTeamSeason = SQL(
         s"""
           DELETE FROM ${TeamSeasonSchema.tableName}
           WHERE ${TeamSeasonSchema.seasonId} = {seasonId};
@@ -125,6 +127,42 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
       .executeUpdate > 0
 
       removeFromTeamSeason || removeFromSeason
+    }
+
+    def removeTeamFromSeason(seasonId: Int, teamId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          DELETE FROM 
+            ${TeamSeasonSchema.tableName}
+          WHERE 
+            ${TeamSeasonSchema.seasonId} = {seasonId} AND 
+            ${TeamSeasonSchema.teamId} = {teamId}
+        """
+      )
+      .on(
+        'seasonId -> seasonId,
+        'teamId -> teamId
+      )
+      .executeUpdate > 0
+    }
+
+    def assignTeamToSeason(seasonId: Int, teamId: Int) : Boolean = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          INSERT INTO ${TeamSeasonSchema.tableName} (
+            ${TeamSeasonSchema.seasonId},
+            ${TeamSeasonSchema.teamId}
+          ) VALUES (
+            {seasonId},
+            {teamId}
+          )
+        """
+      )
+      .on(
+        'seasonId -> seasonId,
+        'teamId -> teamId
+      )
+      .executeUpdate > 0
     }
   }
 }

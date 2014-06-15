@@ -13,5 +13,60 @@
 }
 
 @views.html.admin.seasons.seasonsTemplate("Manage Teams Seasons", extraScripts = extraScripts) {
-	
+	<div style="display: none;" data-bind="visible: true">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>Team Seasons</h4>
+			</div>
+			<div class="panel-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-4">
+							<div>
+								<label for="teamsInSeason">
+									Teams in <span data-bind="text: seasonName"></span>
+								</label>
+							</div>
+							<select 
+								id="teamsInSeason"
+								multiple="multiple"
+								data-bind="options: teamsInSeason,
+									optionsText: 'teamName',
+									selectedOptions: selectedTeamsInSeason"></select>
+						</div>
+						<div class="col-md-4">
+							<div class="visible-xs visible-sm">
+								<button class="btn btn-default" data-bind="enable: canAssignTeams(), click: assignTeamsToSeason">
+									<span class="glyphicon glyphicon-arrow-up"></span>
+								</button>
+								<button class="btn btn-default" data-bind="enable: canRemoveTeams(), click: removeTeamsFromSeason">
+									<span class="glyphicon glyphicon-arrow-down"></span>
+								</button>
+							</div>
+
+							<div class="visible-md visible-lg">
+								<button class="btn btn-default" data-bind="enable: canAssignTeams(), click: assignTeamsToSeason">
+									<span class="glyphicon glyphicon-arrow-left"></span>
+								</button>
+								<button class="btn btn-default" data-bind="enable: canRemoveTeams(), click: removeTeamsFromSeason">
+									<span class="glyphicon glyphicon-arrow-right"></span>
+								</button>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div>
+								<label for="availableTeams">Available Teams</label>
+							</div>
+							<select 
+								id="availableTeams"
+								multiple="multiple" 
+								data-bind="options: teamsNotInSeason,
+									optionsText: 'teamName',
+									selectedOptions: selectedAvailableTeams"></select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 }
