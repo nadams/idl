@@ -1,4 +1,4 @@
-@(model: models.admin.teams.EditTeamModel)(implicit header: MenuModel)
+@(model: models.admin.teams.EditTeamModel, errors: models.admin.teams.EditTeamModelErrors)(implicit header: MenuModel)
 
 @title() = {
 	@if(model.isNewTeam) { 
@@ -20,15 +20,18 @@
 
 			<fieldset>
 				<div class="row form-group">
-					<div class="col-xs-4">
+					<div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
 						<label for="name">Name</label>
 						<input type="text" id="name" name="name" class="form-control" value="@model.teamName" />
+						@if(errors.nameError.nonEmpty) {
+							<span class="help-block">@errors.nameError.get</span>
+						}
 					</div>
 				</div>
 				<div class="row form-group">
 					<div class="col-xs-4">
 						<label for="active">Active</label>
-						<input type="checkbox" id="active" name="active" checked="checked" />
+						<input type="checkbox" id="active" name="active" @if(model.isActive) {checked="checked"} />
 					</div>
 				</div>
 				<div class="row form-group">

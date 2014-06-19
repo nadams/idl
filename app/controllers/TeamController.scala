@@ -13,7 +13,7 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   }
 
   def create = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(views.html.admin.teams.edit(EditTeamModel.empty))
+    Ok(views.html.admin.teams.edit(EditTeamModel.empty, EditTeamModelErrors.empty))
   }
 
   def saveNew = IsAuthenticated(Roles.Admin) { username => implicit request => 
@@ -21,7 +21,7 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   }
 
   def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(views.html.admin.teams.edit(EditTeamModel.empty))
+    Ok(views.html.admin.teams.edit(EditTeamModel.empty, EditTeamModelErrors.empty))
   }
 
   def saveExisting(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 

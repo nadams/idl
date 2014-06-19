@@ -7,3 +7,9 @@ case class EditTeamModel(teamId: Int, teamName: String, isActive: Boolean) {
 object EditTeamModel {
   def empty = EditTeamModel(0, "", true)
 }
+
+case class EditTeamModelErrors(nameError: Option[String])
+
+object EditTeamModelErrors {
+  def empty = EditTeamModelErrors(None)
+}
