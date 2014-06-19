@@ -10,7 +10,7 @@
 
 @views.html.admin.teams.teamsTemplate(title.toString) {
 	<div class="panel panel-default">
-		<div class="panel-heading"><h4>Create/Edit Team</h4></div>
+		<div class="panel-heading"><h4>@title</h4></div>
 		<form 
 			method="post" 
 			action="@if(model.isNewTeam) {@routes.TeamController.saveNew} else {@routes.TeamController.saveExisting(model.teamId)}" 
