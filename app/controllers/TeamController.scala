@@ -12,6 +12,26 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
     Ok(views.html.admin.teams.index())
   }
 
+  def create = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Ok(views.html.admin.teams.edit(EditTeamModel.empty))
+  }
+
+  def saveNew = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Redirect(routes.TeamController.index)
+  }
+
+  def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Ok(views.html.admin.teams.edit(EditTeamModel.empty))
+  }
+
+  def saveExisting(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Redirect(routes.TeamController.index)
+  }
+
+  def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Redirect(routes.TeamController.index)
+  }
+
   def players = IsAuthenticated(Roles.Admin) { username => implicit request =>
     Ok(views.html.admin.teams.players(
       TeamPlayersModel(

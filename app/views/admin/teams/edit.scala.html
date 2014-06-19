@@ -1,0 +1,43 @@
+@(model: models.admin.teams.EditTeamModel)(implicit header: MenuModel)
+
+@title() = {
+	@if(model.isNewTeam) { 
+		Create Team
+	} else { 
+		@(s"Edit Team: ${model.teamName}")
+	}
+}
+
+@views.html.admin.teams.teamsTemplate(title.toString) {
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Create/Edit Team</h4></div>
+		<form 
+			method="post" 
+			action="@if(model.isNewTeam) {@routes.TeamController.saveNew} else {@routes.TeamController.saveExisting(model.teamId)}" 
+			role="form" 
+			class="panel-body">
+			<input type="hidden" name="seasonId" value="@model.teamId" />
+
+			<fieldset>
+				<div class="row form-group">
+					<div class="col-xs-4">
+						<label for="name">Name</label>
+						<input type="text" id="name" name="name" class="form-control" value="@model.teamName" />
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-4">
+						<label for="active">Active</label>
+						<input type="checkbox" id="active" name="active" checked="checked" />
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-4">
+						<button type="submit" class="btn btn-primary">Save</button>
+						<a class="btn btn-default" href="@routes.TeamController.index">Cancel</a>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+}
