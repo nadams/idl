@@ -11,6 +11,7 @@ trait TeamServiceComponent {
     def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) : Seq[Int]
     def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean
     def getAllEligibleTeams() : Seq[Team]
+    def insertTeam(team: Team) : Boolean
   }
 }
 
@@ -22,6 +23,7 @@ trait TeamServiceComponentImpl extends TeamServiceComponent {
     def getTeamsForSeason(seasonId: Int) = teamRepository.getTeamsForSeason(seasonId)
     def getAllPlayers() = playerRepository.getAllPlayers
     def getAllEligibleTeams() = teamRepository.getAllActiveTeams
+    def insertTeam(team: Team) = teamRepository.insertTeam(team)
 
     def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) =
       playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId) }
