@@ -1,8 +1,10 @@
-@(model: models.admin.teams.TeamIndexModel)(implicit header: MenuModel)
+@(model: models.admin.teams.TeamIndexModel)(implicit header: MenuModel, req: RequestHeader)
 
 @import play.api.libs.json.Json
 
 @extraScripts = {
+	@helper.javascriptRouter("routes")()
+
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
 	<script>
@@ -10,7 +12,7 @@
 		admin.teams = admin.teams || {};
 		admin.teams.data = @Html(Json.toJson(model).toString) || {};
 	</script>
-	<script src="@routes.Assets.at("javascripts/views/admin/ajax.js")"></script>
+	<script src="@routes.Assets.at("javascripts/ajax.js")"></script>
 	<script src="@routes.Assets.at("javascripts/views/admin/teams/TeamsRepository.js")"></script>
 	<script src="@routes.Assets.at("javascripts/views/admin/teams/Teams.js")"></script>
 }
@@ -36,9 +38,27 @@
 							<input type="checkbox" disabled="disabled" data-bind="checked: isActive" />
 						</td>
 						<td class="center-text">
-							<button class="btn btn-danger">Remove</button>
+							<button class="btn btn-danger" data-bind="click: showConfirmRemoveTeam">Remove</button>
 						</td>
 					</tr>
+					<!-- ko if: confirmRemoveTeam -->
+					<tr>
+						<td colspan="3" class="danger">
+							<button type="button" class="close" aria-hidden="true" data-bind="click: hideConfirmRemoveTeam">&times;</button>
+							<div class="danger-row">
+								<p class="text-danger">Are you sure you want to remove this season? It will remove all records associated with it.</p>
+								<div>
+									<button class="btn btn-primary" data-bind="click: hideConfirmRemoveTeam">No</button>
+									<button class="btn btn-danger" data-bind="click: function() { removeTeam($parent); }">Yes</button>
+									<span data-bind="if: isRemovingTeam">
+										<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
+									</span>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<!-- /ko -->
+
 				</tbody>
 			</table>
 		</div>

@@ -29,6 +29,9 @@ admin.teams.TeamModel = (function() {
 		this.editUrl = '';
 		this.removeUrl = '';
 
+		this.confirmRemoveTeam = ko.observable(false);
+		this.isRemovingTeam = ko.observable(false);
+
 		this.initialize(data);
 	};
 
@@ -39,6 +42,15 @@ admin.teams.TeamModel = (function() {
 			this.isActive = data.isActive;
 			this.editUrl = data.editUrl;
 			this.removeUrl = data.removeUrl;
+		},
+		showConfirmRemoveTeam: function() {
+			this.confirmRemoveTeam(true);
+		},
+		hideConfirmRemoveTeam: function() {
+			this.confirmRemoveTeam(false);
+		},
+		removeTeam: function(team) {
+
 		}
 	});
 
