@@ -3,8 +3,12 @@ package controllers
 import play.api._
 import play.api.mvc._
 import play.api.libs.json._
+import org.joda.time.{ DateTime, DateTimeZone }
 import components._
+import _root_.data._
 import models.admin.teams._
+import models.FieldExtensions._
+import models.FormExtensions._
 import security.Roles
 
 object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
@@ -17,7 +21,7 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   }
 
   def saveNew = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Redirect(routes.TeamController.index)
+    updateTeam(team => teamService.insertTeam(Team(team.teamId, team.teamName, team.isActive, new DateTime(DateTimeZone.UTC))))
   }
 
   def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
@@ -62,4 +66,21 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
 
     handleJsonPost[RemovePlayersFromTeamModel](x => Json.toJson(teamService.removePlayersFromTeam(x.teamId, x.playerIds)))
   }
+
+  private def updateTeam(saveAction: EditTeamModel => Boolean)(implicit request: Request[AnyContent]) : Result = 
+    EditTeamForm().bindFromRequest.fold(
+      content => {
+        val nameError = content("teamName").formattedMessage
+        val model = EditTeamModel(0, nameError._1, true)
+        val errors = EditTeamModelErrors(nameError._2)
+
+        BadRequest(views.html.admin.teams.edit(model, errors))
+      },
+      team => {
+        saveAction(team) match {
+          case true => Redirect(routes.TeamController.index)
+          case false => InternalServerError("Could not save team")
+        }
+      }
+    )
 }

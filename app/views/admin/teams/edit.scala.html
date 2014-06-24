@@ -16,13 +16,13 @@
 			action="@if(model.isNewTeam) {@routes.TeamController.saveNew} else {@routes.TeamController.saveExisting(model.teamId)}" 
 			role="form" 
 			class="panel-body">
-			<input type="hidden" name="seasonId" value="@model.teamId" />
+			<input type="hidden" name="teamId" value="@model.teamId" />
 
 			<fieldset>
 				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
-						<label for="name">Name</label>
-						<input type="text" id="name" name="name" class="form-control" value="@model.teamName" />
+						<label for="teamName">Name</label>
+						<input type="text" id="teamName" name="teamName" class="form-control" value="@model.teamName" />
 						@if(errors.nameError.nonEmpty) {
 							<span class="help-block">@errors.nameError.get</span>
 						}
@@ -30,8 +30,8 @@
 				</div>
 				<div class="row form-group">
 					<div class="col-xs-4">
-						<label for="active">Active</label>
-						<input type="checkbox" id="active" name="active" @if(model.isActive) {checked="checked"} />
+						<label for="isActive">Active</label>
+						<input type="checkbox" id="isActive" name="isActive" @if(model.isActive) {checked="checked"} />
 					</div>
 				</div>
 				<div class="row form-group">
