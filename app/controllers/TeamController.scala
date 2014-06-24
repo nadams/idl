@@ -13,7 +13,7 @@ import security.Roles
 
 object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
   def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(views.html.admin.teams.index(TeamIndexModel.toModel(teamService.getAllTeams)))
+    Ok(views.html.admin.teams.index(TeamIndexModel.toModel(teamService.getAllTeams, routes.TeamController)))
   }
 
   def create = IsAuthenticated(Roles.Admin) { username => implicit request => 
