@@ -12,6 +12,7 @@ trait TeamRepositoryComponent {
     def insertTeam(team: Team) : Boolean
     def updateTeam(team: Team) : Boolean
     def getTeam(teamId: Int) : Option[Team]
+    def getAllTeams() : Seq[Team]
   }
 }
 
@@ -192,6 +193,12 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         'teamId -> teamId
       )
       .as(teamParser singleOpt)
+      .map(Team(_))
+    }
+
+    def getAllTeams() = DB.withConnection { implicit connection => 
+      SQL(selectAllTeamsSql)
+      .as(multiRowParser)
       .map(Team(_))
     }
   }

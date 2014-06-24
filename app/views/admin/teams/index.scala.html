@@ -1,12 +1,21 @@
-@()(implicit header: MenuModel)
+@(model: models.admin.teams.TeamIndexModel)(implicit header: MenuModel)
 
-@views.html.admin.teams.teamsTemplate("Manage Teams") {
+@import play.api.libs.json.Json
+
+@extraScripts = {
+	<script>
+		var x = @Html(Json.toJson(model).toString)
+	</script>
+}
+
+@views.html.admin.teams.teamsTemplate("Manage Teams", extraScripts = extraScripts) {
 	<div class="panel panel-default">
 		<div class="panel-heading"><h4>Teams</h4></div>
 		<div class="panel-body">
 			<table class="table table-striped table-hover">
 				<tr>
 					<th>Name</th>
+					<th>Active</th>
 					<th>Remove</th>
 				</tr>
 			</table>
