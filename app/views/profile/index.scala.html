@@ -2,8 +2,10 @@
 
 @main("Manage Profile") {
 	<form method="post" action="@routes.ProfileController.updateProfile" class="panel panel-default" role="form">
+		<div class="panel-heading">
+			<h4>Change Password</h4>
+		</div>
 		<fieldset class="panel-body">
-			<legend>Change Password</legend>
 
 			@if(errors.globalErrors.nonEmpty) {
 				<div class="alert alert-danger">

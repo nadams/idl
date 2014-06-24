@@ -1,7 +1,17 @@
 @(model: models.profile.LoginModel, errors: Seq[String])(implicit header: MenuModel)
 
-@main("Login") {
-	<form method="post" action="@routes.ProfileController.performLogin" role="form" class="panel panel-default">
+@extraScripts = {
+	<script>
+		(function($) {
+			$(function() {
+				$('#username').focus();
+			});
+		})(jQuery);
+	</script>
+}
+
+@main("Login", extraScripts = extraScripts) {
+	<form method="post" role="form" class="panel panel-default">
 		<fieldset class="panel-body">
 			<legend>Login</legend>
 

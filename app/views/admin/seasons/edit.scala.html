@@ -1,0 +1,94 @@
+@(model: models.admin.seasons.EditSeasonModel, errors: models.admin.seasons.EditSeasonModelErrors)(implicit header: MenuModel, req: RequestHeader)
+
+@import play.api.libs.json.Json
+
+@extraScripts = {
+	<script src="@routes.Assets.at("datetimepicker/js/bootstrap-datetimepicker.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/ko-bindings/datetimepicker.binding.js")"></script>
+	<script>
+		admin.seasons.edit = admin.seasons.edit || {};
+		admin.seasons.edit = {
+			data: @Html(Json.toJson(model).toString) || {}
+		};
+	</script>
+	<script src="@routes.Assets.at("javascripts/views/admin/seasons/EditSeason.js")"></script>
+}
+
+@extraCss = {
+	<link rel="stylesheet" href="@routes.Assets.at("datetimepicker/css/bootstrap-datetimepicker.min.css")" />
+}
+
+@title() = {
+	@if(model.isNewSeason) { 
+		Create Season
+	} else { 
+		@(s"Edit Season: ${model.name}")
+	}
+}
+
+@views.html.admin.seasons.seasonsTemplate(title.toString, extraScripts = extraScripts, extraCss = extraCss) {
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Create/Edit Season</h4></div>
+		<form 
+			method="post" 
+			action="@if(model.isNewSeason) {@routes.SeasonController.saveNew} else {@routes.SeasonController.saveExisting(model.seasonId)}" 
+			role="form" 
+			class="panel-body">
+			<input type="hidden" name="seasonId" value="@model.seasonId" />
+			<input type="hidden" name="startDate" data-bind="value: startDate" />
+			<input type="hidden" name="endDate" data-bind="value: endDate" />
+
+			<fieldset>
+				@if(errors.globalErrors.nonEmpty) {
+					<div class="alert alert-danger">
+						@for(error <- errors.globalErrors) {
+							<p class="error">@error</p>
+						}
+					</div>
+				}
+
+				<div class="row form-group">
+					<div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
+						<label for="name" class="control-label">Name</label>
+						<input type="text" id="name" name="name" class="form-control" value="@model.name" />
+						@if(errors.nameError.nonEmpty) {
+							<span class="help-block">@errors.nameError.get</span>
+						}
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-4 @if(errors.startDateError.nonEmpty) { has-error }">
+						<label for="startDate" class="control-label">Start Date</label>
+						<div class="input-group date" id="startDateTimePicker">
+							<input type="text" class="form-control" data-bind="datetimepicker: startDate" />
+							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+						</div>
+
+						@if(errors.startDateError.nonEmpty) {
+							<span class="help-block">@errors.startDateError.get</span>
+						}
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-4 @if(errors.endDateError.nonEmpty) { has-error }">
+						<label for="endDate" class="control-label">End Date</label>
+						<div class="input-group date" id="endDateTimePicker">
+							<input type="text" class="form-control" data-bind="datetimepicker: endDate" />
+							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+						</div>
+
+						@if(errors.endDateError.nonEmpty) {
+							<span class="help-block">@errors.endDateError.get</span>
+						}
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-4">
+						<button type="submit" class="btn btn-primary">Save</button>
+						<a class="btn btn-default" href="@routes.SeasonController.index">Cancel</a>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+}

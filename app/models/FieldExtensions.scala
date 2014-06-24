@@ -1,11 +1,12 @@
 package models
 
+import scala.language.implicitConversions
 import play.api.data.{ Field, Form }
 import play.api.i18n.{ Messages, Lang }
 
 object FieldExtensions {
   class FieldError(field: Field) {
-    def formattedMessage : Pair[String, Option[String]] =
+    def formattedMessage : Tuple2[String, Option[String]] =
       (field.value.getOrElse(""), field.error.map { error => Messages(error.message, error.args: _*) })
   }
 

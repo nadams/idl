@@ -1,0 +1,20 @@
+# --- !Ups
+
+CREATE TABLE IF NOT EXISTS TeamPlayer (
+	TeamId INT NOT NULL,
+	PlayerId INT NOT NULL,
+	IsCaptain BIT NOT NULL DEFAULT 0,
+
+	CONSTRAINT PK_TeamPlayer PRIMARY KEY (TeamId, PlayerId),
+	CONSTRAINT FK_TeamPlayer_Team FOREIGN KEY (TeamId) REFERENCES Team(TeamId),
+	CONSTRAINT FK_TeamPlayer_Player FOREIGN KEY (PlayerId) REFERENCES Player(PlayerId)
+) ENGINE = INNODB;
+
+CREATE TABLE IF NOT EXISTS TeamSeason (
+	TeamId INT NOT NULL,
+	SeasonId INT NOT NULL,
+
+	CONSTRAINT PK_TeamSeason PRIMARY KEY (TeamId, SeasonId),
+	CONSTRAINT FK_TeamSeason_Team FOREIGN KEY (TeamId) REFERENCES Team(TeamId),
+	CONSTRAINT FK_TeamSeason_Season FOREIGN KEY (SeasonId) REFERENCES Season(SeasonId)
+) ENGINE = INNODB;

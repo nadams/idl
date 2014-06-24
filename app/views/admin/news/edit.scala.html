@@ -1,7 +1,7 @@
-@(model: models.news.EditNews, errors: models.news.EditNewsErrors)(implicit header: MenuModel)
+@(model: models.admin.news.EditNews, errors: models.admin.news.EditNewsErrors)(implicit header: MenuModel)
 
 @import play.api.libs.json.Json
-@import models.news.EditNews
+@import models.admin.news.EditNews
 
 @extraCss = {
 	<link rel="stylesheet" media="screen" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
@@ -22,12 +22,13 @@
 		};
 	</script>
 	<script src="@routes.Assets.at("javascripts/ko-bindings/summernote.bindings.js")"></script>
-	<script src="@routes.Assets.at("javascripts/views/news/EditNews.js")"></script>
+	<script src="@routes.Assets.at("javascripts/views/admin/news/EditNews.js")"></script>
 }
 
 @newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: ${model.subject}", extraScripts = extraScripts, extraCss = extraCss) {
 	@defining(if(model.isNewNews) routes.NewsController.saveNew else routes.NewsController.saveExisting(model.newsId)) { route =>
 		<div class="panel panel-default">
+			<div class="panel-heading"><h4>Create/Edit News</h4></div>
 			<form method="post" action="@route" role="form" class="panel-body edit-news-container">
 				<input type="hidden" name="newsId" value="@model.newsId" />
 
@@ -51,13 +52,12 @@
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-4">
-							<button class="btn btn-primary">Save</button>
+							<button type="submit" class="btn btn-primary">Save</button>
 							<a class="btn btn-default" href="@routes.NewsController.index">Cancel</a>
 						</div>
 					</div>
 				</fieldset>
 			</form>
 		</div>
-
 	}
 }
