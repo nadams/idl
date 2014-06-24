@@ -12,6 +12,7 @@ object TeamSchema {
   val teamId = "TeamId"
   val name = "Name"
   val isActive = "IsActive"
+  val dateCreated = "DateCreated"
 }
 
 object TeamPlayerSchema {

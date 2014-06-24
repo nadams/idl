@@ -3,13 +3,43 @@ package controllers
 import play.api._
 import play.api.mvc._
 import play.api.libs.json._
+import org.joda.time.{ DateTime, DateTimeZone }
 import components._
+import _root_.data._
 import models.admin.teams._
+import models.FieldExtensions._
+import models.FormExtensions._
 import security.Roles
 
 object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
   def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(views.html.admin.teams.index())
+    Ok(views.html.admin.teams.index(TeamIndexModel.toModel(teamService.getAllTeams, routes.TeamController)))
+  }
+
+  def create = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Ok(views.html.admin.teams.edit(EditTeamModel.empty, EditTeamModelErrors.empty))
+  }
+
+  def saveNew = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    updateTeam(team => teamService.insertTeam(EditTeamModel.toEntity(team)))
+  }
+
+  def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    teamService.getTeam(id) match {
+      case Some(team) => Ok(views.html.admin.teams.edit(EditTeamModel.toModel(team), EditTeamModelErrors.empty))
+      case None => NotFound(s"No team found with id: $id")
+    }
+  }
+
+  def saveExisting(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    updateTeam(team => teamService.updateTeam(EditTeamModel.toEntity(team)))
+  }
+
+  def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    teamService.removeTeam(id) match {
+      case true => Ok(Json.toJson(id))
+      case false => InternalServerError("Could not remove team")
+    }
   }
 
   def players = IsAuthenticated(Roles.Admin) { username => implicit request =>
@@ -42,4 +72,21 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
 
     handleJsonPost[RemovePlayersFromTeamModel](x => Json.toJson(teamService.removePlayersFromTeam(x.teamId, x.playerIds)))
   }
+
+  private def updateTeam(saveAction: EditTeamModel => Boolean)(implicit request: Request[AnyContent]) : Result = 
+    EditTeamForm().bindFromRequest.fold(
+      content => {
+        val nameError = content("teamName").formattedMessage
+        val model = EditTeamModel(0, nameError._1, true)
+        val errors = EditTeamModelErrors(nameError._2)
+
+        BadRequest(views.html.admin.teams.edit(model, errors))
+      },
+      team => {
+        saveAction(team) match {
+          case true => Redirect(routes.TeamController.index)
+          case false => InternalServerError("Could not save team")
+        }
+      }
+    )
 }

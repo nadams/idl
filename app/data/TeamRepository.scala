@@ -9,6 +9,11 @@ trait TeamRepositoryComponent {
     def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean
     def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean
     def getAllActiveTeams() : Seq[Team]
+    def insertTeam(team: Team) : Boolean
+    def updateTeam(team: Team) : Boolean
+    def getTeam(teamId: Int) : Option[Team]
+    def getAllTeams() : Seq[Team]
+    def removeTeam(teamId: Int) : Boolean
   }
 }
 
@@ -20,16 +25,23 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
     import anorm.SqlParser._
     import play.api.db.DB
     import play.api.Play.current
+    import org.joda.time.DateTime
+    import AnormExtensions._
 
     val selectAllTeamsSql = 
       s"""
         SELECT
           t.${TeamSchema.teamId},
           t.${TeamSchema.name},
-          t.${TeamSchema.isActive} 
+          t.${TeamSchema.isActive} ,
+          t.${TeamSchema.dateCreated}
         FROM ${TeamSchema.tableName} AS t
       """
-    val teamParser = int(TeamSchema.teamId) ~ str(TeamSchema.name) ~ bool(TeamSchema.isActive) map flatten
+    val teamParser = 
+      int(TeamSchema.teamId) ~ 
+      str(TeamSchema.name) ~ 
+      bool(TeamSchema.isActive) ~ 
+      get[DateTime](TeamSchema.dateCreated) map flatten
     val multiRowParser = teamParser *
 
     def getTeamsForSeason(seasonId: Int) = DB.withConnection { implicit connection =>
@@ -127,6 +139,81 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       )
       .as(multiRowParser)
       .map(Team(_))
+    }
+
+    def insertTeam(team: Team) : Boolean = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          INSERT INTO ${TeamSchema.tableName} (
+            ${TeamSchema.name},
+            ${TeamSchema.isActive},
+            ${TeamSchema.dateCreated}
+          ) VALUES (
+            {teamName},
+            {isActive},
+            {dateCreated}
+          )
+        """
+      )
+      .on(
+        'teamName -> team.name,
+        'isActive -> team.isActive,
+        'dateCreated -> team.dateCreated
+      )
+      .executeUpdate > 0
+    } 
+
+    def updateTeam(team: Team) : Boolean = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          UPDATE ${TeamSchema.tableName}
+          SET
+            ${TeamSchema.name} = {teamName},
+            ${TeamSchema.isActive} = {isActive}
+          WHERE
+            ${TeamSchema.teamId} = {teamId}
+        """
+      )
+      .on(
+        'teamId -> team.teamId,
+        'teamName -> team.name,
+        'isActive -> team.isActive,
+        'dateCreated -> team.dateCreated
+      )
+      .executeUpdate > 0
+    }
+
+    def getTeam(teamId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          $selectAllTeamsSql
+          WHERE ${TeamSchema.teamId} = {teamId}
+        """
+      )
+      .on(
+        'teamId -> teamId
+      )
+      .as(teamParser singleOpt)
+      .map(Team(_))
+    }
+
+    def getAllTeams() = DB.withConnection { implicit connection => 
+      SQL(selectAllTeamsSql)
+      .as(multiRowParser)
+      .map(Team(_))
+    }
+
+    def removeTeam(teamId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          DELETE FROM ${TeamSchema.tableName}
+          WHERE ${TeamSchema.teamId} = {teamId}
+        """
+      )
+      .on(
+        'teamId -> teamId
+      )
+      .executeUpdate > 0
     }
   }
 }
