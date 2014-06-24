@@ -3,7 +3,9 @@
 @import play.api.libs.json.Json
 
 @extraScripts = {
-	@helper.javascriptRouter("routes")()
+	@helper.javascriptRouter("routes")(
+		routes.javascript.TeamController.remove
+	)
 
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
@@ -49,7 +51,7 @@
 								<p class="text-danger">Are you sure you want to remove this season? It will remove all records associated with it.</p>
 								<div>
 									<button class="btn btn-primary" data-bind="click: hideConfirmRemoveTeam">No</button>
-									<button class="btn btn-danger" data-bind="click: function() { removeTeam($parent); }">Yes</button>
+									<button class="btn btn-danger" data-bind="click: function() { $parent.removeTeam($data); }">Yes</button>
 									<span data-bind="if: isRemovingTeam">
 										<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
 									</span>

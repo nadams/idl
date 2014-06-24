@@ -4,7 +4,7 @@ import play.api.libs.json.Json
 import data.Team
 
 case class TeamIndexModel(teams: Seq[TeamIndexRowModel])
-case class TeamIndexRowModel(teamId: Int, teamName: String, isActive: Boolean, editUrl: String, removeUrl: String)
+case class TeamIndexRowModel(teamId: Int, teamName: String, isActive: Boolean, editUrl: String)
 
 object TeamIndexModel {
   implicit val writesRowIndexModel = Json.writes[TeamIndexRowModel]
@@ -21,7 +21,6 @@ object TeamIndexRowModel {
       team.teamId, 
       team.name, 
       team.isActive, 
-      routes.edit(team.teamId).toString,
-      routes.remove(team.teamId).toString
+      routes.edit(team.teamId).toString
     )
 }

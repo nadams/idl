@@ -4,7 +4,8 @@
 
 admin.teams = admin.teams || {};
 admin.teams.IndexModel = (function(ko, _) {
-	var Model = function(data) {
+	var Model = function(data, repo) {
+		this.repo = repo;
 		this.teams = ko.observableArray([]);
 
 		this.initialize(data);
@@ -15,6 +16,24 @@ admin.teams.IndexModel = (function(ko, _) {
 			this.teams(_.map(data.teams, function(team) {
 				return new admin.teams.TeamModel(team);
 			}, this));
+		},
+		removeTeam: function(team) {
+			team.isRemovingTeam(true);
+
+			var promise = this.repo.removeTeam(team.teamId, this);
+
+			promise.always(function() {
+				team.isRemovingTeam(false);
+				team.hideConfirmRemoveTeam();
+			});
+
+			promise.done(function(data) {
+				if(data) {
+					this.teams.remove(_.find(this.teams(), function(team) {
+						return data == team.teamId;
+					}, this));
+				}
+			});
 		}
 	});
 
@@ -27,7 +46,6 @@ admin.teams.TeamModel = (function() {
 		this.teamName = '';
 		this.isActive = false;
 		this.editUrl = '';
-		this.removeUrl = '';
 
 		this.confirmRemoveTeam = ko.observable(false);
 		this.isRemovingTeam = ko.observable(false);
@@ -41,16 +59,12 @@ admin.teams.TeamModel = (function() {
 			this.teamName = data.teamName;
 			this.isActive = data.isActive;
 			this.editUrl = data.editUrl;
-			this.removeUrl = data.removeUrl;
 		},
 		showConfirmRemoveTeam: function() {
 			this.confirmRemoveTeam(true);
 		},
 		hideConfirmRemoveTeam: function() {
 			this.confirmRemoveTeam(false);
-		},
-		removeTeam: function(team) {
-
 		}
 	});
 
@@ -58,7 +72,7 @@ admin.teams.TeamModel = (function() {
 })();
 
 (function(ko, admin) {
-	var model = new admin.teams.IndexModel(admin.teams.data);
+	var model = new admin.teams.IndexModel(admin.teams.data, new admin.teams.TeamRepository());
 
 	ko.applyBindings(model);
 })(ko, admin);

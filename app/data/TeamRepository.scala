@@ -13,6 +13,7 @@ trait TeamRepositoryComponent {
     def updateTeam(team: Team) : Boolean
     def getTeam(teamId: Int) : Option[Team]
     def getAllTeams() : Seq[Team]
+    def removeTeam(teamId: Int) : Boolean
   }
 }
 
@@ -200,6 +201,19 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       SQL(selectAllTeamsSql)
       .as(multiRowParser)
       .map(Team(_))
+    }
+
+    def removeTeam(teamId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          DELETE FROM ${TeamSchema.tableName}
+          WHERE ${TeamSchema.teamId} = {teamId}
+        """
+      )
+      .on(
+        'teamId -> teamId
+      )
+      .executeUpdate > 0
     }
   }
 }

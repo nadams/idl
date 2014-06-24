@@ -30,6 +30,10 @@ admin.teams.TeamRepository = (function(ajax, routes) {
 
 			return ajax.post(routes.controllers.TeamController.removePlayers().url, data, context);
 		};
+
+		this.removeTeam = function(teamId, context) {
+			return ajax.post(routes.controllers.TeamController.remove(teamId).url, {}, context);
+		};
 	};
 
 	return Repository;

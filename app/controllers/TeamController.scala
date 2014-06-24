@@ -36,7 +36,10 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   }
 
   def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Redirect(routes.TeamController.index)
+    teamService.removeTeam(id) match {
+      case true => Ok(Json.toJson(id))
+      case false => InternalServerError("Could not remove team")
+    }
   }
 
   def players = IsAuthenticated(Roles.Admin) { username => implicit request =>
