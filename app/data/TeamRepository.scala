@@ -11,6 +11,7 @@ trait TeamRepositoryComponent {
     def getAllActiveTeams() : Seq[Team]
     def insertTeam(team: Team) : Boolean
     def updateTeam(team: Team) : Boolean
+    def getTeam(teamId: Int) : Option[Team]
   }
 }
 
@@ -166,8 +167,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
           UPDATE ${TeamSchema.tableName}
           SET
             ${TeamSchema.name} = {teamName},
-            ${TeamSchema.isActive} = {isActive},
-            ${TeamSchema.dateCreated} = {dateCreated}
+            ${TeamSchema.isActive} = {isActive}
           WHERE
             ${TeamSchema.teamId} = {teamId}
         """
@@ -179,6 +179,20 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         'dateCreated -> team.dateCreated
       )
       .executeUpdate > 0
+    }
+
+    def getTeam(teamId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          $selectAllTeamsSql
+          WHERE ${TeamSchema.teamId} = {teamId}
+        """
+      )
+      .on(
+        'teamId -> teamId
+      )
+      .as(teamParser singleOpt)
+      .map(Team(_))
     }
   }
 }

@@ -21,15 +21,18 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   }
 
   def saveNew = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    updateTeam(team => teamService.insertTeam(Team(team.teamId, team.teamName, team.isActive, new DateTime(DateTimeZone.UTC))))
+    updateTeam(team => teamService.insertTeam(EditTeamModel.toEntity(team)))
   }
 
   def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(views.html.admin.teams.edit(EditTeamModel.empty, EditTeamModelErrors.empty))
+    teamService.getTeam(id) match {
+      case Some(team) => Ok(views.html.admin.teams.edit(EditTeamModel.toModel(team), EditTeamModelErrors.empty))
+      case None => NotFound(s"No team found with id: $id")
+    }
   }
 
   def saveExisting(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Redirect(routes.TeamController.index)
+    updateTeam(team => teamService.updateTeam(EditTeamModel.toEntity(team)))
   }
 
   def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
