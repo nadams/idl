@@ -12,6 +12,7 @@ POST    /profile                            controllers.ProfileController.update
 POST    /profile/logout                     controllers.ProfileController.logout
 
 GET     /registration                       controllers.RegistrationController.index
+POST    /registration                       controllers.RegistrationController.register
 
 GET     /admin/news                         controllers.NewsController.index(page: Int = 1, size: Int = 15)
 GET     /admin/news/create                  controllers.NewsController.create

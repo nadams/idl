@@ -9,4 +9,8 @@ object RegistrationController extends Controller with ProvidesHeader {
   def index = Action { implicit request => 
     Ok(views.html.registration.index())
   }
+
+  def register = Action { implicit request => 
+    Redirect(routes.HomeController.index)
+  }
 }
