@@ -1,5 +1,36 @@
 @()(implicit header: MenuModel)
 
 @main("Register") {
-	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>Register</h4>
+		</div>
+		<div class="panel-body">
+			<form role="form" class="form-horizontal" method="post">
+				<div class="form-group">
+					<label for="email" class="col-sm-2 control-label">Email</label>
+					<div class="col-sm-4">
+						<input type="email" id="email" name="email" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="password" class="col-sm-2 control-label">Password</label>
+					<div class="col-sm-4">
+						<input type="password" id="password" name="password" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="passwordConfirm" class="col-sm-2 control-label">Confirm Password</label>
+					<div class="col-sm-4">
+						<input type="passwordConfirm" id="passwordConfirm" name="passwordConfirm" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-4">
+						<button type="submit" class="btn btn-primary">Register</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
 }
