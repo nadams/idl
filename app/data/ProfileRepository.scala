@@ -9,6 +9,7 @@ trait ProfileRepositoryComponent {
     def getByUsername(username: String) : Option[Profile]
     def updateProfile(profile: Profile) : Boolean
     def getRolesForUsername(username: String) : Seq[Roles.Role]
+    def insertProfile(profile: Profile) : Profile
   }
 }
 
@@ -83,6 +84,45 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       .on('username -> username)
       .as(scalar[Int] *)
       .map(Roles(_))
+    }
+
+    def insertProfile(profile: Profile) = DB.withConnection { implicit connection => 
+      Profile(
+        SQL(
+          s"""
+            INSERT INTO ${ProfileSchema.tableName} (
+              ${ProfileSchema.email},
+              ${ProfileSchema.displayName},
+              ${ProfileSchema.password},
+              ${ProfileSchema.dateCreated},
+              ${ProfileSchema.passwordExpired},
+              ${ProfileSchema.lastLoginDate}
+            ) VALUES (
+              {email},
+              {displayName},
+              {password},
+              {dateCreated},
+              {passwordExpired},
+              {lastLoginDate}
+            )
+          """
+        )
+        .on(
+          'email -> profile.email,
+          'displayName -> profile.displayName,
+          'password -> profile.password,
+          'dateCreated -> profile.dateCreated,
+          'passwordExpired -> profile.passwordExpired,
+          'lastLoginDate -> profile.lastLoginDate
+        )
+        .executeInsert(scalar[Int] single),
+        profile.email,
+        profile.displayName,
+        profile.password,
+        profile.passwordExpired,
+        profile.dateCreated,
+        profile.lastLoginDate
+      )
     }
   }
 }

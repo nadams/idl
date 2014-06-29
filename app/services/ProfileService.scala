@@ -13,6 +13,7 @@ trait ProfileServiceComponent {
     def getProfileIdByUsername(username: String) : Option[Int]
     def profileIsInRole(username: String, role: Roles.Role): Boolean
     def profileIsInAnyRole(username: String, roles: Set[Roles.Role]): Boolean
+    def createProfile(profile: Profile) : Profile
   }
 }
 
@@ -54,6 +55,9 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 
     def hashPassword(password: String) : String = 
       hasher.createHash(password)
+
+    def createProfile(profile: Profile) : Profile = 
+      profileRepository.insertProfile(profile)
 
     def profileIsInRole(username: String, role: Roles.Role): Boolean = 
       profileRepository.getRolesForUsername(username).exists { profileRole => 
