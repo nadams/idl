@@ -14,12 +14,13 @@ trait ProfileServiceComponent {
     def profileIsInRole(username: String, role: Roles.Role): Boolean
     def profileIsInAnyRole(username: String, roles: Set[Roles.Role]): Boolean
     def createProfile(email: String, displayName: String, password: String) : Profile
+    
   }
 }
 
 trait ProfileServiceComponentImpl extends ProfileServiceComponent {
   self: ProfileRepositoryComponent =>
-  val profileService: ProfileService = new ProfileServiceImpl
+  val profileService = new ProfileServiceImpl
 
   class ProfileServiceImpl extends ProfileService {
     import io.github.nremond._

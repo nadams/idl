@@ -5,6 +5,7 @@ trait PlayerRepositoryComponent {
 
   trait PlayerRepository {
     def getAllPlayers() : Seq[Player]
+    def getPlayerByProfileId(profileId: Int) : Option[Player]
   }
 }
 
@@ -32,6 +33,26 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
 
     def getAllPlayers() : Seq[Player] = DB.withConnection { implicit connection => 
       SQL(selectAllPlayersSql).as(multiRowParser).map(Player(_))
+    }
+
+    def getPlayerByProfileId(profileId: Int) : Option[Player] = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT 
+            p.${PlayerSchema.playerId},
+            p.${PlayerSchema.name},
+            p.${PlayerSchema.isActive},
+            NULL
+          FROM ${PlayerSchema.tableName} AS p
+            INNER JOIN ${PlayerProfileSchema.tableName} AS pp ON p.${PlayerSchema.playerId} = pp.${PlayerProfileSchema.playerId}
+          WHERE ${PlayerProfileSchema.profileId} = {profileId}
+        """
+      )
+      .on(
+        'profileId -> profileId
+      )
+      .as(singleRowParser singleOpt)
+      .map(Player(_))
     } 
   }
 }

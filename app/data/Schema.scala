@@ -68,3 +68,9 @@ object NewsSchema {
   val content = "Content"
   val postedByProfileId = "PostedByProfileId"
 }
+
+object PlayerProfileSchema {
+  val tableName = "PlayerProfile"
+  val playerId = "PlayerId"
+  val profileId = "ProfileId"
+}

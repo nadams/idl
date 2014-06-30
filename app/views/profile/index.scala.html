@@ -1,4 +1,4 @@
-@()(implicit header: MenuModel, flash: Flash)
+@(model: models.profile.IndexModel)(implicit header: MenuModel, flash: Flash)
 
 @views.html.profile.profileTemplate("Profile") {
 	<div class="panel panel-default">
@@ -11,13 +11,15 @@
 					<p>@flash.get("profileIsNowPlayer")</p>
 				</div>
 			}
-			
-			<form action="@routes.ProfileController.becomePlayer" method="post" role="form">
-				<div class="form-group">
-					<h5>You are not currently a player, would you like to become a player?</h5>
-					<button type="submit" class="btn btn-success">Yes Please</button>
-				</div>
-			</form>
+
+			@if(!model.profileIsPlayer) {
+				<form action="@routes.ProfileController.becomePlayer" method="post" role="form">
+					<div class="form-group">
+						<h5>You are not currently a league player, would you like to become a league player?</h5>
+						<button type="submit" class="btn btn-success">Yes Please</button>
+					</div>
+				</form>
+			}
 		</div>
 	</div>
 }

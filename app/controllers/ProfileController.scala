@@ -2,13 +2,20 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import components.ProfileComponentImpl
+import components.{ ProfileComponentImpl, PlayerComponentImpl, TeamComponentImpl }
 import models.profile._
 import _root_.data._
 import models.FieldExtensions._
 import models.FormExtensions._
 
-object ProfileController extends Controller with Secured with ProvidesHeader with ProfileComponentImpl {
+object ProfileController 
+  extends Controller 
+  with Secured 
+  with ProvidesHeader 
+  with ProfileComponentImpl 
+  with TeamComponentImpl 
+  with PlayerComponentImpl {
+
   def login = Action { implicit request =>
     Ok(views.html.profile.login(LoginModel(), Seq.empty[String]))
   }
@@ -29,7 +36,10 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
   }
 
   def index = IsAuthenticated { username => implicit request =>
-    Ok(views.html.profile.index())
+    profileService.getByUsername(username) match {
+      case Some(profile) => Ok(views.html.profile.index(IndexModel(playerService.profileIsPlayer(profile.profileId))))
+      case None => NotFound("The profile `$username` was not found.")
+    }
   }
 
   def password = IsAuthenticated { username => implicit request => 

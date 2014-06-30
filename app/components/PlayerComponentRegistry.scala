@@ -1,11 +1,14 @@
 package components
 
 import data._
+import services._
 
 trait PlayerRegistry
-extends PlayerRepositoryComponent
+extends PlayerServiceComponent
+with PlayerRepositoryComponent
 with TeamRepositoryComponent
 
 trait PlayerComponentImpl
 extends PlayerRegistry
+with PlayerServiceComponentImpl
 with PlayerRepositoryComponentImpl
