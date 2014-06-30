@@ -13,7 +13,7 @@ trait ProfileServiceComponent {
     def getProfileIdByUsername(username: String) : Option[Int]
     def profileIsInRole(username: String, role: Roles.Role): Boolean
     def profileIsInAnyRole(username: String, roles: Set[Roles.Role]): Boolean
-    def createProfile(profile: Profile) : Profile
+    def createProfile(email: String, displayName: String, password: String) : Profile
   }
 }
 
@@ -23,6 +23,7 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 
   class ProfileServiceImpl extends ProfileService {
     import io.github.nremond._
+    import org.joda.time.{ DateTime, DateTimeZone }
 
     val hasher = SecureHash(dkLength = 64)
 
@@ -56,8 +57,13 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
     def hashPassword(password: String) : String = 
       hasher.createHash(password)
 
-    def createProfile(profile: Profile) : Profile = 
-      profileRepository.insertProfile(profile)
+    def createProfile(email: String, displayName: String, password: String) : Profile = {
+      val now = new DateTime(DateTimeZone.UTC)
+
+      profileRepository.insertProfile(
+        Profile(0, email, displayName, hashPassword(password), false, now, now)
+      )
+    }
 
     def profileIsInRole(username: String, role: Roles.Role): Boolean = 
       profileRepository.getRolesForUsername(username).exists { profileRole => 

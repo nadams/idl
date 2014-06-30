@@ -19,7 +19,7 @@ object RegistrationController extends Controller with ProvidesHeader with Profil
         Logger.info(errors.toString)
         BadRequest(views.html.registration.index(RegisterModel.toModel(errors), RegisterModelErrors.toModel(errors)))
       },
-      model => profileService.createProfile(RegisterModel.toEntity(model)) match {
+      model => profileService.createProfile(model.email, model.email, model.password) match {
         case Profile(profileId, email, displayName, password, passwordExpired, dateCreated, lastLoginDate) => 
           Redirect(routes.HomeController.index).withSession(SessionKeys.username -> email)
         case _ => InternalServerError("Unable to create profile")
