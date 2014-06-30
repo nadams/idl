@@ -10,6 +10,7 @@ trait ProfileRepositoryComponent {
     def updateProfile(profile: Profile) : Boolean
     def getRolesForUsername(username: String) : Seq[Roles.Role]
     def insertProfile(profile: Profile) : Profile
+    def addProfileToRole(profileId: Int, role: Roles.Role) : Boolean
   }
 }
 
@@ -123,6 +124,25 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
         profile.dateCreated,
         profile.lastLoginDate
       )
+    }
+
+    def addProfileToRole(profileId: Int, role: Roles.Role) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          INSERT INTO ${ProfileRoleSchema.tableName} (
+            ${ProfileRoleSchema.profileId},
+            ${ProfileRoleSchema.roleId}
+          ) VALUES (
+            {profileId},
+            {roleId}
+          )
+        """
+      )
+      .on(
+        'profileId -> profileId,
+        'roleId -> role.id
+      )
+      .executeUpdate > 0
     }
   }
 }

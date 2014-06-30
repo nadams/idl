@@ -14,6 +14,8 @@ object RegistrationController extends Controller with ProvidesHeader with Profil
   }
 
   def register = Action { implicit request =>
+    lazy val cannotCreateProfile = InternalServerError("Unable to create profile")
+    
     RegisterModelForm().bindFromRequest.fold(
       errors => {
         Logger.info(errors.toString)
@@ -22,7 +24,7 @@ object RegistrationController extends Controller with ProvidesHeader with Profil
       model => profileService.createProfile(model.email, model.email, model.password) match {
         case Profile(profileId, email, displayName, password, passwordExpired, dateCreated, lastLoginDate) => 
           Redirect(routes.HomeController.index).withSession(SessionKeys.username -> email)
-        case _ => InternalServerError("Unable to create profile")
+        case _ => cannotCreateProfile
       }
     )
   }

@@ -60,9 +60,13 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
     def createProfile(email: String, displayName: String, password: String) : Profile = {
       val now = new DateTime(DateTimeZone.UTC)
 
-      profileRepository.insertProfile(
+      val profile = profileRepository.insertProfile(
         Profile(0, email, displayName, hashPassword(password), false, now, now)
       )
+
+      profileRepository.addProfileToRole(profile.profileId, Roles.User)
+
+      profile
     }
 
     def profileIsInRole(username: String, role: Roles.Role): Boolean = 
