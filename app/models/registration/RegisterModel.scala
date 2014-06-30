@@ -1,5 +1,6 @@
 package models.registration
 
+import play.api._
 import play.api.data._
 import play.api.data.Forms._
 import org.joda.time.{ DateTime, DateTimeZone }
@@ -38,10 +39,10 @@ object RegisterModelForm extends components.ProfileComponentImpl {
     mapping(
       "email" -> email.verifying("error.emailExists", !profileService.getByUsername(_).isDefined),
       "password" -> nonEmptyText(minLength = 6),
-      "confirmPassword" -> nonEmptyText(minLength = 6)
+      "passwordConfirm" -> nonEmptyText(minLength = 6)
     )(RegisterModel.apply)(RegisterModel.unapply)
-    verifying("Passwords do not match" , result => result match {
-      case RegisterModel(email, password, confirmPassword) => password != confirmPassword
+    verifying("error.passwordsDoNotMatch" , result => result match {
+      case RegisterModel(email, password, passwordConfirm) => password == passwordConfirm
     })
   )
 }

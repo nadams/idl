@@ -16,6 +16,7 @@ object RegistrationController extends Controller with ProvidesHeader with Profil
   def register = Action { implicit request =>
     RegisterModelForm().bindFromRequest.fold(
       errors => {
+        Logger.info(errors.toString)
         BadRequest(views.html.registration.index(RegisterModel.toModel(errors), RegisterModelErrors.toModel(errors)))
       },
       model => profileService.createProfile(RegisterModel.toEntity(model)) match {

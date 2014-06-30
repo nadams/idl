@@ -115,7 +115,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
           'passwordExpired -> profile.passwordExpired,
           'lastLoginDate -> profile.lastLoginDate
         )
-        .executeInsert(scalar[Int] single),
+        .executeInsert(scalar[Long] single).toInt,
         profile.email,
         profile.displayName,
         profile.password,

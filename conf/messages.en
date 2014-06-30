@@ -1,3 +1,4 @@
 error.passwordsDoNotMatch=Passwords do not match
 validate.error.expected.date=Not a valid date format
 error.startDateMustBeBeforeEndDate=Start Date must be earlier than End Date
+error.emailExists=Email address already exists in the system
