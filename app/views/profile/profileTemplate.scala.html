@@ -1,0 +1,17 @@
+@(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel)
+
+@extraNavItemsTemplate = {
+	@extraNavItems
+}
+
+@extraCssTemplate = {
+    @extraCss
+}
+
+@extraScriptsTemplate = { 
+	@extraScripts
+}
+
+@main(title, extraCssTemplate, extraScriptsTemplate, extraNavItemsTemplate) {
+	@content
+}
