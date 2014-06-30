@@ -1,6 +1,10 @@
 @(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel)
 
 @extraNavItemsTemplate = {
+	<ul class="nav navbar-nav navbar-right nav-actions">
+		<li><a href="@routes.ProfileController.password">Password</a></li>
+	</ul>
+
 	@extraNavItems
 }
 
