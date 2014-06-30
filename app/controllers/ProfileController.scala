@@ -29,17 +29,21 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
   }
 
   def index = IsAuthenticated { username => implicit request =>
-    Ok(views.html.profile.index(ProfileModelErrors()))
+    Ok(views.html.profile.index())
   }
 
-  def updateProfile = IsAuthenticated { username => implicit request => 
+  def password = IsAuthenticated { username => implicit request => 
+    Ok(views.html.profile.password(ProfileModelErrors()))
+  }
+
+  def updatePassword = IsAuthenticated { username => implicit request => 
     ChangePasswordForm().bindFromRequest.fold(
       errors => {
         val currentPassword = errors("currentPassword").formattedMessage._2
         val newPassword = errors("newPassword").formattedMessage._2
         val confirmPassword = errors("confirmPassword").formattedMessage._2
 
-        BadRequest(views.html.profile.index(ProfileModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
+        BadRequest(views.html.profile.password(ProfileModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
       },
       result => profileService.updateProfilePassword(username, result.newPassword) match {
         case true => Redirect(routes.ProfileController.login).withSession(request.session - SessionKeys.username)
