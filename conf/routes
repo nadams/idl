@@ -11,6 +11,7 @@ GET     /profile                            controllers.ProfileController.index
 GET     /profile/password                   controllers.ProfileController.password
 POST    /profile/password                   controllers.ProfileController.updatePassword
 POST    /profile/logout                     controllers.ProfileController.logout
+POST    /profile/becomePlayer               controllers.ProfileController.becomePlayer
 
 GET     /registration                       controllers.RegistrationController.index
 POST    /registration                       controllers.RegistrationController.register

@@ -55,4 +55,8 @@ object ProfileController extends Controller with Secured with ProvidesHeader wit
   def logout = Action { implicit request =>
     Redirect(routes.HomeController.index).withSession(request.session - SessionKeys.username)
   }
+
+  def becomePlayer = IsAuthenticated { username => implicit request => 
+    Redirect(routes.ProfileController.index).flashing("profileIsNowPlayer" -> "Congratulations, you are now an IDL player!")
+  }
 }
