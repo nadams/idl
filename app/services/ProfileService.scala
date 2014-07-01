@@ -14,7 +14,6 @@ trait ProfileServiceComponent {
     def profileIsInRole(username: String, role: Roles.Role): Boolean
     def profileIsInAnyRole(username: String, roles: Set[Roles.Role]): Boolean
     def createProfile(email: String, displayName: String, password: String) : Profile
-    
   }
 }
 

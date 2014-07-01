@@ -38,7 +38,7 @@ object ProfileController
   def index = IsAuthenticated { username => implicit request =>
     profileService.getByUsername(username) match {
       case Some(profile) => Ok(views.html.profile.index(IndexModel(playerService.profileIsPlayer(profile.profileId))))
-      case None => NotFound("The profile `$username` was not found.")
+      case None => profileNotFound(username)
     }
   }
 
@@ -67,6 +67,16 @@ object ProfileController
   }
 
   def becomePlayer = IsAuthenticated { username => implicit request => 
-    Redirect(routes.ProfileController.index).flashing("profileIsNowPlayer" -> "Congratulations, you are now an IDL player!")
-  }
+    profileService.getByUsername(username) match {
+      case Some(profile) => playerService.makeProfileAPlayer(profile) match {
+        case true => Redirect(routes.ProfileController.index).flashing("profileIsNowPlayer" -> "Congratulations, you are now an IDL player!")
+        case false => InternalServerError(
+          views.html.profile.index(IndexModel(playerService.profileIsPlayer(profile.profileId)))
+        ).flashing("makingProfileAPlayerError" -> "Cannot add you as an IDL player.")
+      }
+      case None => profileNotFound(username)
+    } 
+ }
+
+  private def profileNotFound(username: String) = NotFound("The profile `$username` was not found.")
 }

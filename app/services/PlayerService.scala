@@ -7,6 +7,7 @@ trait PlayerServiceComponent {
 
   trait PlayerService {
     def profileIsPlayer(profileId: Int) : Boolean
+    def makeProfileAPlayer(profile: Profile) : Boolean
   }
 }
 
@@ -17,5 +18,8 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
   class PlayerServiceImpl extends PlayerService {
     def profileIsPlayer(profileId: Int) = 
       playerRepository.getPlayerByProfileId(profileId).isDefined
+
+    def makeProfileAPlayer(profile: Profile) =
+      playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, None), profile.profileId)
   }
 }
