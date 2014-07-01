@@ -25,10 +25,9 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   }
 
   def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    teamService.getTeam(id) match {
-      case Some(team) => Ok(views.html.admin.teams.edit(EditTeamModel.toModel(team), EditTeamModelErrors.empty))
-      case None => NotFound(s"No team found with id: $id")
-    }
+    teamService.getTeam(id)
+      .map(team => Ok(views.html.admin.teams.edit(EditTeamModel.toModel(team), EditTeamModelErrors.empty)))
+      .getOrElse(NotFound(s"No team found with id: $id"))
   }
 
   def saveExisting(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
@@ -36,10 +35,8 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   }
 
   def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    teamService.removeTeam(id) match {
-      case true => Ok(Json.toJson(id))
-      case false => InternalServerError("Could not remove team")
-    }
+    if(teamService.removeTeam(id)) Ok(Json.toJson(id))
+    else InternalServerError("Could not remove team")
   }
 
   def players = IsAuthenticated(Roles.Admin) { username => implicit request =>
@@ -82,11 +79,8 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
 
         BadRequest(views.html.admin.teams.edit(model, errors))
       },
-      team => {
-        saveAction(team) match {
-          case true => Redirect(routes.TeamController.index)
-          case false => InternalServerError("Could not save team")
-        }
-      }
+      team => 
+        if(saveAction(team)) Redirect(routes.TeamController.index)
+        else InternalServerError("Could not save team")
     )
 }
