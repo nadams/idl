@@ -28,18 +28,15 @@ object ProfileController
 
         BadRequest(views.html.profile.login(loginModel, errorMessages))
       },
-      user => (request.queryString.get(Secured.returnUrl) match {
-        case Some(x) => Redirect(x.head)
-        case None => Redirect(routes.HomeController.index)
-      }) withSession(SessionKeys.username -> user.username)
+      user => request.queryString.get(Secured.returnUrl).fold(Redirect(routes.HomeController.index))(url => Redirect(url.head))
+        .withSession(SessionKeys.username -> user.username)
     )
   }
 
   def index = IsAuthenticated { username => implicit request =>
-    profileService.getByUsername(username) match {
-      case Some(profile) => Ok(views.html.profile.index(IndexModel(playerService.profileIsPlayer(profile.profileId))))
-      case None => profileNotFound(username)
-    }
+    profileService.getByUsername(username).fold(profileNotFound(username))(profile =>
+      Ok(views.html.profile.index(IndexModel(playerService.profileIsPlayer(profile.profileId))))
+    )
   }
 
   def password = IsAuthenticated { username => implicit request => 
@@ -55,10 +52,12 @@ object ProfileController
 
         BadRequest(views.html.profile.password(ProfileModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
       },
-      result => profileService.updateProfilePassword(username, result.newPassword) match {
-        case true => Redirect(routes.ProfileController.login).withSession(request.session - SessionKeys.username)
-        case false => InternalServerError("Could not update password")
-      }
+      result => 
+        if(profileService.updateProfilePassword(username, result.newPassword)) {
+          Redirect(routes.ProfileController.login).withSession(request.session - SessionKeys.username)
+        } else {
+          InternalServerError("Could not update password")
+        }
     )
   }
 
@@ -67,16 +66,16 @@ object ProfileController
   }
 
   def becomePlayer = IsAuthenticated { username => implicit request => 
-    profileService.getByUsername(username) match {
-      case Some(profile) => playerService.makeProfileAPlayer(profile) match {
-        case true => Redirect(routes.ProfileController.index).flashing("profileIsNowPlayer" -> "Congratulations, you are now an IDL player!")
-        case false => InternalServerError(
+    profileService.getByUsername(username).fold(profileNotFound(username))(profile => 
+      if(playerService.makeProfileAPlayer(profile)) {
+        Redirect(routes.ProfileController.index).flashing("profileIsNowPlayer" -> "Congratulations, you are now an IDL player!")
+      } else {
+        InternalServerError(
           views.html.profile.index(IndexModel(playerService.profileIsPlayer(profile.profileId)))
         ).flashing("makingProfileAPlayerError" -> "Cannot add you as an IDL player.")
       }
-      case None => profileNotFound(username)
-    } 
- }
+    )
+  }
 
   private def profileNotFound(username: String) = NotFound("The profile `$username` was not found.")
 }
