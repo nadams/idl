@@ -22,10 +22,9 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
   }
 
   def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    seasonService.getSeasonById(id) match {
-      case Some(x) => Ok(views.html.admin.seasons.edit(EditSeasonModel.toModel(x), EditSeasonModelErrors.empty))
-      case None => Redirect(routes.SeasonController.create)
-    }
+    seasonService.getSeasonById(id).map(season =>
+      Ok(views.html.admin.seasons.edit(EditSeasonModel.toModel(season), EditSeasonModelErrors.empty))
+    ).getOrElse(Redirect(routes.SeasonController.create))
   }
 
   def saveNew = IsAuthenticated(Roles.Admin) { username => implicit request => 
@@ -37,19 +36,15 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
   }
 
   def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    seasonService.removeSeason(id) match {
-      case true => Ok(Json.toJson(id))
-      case false => InternalServerError("Could not remove season")
-    }
+    if(seasonService.removeSeason(id)) Ok(Json.toJson(id))
+    else InternalServerError("Could not remove season")
   }
 
   def teamSeasons(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request =>
-    seasonService.getSeasonById(id) match {
-      case None => NotFound(s"Season $id not found")
-      case Some(season) => Ok(views.html.admin.seasons.teamSeason(
+    seasonService.getSeasonById(id).map(season => 
+      Ok(views.html.admin.seasons.teamSeason(
         TeamSeasonsModel.toModel(season, teamService.getAllEligibleTeams, teamService.getTeamsForSeason(id))
-      ))
-    }
+      ))).getOrElse(NotFound(s"Season $id not found"))
   }
 
   def assignTeamsToSeason(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
@@ -73,9 +68,8 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
 
         BadRequest(views.html.admin.seasons.edit(editSeasonModel, errorsModel))
       },
-      season => saveAction(season) match {
-        case true => Redirect(routes.SeasonController.index)
-        case false => InternalServerError("Could not save season")
-      }
+      season => 
+        if(saveAction(season)) Redirect(routes.SeasonController.index)
+        else InternalServerError("Could not save season")
     )
 }
