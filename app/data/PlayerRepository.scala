@@ -51,9 +51,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
           WHERE ${PlayerProfileSchema.profileId} = {profileId}
         """
       )
-      .on(
-        'profileId -> profileId
-      )
+      .on('profileId -> profileId)
       .as(singleRowParser singleOpt)
       .map(Player(_))
     } 
@@ -70,9 +68,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
           WHERE ${PlayerSchema.playerId} = {playerId}
         """
       )
-      .on(
-        'playerId -> playerId
-      )
+      .on('playerId -> playerId)
       .as(singleRowParser singleOpt)
       .map(Player(_))
     }
