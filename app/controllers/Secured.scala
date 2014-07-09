@@ -15,9 +15,10 @@ trait Secured extends ProfileComponentImpl {
   }
 
   def IsAuthenticated(roles: Roles.Role*)(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user => 
-    profileService.profileIsInAnyRole(user, roles.toSet) match {
-      case true => Action(request => f(user)(request))
-      case false => Action(request => onUnauthorized(request))
+    if(profileService.profileIsInAnyRole(user, roles.toSet)) {
+      Action(request => f(user)(request))
+    } else {
+      Action(request => onUnauthorized(request))
     }
   }
 }
