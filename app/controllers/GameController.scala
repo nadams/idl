@@ -10,7 +10,7 @@ import security.Roles
 
 object GameController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl {
   def index(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(views.html.admin.games.index())
+    Ok(views.html.admin.seasons.games())
   }
 
   def HasSeason(seasonId: Int)(f: Season => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 
