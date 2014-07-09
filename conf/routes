@@ -41,11 +41,10 @@ POST    /admin/seasons/create               controllers.SeasonController.saveNew
 GET     /admin/seasons/edit/:id             controllers.SeasonController.edit(id: Int)
 POST    /admin/seasons/edit/:id/save        controllers.SeasonController.saveExisting(id: Int)
 POST    /admin/seasons/remove/:id           controllers.SeasonController.remove(id: Int)
-
 GET     /admin/season/:id/teams             controllers.SeasonController.teamSeasons(id: Int)
 POST    /admin/season/:id/teams/remove      controllers.SeasonController.removeTeamsFromSeason(id: Int)
 POST    /admin/season/:id/teams/add         controllers.SeasonController.assignTeamsToSeason(id: Int)
-GET     /admin/season/:id/games             controllers.GameController.index(id: Int)
+GET     /admin/season/:id/games             controllers.SeasonController.games(id: Int)
         
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)
