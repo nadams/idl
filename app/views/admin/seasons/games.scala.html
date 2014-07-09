@@ -17,9 +17,9 @@
 				<tbody>
 					@for(game <- model.games) {
 						<tr>
-							<td>Team 1</td>
-							<td>Team 2</td>
-							<td>arsitenars</td>
+							<td>@game.team1.teamName</td>
+							<td>@game.team2.teamName</td>
+							<td>@game.scheduledTime</td>
 							<td>Scheduled</td>
 							<td>Remove</td>
 						</tr>
