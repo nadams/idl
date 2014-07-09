@@ -1,4 +1,4 @@
-@()(implicit header: MenuModel, req: RequestHeader)
+@(model: models.admin.seasons.GamesModel)(implicit header: MenuModel, req: RequestHeader)
 
 @main("Matches in season 1") {
 	<div class="panel panel-default">
@@ -15,13 +15,15 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>Team 1</td>
-						<td>Team 2</td>
-						<td>arsitenars</td>
-						<td>Scheduled</td>
-						<td>Remove</td>
-					</tr>
+					@for(game <- model.games) {
+						<tr>
+							<td>Team 1</td>
+							<td>Team 2</td>
+							<td>arsitenars</td>
+							<td>Scheduled</td>
+							<td>Remove</td>
+						</tr>
+					}
 				</tbody>
 			</table>
 		</div>
