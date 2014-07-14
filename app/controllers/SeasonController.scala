@@ -55,13 +55,13 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
     handleJsonPost[Seq[Int]](teamIds => Json.toJson(seasonService.removeTeamsFromSeason(id, teamIds)))
   }
 
-  def games(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+  def games(id: Int) = HasSeason(id) { season => implicit request => 
     Ok(views.html.admin.seasons.games(GamesModel.empty))
   }
 
-  def HasSeason(seasonId: Int)(f: Season => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+  def HasSeason(seasonId: Int)(f: => Season => Request[AnyContent] => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     seasonService.getSeasonById(seasonId)
-      .map(f(_))
+      .map(f(_)(request))
       .getOrElse(NotFound(s"Season $seasonId not found"))
   }
 
