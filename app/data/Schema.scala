@@ -74,3 +74,19 @@ object PlayerProfileSchema {
   val playerId = "PlayerId"
   val profileId = "ProfileId"
 }
+
+object GameSchema {
+  val tableName = "Game"
+  val gameId = "GameId"
+  val weekId = "WeekId"
+  val seasonId = "SeasonId"
+  val scheduledPlayTime = "ScheduledPlayTime"
+  val dateCompleted = "DateCompleted"
+}
+
+object TeamGameSchema {
+  val tableName = "TeamGame"
+  val gameId = "GameId"
+  val team1 = "Team1"
+  val team2 = "Team2"
+}
