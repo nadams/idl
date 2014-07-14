@@ -59,7 +59,7 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
     Ok(views.html.admin.seasons.games(GamesModel.empty))
   }
 
-  def HasSeason(seasonId: Int)(f: => Season => Request[AnyContent] => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+  private def HasSeason(seasonId: Int)(f: => Season => Request[AnyContent] => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     seasonService.getSeasonById(seasonId)
       .map(f(_)(request))
       .getOrElse(NotFound(s"Season $seasonId not found"))
