@@ -8,7 +8,7 @@ trait GameRepositoryComponent {
   }
 }
 
-trait GameRepositoryComponentImpl {
+trait GameRepositoryComponentImpl extends GameRepositoryComponent {
   val gameRepository = new GameRepositoryImpl
 
   class GameRepositoryImpl extends GameRepository {
