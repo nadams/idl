@@ -12,7 +12,7 @@ import models.FormExtensions._
 import extensions.DateTimeExtensions._
 import security.Roles
 
-object SeasonController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
+object SeasonController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl with GameComponentImpl {
   def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(views.html.admin.seasons.index(SeasonModel.toModels(seasonService.getAllSeasons, routes.SeasonController)))
   }
