@@ -7,7 +7,8 @@ case class GamesModel(games: Seq[GameModel])
 case class GameModel(
   gameId: Int, 
   team1: String, 
-  team2: String, 
+  team2: String,
+  scheduledWeek: String, 
   scheduledTime: DateTime,
   gameStatus: String,
   removeLink: String
