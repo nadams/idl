@@ -40,11 +40,10 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
     else InternalServerError("Could not remove season")
   }
 
-  def teamSeasons(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request =>
-    seasonService.getSeasonById(id).map(season => 
-      Ok(views.html.admin.seasons.teamSeason(
-        TeamSeasonsModel.toModel(season, teamService.getAllEligibleTeams, teamService.getTeamsForSeason(id))
-      ))).getOrElse(NotFound(s"Season $id not found"))
+  def teamSeasons(id: Int) = HasSeason(id) { season => implicit request => 
+    Ok(views.html.admin.seasons.teamSeason(
+      TeamSeasonsModel.toModel(season, teamService.getAllEligibleTeams, teamService.getTeamsForSeason(id))
+    ))
   }
 
   def assignTeamsToSeason(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
