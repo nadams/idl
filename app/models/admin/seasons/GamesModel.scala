@@ -25,7 +25,8 @@ object GamesModel {
 object GameModel {
   def toModel(game: Game, teams: Option[(Team, Team)]) = {
     val teamNames = teams.map(teams => (teams._1.name, teams._2.name)).getOrElse(("", ""))
+    val status = game.dateCompleted.map(date => "Completed").getOrElse("Pending")
 
-    GameModel(game.gameId, teamNames._1, teamNames._2, Weeks(game.weekId).toString, game.scheduledPlayTime, "", "")
+    GameModel(game.gameId, teamNames._1, teamNames._2, Weeks(game.weekId).toString, game.scheduledPlayTime, status, "")
   }
 }
