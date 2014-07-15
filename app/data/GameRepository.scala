@@ -5,6 +5,7 @@ trait GameRepositoryComponent {
 
   trait GameRepository {
     def getGamesBySeasonId(seasonId: Int) : Seq[Game]
+    def getGamesForProfile(username: String) : Seq[Game]
   }
 }
 
@@ -53,6 +54,43 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         """
       )
       .on('seasonId -> seasonId)
+      .as(multiRowParser)
+      .map(Game(_))
+    }
+
+    def getGamesForProfile(username: String) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT 
+            g.${GameSchema.gameId},
+            g.${GameSchema.weekId},
+            g.${GameSchema.seasonId},
+            g.${GameSchema.scheduledPlayTime},
+            g.${GameSchema.dateCompleted}
+          FROM ${ProfileSchema.tableName} AS p
+            INNER JOIN ${PlayerProfileSchema.tableName} AS pp ON p.${ProfileSchema.profileId} = pp.${PlayerProfileSchema.profileId}
+            INNER JOIN ${PlayerSchema.tableName} AS p2 ON pp.${PlayerProfileSchema.playerId} = p2.${PlayerSchema.playerId}
+            INNER JOIN ${TeamPlayerSchema.tableName} AS tp ON p2.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
+            INNER JOIN ${TeamSchema.tableName} AS t ON tp.${TeamPlayerSchema.teamId} = t.${TeamSchema.teamId}
+            INNER JOIN ( 
+              SELECT 
+                ${TeamGameSchema.gameId} AS GameId, 
+                ${TeamGameSchema.team1Id} AS TeamId
+              FROM ${TeamGameSchema.tableName}
+
+              UNION ALL
+              
+              SELECT 
+                ${TeamGameSchema.gameId} AS GameId, 
+                ${TeamGameSchema.team2Id} AS TeamId 
+              FROM ${TeamGameSchema.tableName}
+            ) AS tg ON t.${TeamSchema.teamId} = tg.TeamId
+            INNER JOIN ${GameSchema.tableName} AS g on tg.GameId = g.${GameSchema.gameId}
+          WHERE p.${ProfileSchema.email} = {email}
+          ORDER BY g.${GameSchema.scheduledPlayTime} DESC
+        """
+      )
+      .on('email -> username)
       .as(multiRowParser)
       .map(Game(_))
     }

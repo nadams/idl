@@ -77,5 +77,9 @@ object ProfileController
     )
   }
 
+  def myGames = IsAuthenticated { username => implicit request => 
+    Ok(views.html.profile.myGames())
+  }
+
   private def profileNotFound(username: String) = NotFound("The profile `$username` was not found.")
 }
