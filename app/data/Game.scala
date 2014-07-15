@@ -7,12 +7,12 @@ case class Game(
   weekId: Int, 
   seasonId: Int, 
   scheduledPlayTime: DateTime, 
-  dateCompleted: DateTime,
-  team1: Option[Int],
-  team2: Option[Int]
+  dateCompleted: Option[DateTime],
+  teams: Option[(Int, Int)]
 )
 
 object Game {
-  def apply(data: (Int, Int, Int, DateTime, DateTime, Option[Int], Option[Int])) : Game = 
-    Game(data._1, data._2, data._3, data._4, data._5, data._6, data._6)
+  def apply(data: (Int, Int, Int, DateTime, Option[DateTime], Option[Int], Option[Int])) : Game = 
+    if(data._6.isDefined && data._7.isDefined) Game(data._1, data._2, data._3, data._4, data._5, Some(data._6.get, data._7.get))
+    else Game(data._1, data._2, data._3, data._4, data._5, None)
 }

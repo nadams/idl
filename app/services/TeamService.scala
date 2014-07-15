@@ -16,6 +16,7 @@ trait TeamServiceComponent {
     def getTeam(id: Int) : Option[Team]
     def getAllTeams() : Seq[Team]
     def removeTeam(teamId: Int) : Boolean
+    def getTeamsForGame(gameId: Int) : Option[(Team, Team)]
   }
 }
 
@@ -32,6 +33,7 @@ trait TeamServiceComponentImpl extends TeamServiceComponent {
     def getTeam(teamId: Int) = teamRepository.getTeam(teamId)
     def getAllTeams() = teamRepository.getAllTeams
     def removeTeam(teamId: Int) = teamRepository.removeTeam(teamId)
+    def getTeamsForGame(gameId: Int) = teamRepository.getTeamsForGame(gameId)
 
     def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) =
       playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId) }

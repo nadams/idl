@@ -87,6 +87,6 @@ object GameSchema {
 object TeamGameSchema {
   val tableName = "TeamGame"
   val gameId = "GameId"
-  val team1 = "Team1Id"
-  val team2 = "Team2Id"
+  val team1Id = "Team1Id"
+  val team2Id = "Team2Id"
 }

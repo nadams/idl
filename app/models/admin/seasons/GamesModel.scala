@@ -1,7 +1,7 @@
 package models.admin.seasons
 
 import org.joda.time.DateTime
-import data.{ Game, Weeks }
+import data.{ Game, Weeks, Team }
 
 case class GamesModel(games: Seq[GameModel])
 case class GameModel(
@@ -17,9 +17,15 @@ case class GameModel(
 object GamesModel {
   def empty = GamesModel(Seq.empty[GameModel])
 
-  def toModel(games: Seq[Game]) = GamesModel(games.map(GameModel.toModel(_)))
+  def toModel(games: Seq[(Game, Option[(Team, Team)])]) = GamesModel(
+    games.map(teamGame => GameModel.toModel(teamGame._1, teamGame._2))
+  )
 }
 
 object GameModel {
-  def toModel(game: Game) = GameModel(game.gameId, "", "", Weeks(game.weekId).toString, game.scheduledPlayTime, "", "")
+  def toModel(game: Game, teams: Option[(Team, Team)]) = {
+    val teamNames = teams.map(teams => (teams._1.name, teams._2.name)).getOrElse(("", ""))
+
+    GameModel(game.gameId, teamNames._1, teamNames._2, Weeks(game.weekId).toString, game.scheduledPlayTime, "", "")
+  }
 }

@@ -55,7 +55,9 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
   }
 
   def games(id: Int) = HasSeason(id) { season => implicit request => 
-    Ok(views.html.admin.seasons.games(GamesModel.toModel(gameService.getGamesBySeasonId(id))))
+    val data = gameService.getGamesBySeasonId(id) map(game => (game, teamService.getTeamsForGame(game.gameId)))
+
+    Ok(views.html.admin.seasons.games(GamesModel.toModel(data)))
   }
 
   private def HasSeason(seasonId: Int)(f: => Season => Request[AnyContent] => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 

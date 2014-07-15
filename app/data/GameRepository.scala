@@ -28,8 +28,8 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
           g.${GameSchema.seasonId},
           g.${GameSchema.scheduledPlayTime},
           g.${GameSchema.dateCompleted},
-          tg.${TeamGameSchema.team1},
-          tg.${TeamGameSchema.team2}
+          tg.${TeamGameSchema.team1Id},
+          tg.${TeamGameSchema.team2Id}
         FROM ${GameSchema.tableName} AS g
           LEFT OUTER JOIN ${TeamGameSchema.tableName} as tg on g.${GameSchema.gameId} = tg.${TeamGameSchema.gameId}
       """
@@ -39,9 +39,9 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       int(GameSchema.weekId) ~
       int(GameSchema.seasonId) ~
       get[DateTime](GameSchema.scheduledPlayTime) ~
-      get[DateTime](GameSchema.dateCompleted) ~
-      get[Option[Int]](TeamGameSchema.team1) ~ 
-      get[Option[Int]](TeamGameSchema.team2) map flatten
+      get[Option[DateTime]](GameSchema.dateCompleted) ~
+      get[Option[Int]](TeamGameSchema.team1Id) ~ 
+      get[Option[Int]](TeamGameSchema.team2Id) map flatten
 
     val multiRowParser = gameParser *
 
