@@ -14,7 +14,7 @@ import security.Roles
 
 object SeasonController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl with GameComponentImpl {
   def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(views.html.admin.seasons.index(SeasonModel.toModels(seasonService.getAllSeasons, routes.SeasonController)))
+    Ok(views.html.admin.seasons.index(SeasonModel.toModels(seasonService.getAllSeasons, routes.SeasonController, routes.GameController)))
   }
 
   def create = IsAuthenticated(Roles.Admin) { username => implicit request => 
@@ -52,12 +52,6 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
 
   def removeTeamsFromSeason(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     handleJsonPost[Seq[Int]](teamIds => Json.toJson(seasonService.removeTeamsFromSeason(id, teamIds)))
-  }
-
-  def games(id: Int) = HasSeason(id) { season => implicit request => 
-    val data = gameService.getGamesBySeasonId(id) map(game => (game, teamService.getTeamsForGame(game.gameId)))
-
-    Ok(views.html.admin.seasons.games(GamesModel.toModel(data)))
   }
 
   private def HasSeason(seasonId: Int)(f: => Season => Request[AnyContent] => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 

@@ -19,7 +19,7 @@ case class SeasonModel(
 object SeasonModel {
   implicit val writesSeason = Json.writes[SeasonModel]
 
-  def toModels(seasons: Seq[Season], routes: controllers.ReverseSeasonController) = seasons.map { season => 
+  def toModels(seasons: Seq[Season], routes: controllers.ReverseSeasonController, gameRoutes: controllers.ReverseGameController) = seasons.map { season => 
     SeasonModel(
       season.seasonId,
       season.name,
@@ -28,7 +28,7 @@ object SeasonModel {
       routes.edit(season.seasonId).url,
       routes.remove(season.seasonId).url,
       routes.teamSeasons(season.seasonId).url,
-      routes.games(season.seasonId).url
+      gameRoutes.index(season.seasonId).url
     )
   }
 }

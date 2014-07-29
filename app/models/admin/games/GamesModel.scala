@@ -1,4 +1,4 @@
-package models.admin.seasons
+package models.admin.games
 
 import org.joda.time.DateTime
 import data.{ Game, Weeks, Team }
