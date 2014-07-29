@@ -6,7 +6,7 @@ trait GameRepositoryComponent {
   trait GameRepository {
     def getGamesBySeasonId(seasonId: Int) : Seq[Game]
     def getGamesForProfile(username: String) : Seq[Game]
-    def addGameResult(gameId: Int, playerName: String, gameResult: GameResult) : Boolean
+    def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
   }
 }
 
@@ -96,50 +96,55 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .map(Game(_))
     }
 
-    def addGameResult(gameId: Int, playerName: String, gameResult: GameResult) = DB.withTransaction { implicit connection => 
-      val playerId = SQL(
-        """
-          SELECT ${PlayerSchema.playerId}
-          FROM ${PlayerSchema.tableName}
-          WHERE ${PlayerSchema.name} = {playerName}
-        """
-      )
-      .on('playerName -> playerName)
-      .as(scalar[Int] singleOpt)
-      .get //This is dangerous, but since we're in a transaction, 
-           //we want an exception to be thrown if an error occurs.
+    def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) = DB.withTransaction { implicit connection => 
+      data.foreach { x => 
+        val playerName = x._1
+        val gameResult = x._2
 
-      SQL(
-        """
-          INSERT INTO ${GameResultSchema.tableName} (
-            ${GameResultSchema.gameId},
-            ${GameResultSchema.playerId},
-            ${GameResultSchema.captures},
-            ${GameResultSchema.pCaptures},
-            ${GameResultSchema.drops},
-            ${GameResultSchema.frags},
-            ${GameResultSchema.deaths}
-          ) VALUES (
-            {gameId},
-            {playerId},
-            {captures},
-            {pCaptures},
-            {drops},
-            {frags},
-            {deaths}
-          )
-        """
-      )
-      .on(
-        'gameId -> gameId,
-        'playerId -> playerId,
-        'captures -> gameResult.captures,
-        'pCaptures -> gameResult.pCaptures,
-        'drops -> gameResult.drops,
-        'frags -> gameResult.frags,
-        'deaths -> gameResult.deaths
-      )
-      .executeUpdate > 0
-    } 
+        val playerId = SQL(
+          """
+            SELECT ${PlayerSchema.playerId}
+            FROM ${PlayerSchema.tableName}
+            WHERE ${PlayerSchema.name} = {playerName}
+          """
+        )
+        .on('playerName -> playerName)
+        .as(scalar[Int] singleOpt)
+        .get //This is dangerous, but since we're in a transaction, 
+             //we want an exception to be thrown if an error occurs.
+
+        SQL(
+          """
+            INSERT INTO ${GameResultSchema.tableName} (
+              ${GameResultSchema.gameId},
+              ${GameResultSchema.playerId},
+              ${GameResultSchema.captures},
+              ${GameResultSchema.pCaptures},
+              ${GameResultSchema.drops},
+              ${GameResultSchema.frags},
+              ${GameResultSchema.deaths}
+            ) VALUES (
+              {gameId},
+              {playerId},
+              {captures},
+              {pCaptures},
+              {drops},
+              {frags},
+              {deaths}
+            )
+          """
+        )
+        .on(
+          'gameId -> gameId,
+          'playerId -> playerId,
+          'captures -> gameResult.captures,
+          'pCaptures -> gameResult.pCaptures,
+          'drops -> gameResult.drops,
+          'frags -> gameResult.frags,
+          'deaths -> gameResult.deaths
+        )
+        .executeUpdate
+      } 
+    }
   }
 }

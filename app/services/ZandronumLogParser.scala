@@ -8,7 +8,7 @@ import java.io.InputStream
 
 class ZandronumLogParser {
   type PlayerStats = Map[String, PlayerData]
-
+  
   private val playerNameRegex = new Regex("""\[.+\] (.+) has connected.""", "name")
   private val playerRenameRegex = new Regex("""\[.+?\] (.+) is now known as (.+)""", "oldName", "newName")
   private val playerJoinedTeamRegex = new Regex("""\[.+?\] (.+) joined the (Red|Blue) team.""", "player", "team")
