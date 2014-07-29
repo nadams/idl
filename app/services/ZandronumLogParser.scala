@@ -62,6 +62,10 @@ class ZandronumLogParser {
 
   private def setSuicides(suicides: Seq[SuicideData], players: PlayerStats) : Unit = 
     suicides.foreach(suicide => players(suicide.player).deaths += 1)
+
+  case class FragData(killer: String, killed: String)
+  case class SuicideData(player: String)
+  case class JoinedTeamData(player: String, team: Teams.Team)
 }
 
 object ZandronumLogParser {
@@ -78,10 +82,6 @@ case class PlayerData(var team: Teams.Team, var captures: Int, var pCaptures: In
 object PlayerData {
   def empty : PlayerData = PlayerData(Teams.Spectator, 0, 0, 0, 0, 0, 0)
 }
-
-case class FragData(killer: String, killed: String)
-case class SuicideData(player: String)
-case class JoinedTeamData(player: String, team: Teams.Team)
 
 object Teams extends Enumeration {
   type Team = Value
