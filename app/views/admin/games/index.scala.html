@@ -1,6 +1,6 @@
-@(model: models.admin.games.GamesModel)(implicit header: MenuModel, req: RequestHeader)
+@(model: models.admin.games.GamesModel)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
 
-@main("Games") {
+@views.html.admin.games.gamesTemplate("Games") {
 	<div class="panel panel-default">
 		<div class="panel-heading"><h4>Games</h4></div>
 		<div class="panel-body">

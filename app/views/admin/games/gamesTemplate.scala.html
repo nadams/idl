@@ -1,0 +1,21 @@
+@(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
+
+@extraNavItemsTemplate = {
+	<ul class="nav navbar-nav navbar-right nav-actions">
+		<li><a href="@routes.GameController.create(seasonId)">Add</a></li>
+	</ul>
+
+	@extraNavItems
+}
+
+@extraCssTemplate = {
+    @extraCss
+}
+
+@extraScriptsTemplate = { 
+	@extraScripts
+}
+
+@main(title, extraCssTemplate, extraScriptsTemplate, extraNavItemsTemplate) {
+	@content
+}
