@@ -15,24 +15,38 @@
 			method="post" 
 			action="@if(model.isNewGame) {@routes.GameController.saveNew(seasonId)} else {@routes.GameController.saveExisting(seasonId, model.gameId)}" 
 			role="form" 
-			class="panel-body">
+			class="panel-body form-horizontal">
 			<input type="hidden" name="gameId" value="@model.gameId" />
 
 			<fieldset>
 				<div class="row form-group">
-					@*<div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
-						<label for="teamName">Name</label>
-						<input type="text" id="teamName" name="teamName" class="form-control" value="@model.teamName" />
-						@if(errors.nameError.nonEmpty) {
-							<span class="help-block">@errors.nameError.get</span>
-						}
-					</div>*@
+					<div class="col-xs-4">
+						<label for="week">Week</label>
+						<select id="week" name="week" class="form-control">
+							@for(week <- model.availableWeeks) {
+								<option value="@week.weekId" @if(week.weekId == 1) {selected="selected"}>@week.weekName</option>
+							}
+						</select>
+					</div>
 				</div>
 				<div class="row form-group">
-					@*<div class="col-xs-4">
-						<label for="isActive">Active</label>
-						<input type="checkbox" id="isActive" name="isActive" @if(model.isActive) {checked="checked"} />
-					</div>*@
+					<div class="col-xs-4">
+						<label for="team1">Team 1</label>
+						<select id="team1" name="team1" class="form-control">
+							<option selected="selected">Select a team...</option>
+							@for(team <- model.availableTeams) {
+								<option value="@team.teamId">@team.teamName</option>
+							}
+						</select>
+
+						<label for="team2">Team 2</label>
+						<select id="team2" name="team2" class="form-control">
+							<option selected="selected">Select a team...</option>
+							@for(team <- model.availableTeams) {
+								<option value="@team.teamId">@team.teamName</option>
+							}
+						</select>
+					</div>
 				</div>
 				<div class="row form-group">
 					<div class="col-xs-4">

@@ -25,7 +25,7 @@ object GameController extends Controller
   }
 
   def create(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
-    Ok(views.html.admin.games.edit(EditGameModel.empty))
+    Ok(views.html.admin.games.edit(EditGameModel.toModel(0, teamService.getTeamsForSeason(seasonId))))
   }
 
   def saveNew(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
