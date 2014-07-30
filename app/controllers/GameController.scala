@@ -36,19 +36,10 @@ object GameController extends Controller
   }
 
   def saveNew(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
-    EditGameForm().bindFromRequest.fold (
-      formWithErrors => { 
-        play.Logger.info(formWithErrors.toString)
-        BadRequest("placeholder") 
-      },
-      model => {
-        if(gameService.addGame(model.toEntity(seasonId))) Redirect(routes.GameController.index(seasonId))
-        else InternalServerError("Unable to save game")
-      }
-    )
+    updateGame(model => gameService.addGame(model.toEntity(seasonId)))
   }
 
-  def edit(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request =>
+  def edit(implicit seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request =>
     gameService.getGame(gameId) map { game => 
       Ok("")
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
@@ -58,4 +49,13 @@ object GameController extends Controller
     Ok("")
   }
 
+  private def updateGame(saveAction: EditGamePostModel => Boolean)(implicit request: Request[AnyContent], seasonId: Int) : Result = 
+    EditGameForm().bindFromRequest.fold(
+      content => {
+        BadRequest("")
+      },
+      model => 
+        if(saveAction(model)) Redirect(routes.GameController.index(seasonId))
+        else InternalServerError("Unable to save game")
+    )
 }
