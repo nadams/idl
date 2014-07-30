@@ -39,19 +39,20 @@ case class EditGamePostModel(gameId: Int, selectedWeekId: Int, selectedTeam1Id: 
 object EditGameForm {
   def apply() = Form(
     mapping(
-      "gameId" -> number(min = 0),
-      "selectedWeekId" -> number(min = 1),
-      "selectedTeam1Id" -> number(min = 1),
-      "selectedTeam2Id" -> number(min = 1)
+      "gameId" -> number,
+      "selectedWeekId" -> number,
+      "selectedTeam1Id" -> number,
+      "selectedTeam2Id" -> number
     )(EditGamePostModel.apply)(EditGamePostModel.unapply)
+    verifying("error.teamSelectionRequired", result => result.selectedTeam1Id != 0 && result.selectedTeam2Id != 0)
     verifying("error.teamsCannotBeSame", result => result.selectedTeam1Id != result.selectedTeam2Id)
   )
 }
 
-case class EditGameErrors(weekError: Option[String], team1Error: Option[String], team2Error: Option[String], globalErrors: Seq[String])
+case class EditGameErrors(gameIdError: Option[String], weekError: Option[String], team1Error: Option[String], team2Error: Option[String], globalErrors: Seq[String])
 
 object EditGameErrors {
-  def empty = EditGameErrors(None, None, None, Seq.empty[String])
+  def empty = EditGameErrors(None, None, None, None, Seq.empty[String])
 }
 
 case class TeamModel(teamId: Int, teamName: String)

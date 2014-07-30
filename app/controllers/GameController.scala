@@ -51,7 +51,15 @@ object GameController extends Controller
   private def updateGame(saveAction: EditGamePostModel => Boolean)(implicit request: Request[AnyContent], seasonId: Int) : Result = 
     EditGameForm().bindFromRequest.fold(
       content => {
-        BadRequest("")
+        val gameIdError = content("gameId").formattedMessage
+        val weekIdError = content("selectedWeekId").formattedMessage
+        val team1IdError = content("selectedTeam1Id").formattedMessage
+        val team2IdError = content("selectedTeam2Id").formattedMessage
+
+        val editGameModel = EditGameModel.toModel(seasonId, gameIdError._1.toInt, weekIdError._1.toInt, team1IdError._1.toInt, team2IdError._1.toInt)
+        val errorsModel = EditGameErrors(gameIdError._2, weekIdError._2, team1IdError._2, team2IdError._2, content.formattedMessages)
+        
+        BadRequest(views.html.admin.games.edit(editGameModel, errorsModel))
       },
       model => 
         if(saveAction(model)) Redirect(routes.GameController.index(seasonId))
