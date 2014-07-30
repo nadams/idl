@@ -134,7 +134,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
               )
             """
           ).on(
-            'gameId -> game.gameId,
+            'gameId -> gameId,
             'team1Id -> teams._1,
             'team2Id -> teams._2
           ).executeUpdate > 0
