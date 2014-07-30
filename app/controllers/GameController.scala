@@ -51,8 +51,11 @@ object GameController extends Controller
     updateGame(model => gameService.updateGame(model.toEntity(seasonId)))
   }
 
-  def remove(implicit seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
-    Redirect(routes.GameController.index(seasonId))
+  def remove(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { username => implicit request => 
+    implicit val iSeasonId = seasonId
+
+    if(gameService.removeGame(gameId)) Redirect(routes.GameController.index(seasonId))
+    else InternalServerError(s"Could not remove game: $gameId")
   }
 
   private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 

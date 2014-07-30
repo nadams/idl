@@ -9,6 +9,7 @@ trait GameRepositoryComponent {
     def getGamesForProfile(username: String) : Seq[Game]
     def addGame(game: Game) : Boolean
     def updateGame(game: Game) : Boolean
+    def removeGame(gameId: Int) : Boolean
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
   }
 }
@@ -197,6 +198,24 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       } else {
         false
       }
+    }
+
+    def removeGame(gameId: Int) = DB.withTransaction { implicit connection => 
+      SQL(
+        s"""
+          DELETE FROM ${TeamGameSchema.tableName}
+          WHERE ${TeamGameSchema.gameId} = {gameId}
+        """
+      ).on('gameId -> gameId)
+      .executeUpdate
+
+      SQL(
+        s"""
+          DELETE FROM ${GameSchema.tableName}
+          WHERE ${GameSchema.gameId} = {gameId}
+        """
+      ).on('gameId -> gameId)
+      .executeUpdate > 0
     }
 
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) = DB.withTransaction { implicit connection => 
