@@ -11,22 +11,31 @@ case class GameModel(
   scheduledWeek: String, 
   scheduledTime: DateTime,
   gameStatus: String,
-  removeLink: String
+  removeLink: String,
+  editLink: String
 )
 
 object GamesModel {
   def empty = GamesModel(Seq.empty[GameModel])
 
-  def toModel(games: Seq[(Game, Option[(Team, Team)])]) = GamesModel(
-    games.map(teamGame => GameModel.toModel(teamGame._1, teamGame._2))
-  )
+  def toModel(seasonId: Int, games: Seq[(Game, Option[(Team, Team)])], routes: controllers.ReverseGameController) = 
+    GamesModel(games.map(teamGame => GameModel.toModel(seasonId, teamGame._1, teamGame._2, routes)))
 }
 
 object GameModel {
-  def toModel(game: Game, teams: Option[(Team, Team)]) = {
+  def toModel(seasonId: Int, game: Game, teams: Option[(Team, Team)], routes: controllers.ReverseGameController) = {
     val teamNames = teams.map(teams => (teams._1.name, teams._2.name)).getOrElse(("", ""))
     val status = game.dateCompleted.map(date => "Completed").getOrElse("Pending")
 
-    GameModel(game.gameId, teamNames._1, teamNames._2, Weeks(game.weekId).toString, game.scheduledPlayTime, status, "")
+    GameModel(
+      game.gameId, 
+      teamNames._1, 
+      teamNames._2, 
+      Weeks(game.weekId).toString, 
+      game.scheduledPlayTime, 
+      status, 
+      routes.remove(seasonId, game.gameId).url, 
+      routes.edit(seasonId, game.gameId).url 
+    )
   }
 }

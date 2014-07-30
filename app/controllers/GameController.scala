@@ -28,7 +28,7 @@ object GameController extends Controller
   def index(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
     val data = gameService.getGamesBySeasonId(seasonId) map(game => (game, teamService.getTeamsForGame(game.gameId)))
 
-    Ok(views.html.admin.games.index(GamesModel.toModel(data)))
+    Ok(views.html.admin.games.index(GamesModel.toModel(seasonId, data, routes.GameController)))
   }
 
   def create(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
@@ -49,6 +49,10 @@ object GameController extends Controller
 
   def saveExisting(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
     Ok("")
+  }
+
+  def remove(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
+    Redirect(routes.GameController.index(seasonId))
   }
 
   private def updateGame(saveAction: EditGamePostModel => Boolean)(implicit request: Request[AnyContent], seasonId: Int) : Result = 

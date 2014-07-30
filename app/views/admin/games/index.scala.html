@@ -12,6 +12,7 @@
 						<th>Scheduled Week</th>
 						<th>Scheduled Time</th>
 						<th>Status</th>
+						<th>Edit</th>
 						<th>Remove</th>
 					</tr>
 				</thead>
@@ -23,7 +24,12 @@
 							<td>@game.scheduledWeek</td>
 							<td>@game.scheduledTime</td>
 							<td>@game.gameStatus</td>
-							<td>Remove</td>
+							<td><a href="@game.editLink" class="btn btn-default">Edit</a></td>
+							<td>
+								<form method="post" action="@game.removeLink">
+									<button class="btn btn-danger">Remove</button>
+								</form>
+							</td>
 						</tr>
 					}
 				</tbody>
