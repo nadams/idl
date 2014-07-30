@@ -76,8 +76,6 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
     }
 
     def insertNews(news: News) : Boolean = DB.withConnection { implicit connection => 
-      import play.Logger
-
       SQL(
         s"""
           INSERT INTO ${NewsSchema.tableName} (
