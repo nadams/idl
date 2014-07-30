@@ -48,10 +48,11 @@ object GameController extends Controller
   }
 
   def saveExisting(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
-    Ok("")
+    implicit val iSeasonId = seasonId
+    updateGame(model => gameService.updateGame(model.toEntity(seasonId)))
   }
 
-  def remove(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
+  def remove(implicit seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
     Redirect(routes.GameController.index(seasonId))
   }
 

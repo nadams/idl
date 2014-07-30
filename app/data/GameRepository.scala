@@ -8,6 +8,7 @@ trait GameRepositoryComponent {
     def getGamesBySeasonId(seasonId: Int) : Seq[Game]
     def getGamesForProfile(username: String) : Seq[Game]
     def addGame(game: Game) : Boolean
+    def updateGame(game: Game) : Boolean
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
   }
 }
@@ -155,6 +156,47 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       } else false
 
       success
+    }
+
+    def updateGame(game: Game) = DB.withTransaction { implicit connection => 
+      val updateGameSuccess = SQL(
+        s"""
+          UPDATE ${GameSchema.tableName}
+          SET
+            ${GameSchema.weekId} = {weekId},
+            ${GameSchema.seasonId} = {seasonId},
+            ${GameSchema.scheduledPlayTime} = {scheduledPlayTime},
+            ${GameSchema.dateCompleted} = {dateCompleted}
+          WHERE ${GameSchema.gameId} = {gameId}
+        """
+      ).on(
+        'gameId -> game.gameId,
+        'weekId -> game.weekId,
+        'seasonId -> game.seasonId,
+        'scheduledPlayTime -> game.scheduledPlayTime,
+        'dateCompleted -> game.dateCompleted
+      ).executeUpdate > 0
+
+      if(updateGameSuccess) {
+        game.teams.map { teams => 
+          SQL(
+            s"""
+              UPDATE ${TeamGameSchema.tableName}
+              SET
+                ${TeamGameSchema.team1Id} = {team1Id},
+                ${TeamGameSchema.team2Id} = {team2Id}
+              WHERE
+                ${TeamGameSchema.gameId} = {gameId}
+            """
+          ).on(
+            'gameId -> game.gameId,
+            'team1Id -> teams._1,
+            'team2Id -> teams._2
+          ).executeUpdate > 0
+        } getOrElse(true)
+      } else {
+        false
+      }
     }
 
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) = DB.withTransaction { implicit connection => 

@@ -11,6 +11,7 @@ trait GameServiceComponent {
     def getGamesBySeasonId(seasonId: Int) : Seq[Game]
     def getGamesForProfile(username: String) : Seq[Game]
     def addGame(game: Game) : Boolean
+    def updateGame(game: Game) : Boolean
     def addGameResult(gameId: Int, data: Array[Byte]) : Unit
   }
 }
@@ -24,6 +25,7 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def getGamesBySeasonId(seasonId: Int) = gameRepository.getGamesBySeasonId(seasonId)
     def getGamesForProfile(username: String) = gameRepository.getGamesForProfile(username)
     def addGame(game: Game) = gameRepository.addGame(game)
+    def updateGame(game: Game) = gameRepository.updateGame(game)
     def addGameResult(gameId: Int, data: Array[Byte]) = {
       val source = Source.fromBytes(data)(Codec.ISO8859)
       val playerStats = ZandronumLogParser.parseLog(source)
