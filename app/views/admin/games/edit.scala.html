@@ -21,29 +21,33 @@
 			<fieldset>
 				<div class="row form-group">
 					<div class="col-xs-4">
-						<label for="week">Week</label>
-						<select id="week" name="week" class="form-control">
+						<label for="selectedWeekId">Week</label>
+						<select id="selectedWeekId" name="selectedWeekId" class="form-control">
 							@for(week <- model.availableWeeks) {
-								<option value="@week.weekId" @if(week.weekId == 1) {selected="selected"}>@week.weekName</option>
+								@if(week.weekId == model.selectedWeekId || (!model.hasWeekSelected && week.weekId == 1)) {
+									<option value="@week.weekId" selected="selected">@week.weekName</option>
+								} else {
+									<option value="@week.weekId">@week.weekName</option>
+								}
 							}
 						</select>
 					</div>
 				</div>
 				<div class="row form-group">
 					<div class="col-xs-4">
-						<label for="team1">Team 1</label>
-						<select id="team1" name="team1" class="form-control">
+						<label for="selectedTeam1Id">Team 1</label>
+						<select id="selectedTeam1Id" name="selectedTeam1Id" class="form-control">
 							<option selected="selected">Select a team...</option>
 							@for(team <- model.availableTeams) {
-								<option value="@team.teamId">@team.teamName</option>
+								<option value="@team.teamId" @if(team.teamId == model.selectedTeam1Id) {selected="selected"}>@team.teamName</option>
 							}
 						</select>
 
-						<label for="team2">Team 2</label>
-						<select id="team2" name="team2" class="form-control">
+						<label for="selectedTeam2Id">Team 2</label>
+						<select id="selectedTeam2Id" name="selectedTeam2Id" class="form-control">
 							<option selected="selected">Select a team...</option>
 							@for(team <- model.availableTeams) {
-								<option value="@team.teamId">@team.teamName</option>
+								<option value="@team.teamId" @if(team.teamId == model.selectedTeam2Id) {selected="selected"}>@team.teamName</option>
 							}
 						</select>
 					</div>

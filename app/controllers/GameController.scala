@@ -11,11 +11,18 @@ import models.FormExtensions._
 import extensions.DateTimeExtensions._
 import security.Roles
 
+trait SeasonIsRequired extends Secured with SeasonComponentImpl {
+  def HasSeason(seasonId: Int)(f: => Season => Request[AnyContent] => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    seasonService.getSeasonById(seasonId)
+      .map(f(_)(request))
+      .getOrElse(Results.NotFound(s"Season $seasonId not found"))
+  }
+}
+
 object GameController extends Controller 
-  with Secured 
+  with SeasonIsRequired 
   with ProvidesHeader 
   with TeamComponentImpl 
-  with SeasonComponentImpl 
   with GameComponentImpl {
   
   def index(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
@@ -25,11 +32,20 @@ object GameController extends Controller
   }
 
   def create(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
-    Ok(views.html.admin.games.edit(EditGameModel.toModel(0, teamService.getTeamsForSeason(seasonId))))
+    Ok(views.html.admin.games.edit(EditGameModel.toModel(seasonId, 0, 0, 0, 0)))
   }
 
   def saveNew(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
-    Ok(views.html.admin.games.edit(EditGameModel.empty))
+    EditGameForm().bindFromRequest.fold (
+      formWithErrors => { 
+        play.Logger.info(formWithErrors.toString)
+        BadRequest("placeholder") 
+      },
+      model => {
+        if(gameService.addGame(model.toEntity(seasonId))) Redirect(routes.GameController.index(seasonId))
+        else InternalServerError("Unable to save game")
+      }
+    )
   }
 
   def edit(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request =>
@@ -40,9 +56,4 @@ object GameController extends Controller
     Ok("")
   }
 
-  private def HasSeason(seasonId: Int)(f: => Season => Request[AnyContent] => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    seasonService.getSeasonById(seasonId)
-      .map(f(_)(request))
-      .getOrElse(NotFound(s"Season $seasonId not found"))
-  }
 }
