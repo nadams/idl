@@ -7,7 +7,7 @@ trait GameRepositoryComponent {
     def getGame(gameId: Int) : Option[Game]
     def getGamesBySeasonId(seasonId: Int) : Seq[Game]
     def getGamesForProfile(username: String) : Seq[Game]
-    def insert(game: Game) : Boolean
+    def addGame(game: Game) : Boolean
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
   }
 }
@@ -110,7 +110,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .map(Game(_))
     }
 
-    def insert(game: Game) = DB.withTransaction { implicit connection => 
+    def addGame(game: Game) = DB.withTransaction { implicit connection => 
       val gameId = SQL(
         s"""
           INSERT INTO ${GameSchema.tableName} (

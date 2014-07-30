@@ -23,7 +23,7 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def getGame(gameId: Int) = gameRepository.getGame(gameId)
     def getGamesBySeasonId(seasonId: Int) = gameRepository.getGamesBySeasonId(seasonId)
     def getGamesForProfile(username: String) = gameRepository.getGamesForProfile(username)
-    def addGame(game: Game) = gameRepository.insert(game)
+    def addGame(game: Game) = gameRepository.addGame(game)
     def addGameResult(gameId: Int, data: Array[Byte]) = {
       val source = Source.fromBytes(data)(Codec.ISO8859)
       val playerStats = ZandronumLogParser.parseLog(source)
