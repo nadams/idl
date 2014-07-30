@@ -49,7 +49,9 @@ object GameController extends Controller
   }
 
   def edit(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request =>
-    Ok("")
+    gameService.getGame(gameId) map { game => 
+      Ok("")
+    } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
   def saveExisting(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 

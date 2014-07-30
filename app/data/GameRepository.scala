@@ -4,6 +4,7 @@ trait GameRepositoryComponent {
   val gameRepository: GameRepository
 
   trait GameRepository {
+    def getGame(gameId: Int) : Option[Game]
     def getGamesBySeasonId(seasonId: Int) : Seq[Game]
     def getGamesForProfile(username: String) : Seq[Game]
     def insert(game: Game) : Boolean
@@ -47,6 +48,18 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       get[Option[Int]](TeamGameSchema.team2Id) map flatten
 
     val multiRowParser = gameParser *
+
+    def getGame(gameId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          $selectAllGamesSql
+          WHERE ${GameSchema.gameId} = {gameId}
+        """
+      )
+      .on('gameId -> gameId)
+      .as(gameParser singleOpt)
+      .map(Game(_))
+    }
 
     def getGamesBySeasonId(seasonId: Int) = DB.withConnection { implicit connection => 
       SQL(

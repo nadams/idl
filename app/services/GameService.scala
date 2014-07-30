@@ -7,6 +7,7 @@ trait GameServiceComponent {
   val gameService: GameService
 
   trait GameService {
+    def getGame(gameId: Int) : Option[Game]
     def getGamesBySeasonId(seasonId: Int) : Seq[Game]
     def getGamesForProfile(username: String) : Seq[Game]
     def addGame(game: Game) : Boolean
@@ -19,6 +20,7 @@ trait GameServiceComponentImpl extends GameServiceComponent {
   val gameService = new GameServiceImpl
 
   class GameServiceImpl extends GameService {
+    def getGame(gameId: Int) = gameRepository.getGame(gameId)
     def getGamesBySeasonId(seasonId: Int) = gameRepository.getGamesBySeasonId(seasonId)
     def getGamesForProfile(username: String) = gameRepository.getGamesForProfile(username)
     def addGame(game: Game) = gameRepository.insert(game)
