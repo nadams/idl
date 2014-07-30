@@ -48,6 +48,12 @@ object EditGameForm {
   )
 }
 
+case class EditGameErrors(weekError: Option[String], team1Error: Option[String], team2Error: Option[String], globalErrors: Seq[String])
+
+object EditGameErrors {
+  def empty = EditGameErrors(None, None, None, Seq.empty[String])
+}
+
 case class TeamModel(teamId: Int, teamName: String)
 case class WeekModel(weekId: Int, weekName: String)
 

@@ -1,4 +1,4 @@
-@(model: models.admin.games.EditGameModel)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
+@(model: models.admin.games.EditGameModel, errors: models.admin.games.EditGameErrors)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
 
 @title() = {
 	@if(model.isNewGame) {
