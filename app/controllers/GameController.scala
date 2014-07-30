@@ -56,7 +56,10 @@ object GameController extends Controller
   }
 
   private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 
-    gameService.getGame(gameId).map(f(_)(request)).getOrElse(NotFound(s"Game with Id: $gameId not found."))
+    gameService.getGame(gameId).map { game => 
+      if(game.status == GameStatus.Pending) f(game)(request)
+      else BadRequest("Cannot alter an already completed game.")
+    }.getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
   private def updateGame(saveAction: EditGamePostModel => Boolean)(implicit request: Request[AnyContent], seasonId: Int) : Result = 

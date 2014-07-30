@@ -1,7 +1,7 @@
 package models.admin.games
 
 import org.joda.time.DateTime
-import data.{ Game, Weeks, Team }
+import data._
 
 case class GamesModel(games: Seq[GameModel])
 case class GameModel(
@@ -10,6 +10,7 @@ case class GameModel(
   team2: String,
   scheduledWeek: String, 
   scheduledTime: DateTime,
+  status: GameStatus.Value,
   gameStatus: String,
   removeLink: String,
   editLink: String
@@ -33,6 +34,7 @@ object GameModel {
       teamNames._2, 
       Weeks(game.weekId).toString, 
       game.scheduledPlayTime, 
+      game.status,
       status, 
       routes.remove(seasonId, game.gameId).url, 
       routes.edit(seasonId, game.gameId).url 
