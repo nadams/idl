@@ -99,8 +99,8 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
 
     def insert(game: Game) = DB.withTransaction { implicit connection => 
       val gameId = SQL(
-        """
-          INSERT INTO ${GameSchema.tableName) (
+        s"""
+          INSERT INTO ${GameSchema.tableName} (
             ${GameSchema.weekId},
             ${GameSchema.seasonId},
             ${GameSchema.scheduledPlayTime},
@@ -122,7 +122,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       val success = if(gameId > 0) {
         game.teams.map { teams => 
           SQL(
-            """
+            s"""
               INSERT INTO ${TeamGameSchema.tableName} (
                 ${TeamGameSchema.gameId},
                 ${TeamGameSchema.team1Id},
@@ -150,7 +150,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         val gameResult = x._2
 
         val playerId = SQL(
-          """
+          s"""
             SELECT ${PlayerSchema.playerId}
             FROM ${PlayerSchema.tableName}
             WHERE ${PlayerSchema.name} = {playerName}
@@ -162,7 +162,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
              //we want an exception to be thrown if an error occurs.
 
         SQL(
-          """
+          s"""
             INSERT INTO ${GameResultSchema.tableName} (
               ${GameResultSchema.gameId},
               ${GameResultSchema.playerId},
