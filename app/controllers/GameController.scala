@@ -39,21 +39,24 @@ object GameController extends Controller
     updateGame(model => gameService.addGame(model.toEntity(seasonId)))
   }
 
-  def edit(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request =>
-    gameService.getGame(gameId) map { game => 
-      implicit val iSeasonId = seasonId
+  def edit(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { game => implicit request =>
+    implicit val iSeasonId = seasonId
 
-      Ok(views.html.admin.games.edit(EditGameModel.toModel(seasonId, game), EditGameErrors.empty))
-    } getOrElse(NotFound(s"Game with Id: $gameId not found."))
+    Ok(views.html.admin.games.edit(EditGameModel.toModel(seasonId, game), EditGameErrors.empty))
   }
 
-  def saveExisting(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
+  def saveExisting(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { game => implicit request =>
     implicit val iSeasonId = seasonId
+   
     updateGame(model => gameService.updateGame(model.toEntity(seasonId)))
   }
 
   def remove(implicit seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
     Redirect(routes.GameController.index(seasonId))
+  }
+
+  private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 
+    gameService.getGame(gameId).map(f(_)(request)).getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
   private def updateGame(saveAction: EditGamePostModel => Boolean)(implicit request: Request[AnyContent], seasonId: Int) : Result = 
