@@ -112,14 +112,12 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
             {dateCompleted}
           )
         """
-      )
-      .on(
+      ).on(
         'weekId -> game.weekId,
         'seasonId -> game.seasonId,
         'scheduledPlayTime -> game.scheduledPlayTime,
         'dateCompleted -> game.dateCompleted
-      )
-      .executeInsert(scalar[Long] single).toInt
+      ).executeInsert(scalar[Long] single).toInt
 
       val success = if(gameId > 0) {
         game.teams.map { teams => 
@@ -135,13 +133,11 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
                 {team2Id}
               )
             """
-          )
-          .on(
+          ).on(
             'gameId -> game.gameId,
             'team1Id -> teams._1,
             'team2Id -> teams._2
-          )
-          .executeUpdate > 0
+          ).executeUpdate > 0
         }.getOrElse(true)
       } else false
 
