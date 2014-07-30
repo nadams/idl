@@ -53,7 +53,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       SQL(
         s"""
           $selectAllGamesSql
-          WHERE ${GameSchema.gameId} = {gameId}
+          WHERE g.${GameSchema.gameId} = {gameId}
         """
       )
       .on('gameId -> gameId)

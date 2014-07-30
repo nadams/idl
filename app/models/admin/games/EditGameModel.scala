@@ -23,6 +23,27 @@ object EditGameModel extends TeamComponentImpl {
       selectedTeam1Id,
       selectedTeam2Id
     )
+
+  def toModel(seasonId: Int, game: Game) = 
+    game.teams.map { team => 
+      EditGameModel(
+        game.gameId,
+        teamService.getTeamsForSeason(seasonId).map(team => TeamModel(team.teamId, team.name)),
+        WeekModel.enumerate,
+        game.weekId,
+        team._1,
+        team._2
+      )
+    } getOrElse(
+      EditGameModel(
+        game.gameId,
+        teamService.getTeamsForSeason(seasonId).map(team => TeamModel(team.teamId, team.name)),
+        WeekModel.enumerate,
+        game.weekId,
+        0,
+        0
+      )
+    )
 }
 
 case class EditGamePostModel(gameId: Int, selectedWeekId: Int, selectedTeam1Id: Int, selectedTeam2Id: Int) {

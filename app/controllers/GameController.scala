@@ -39,15 +39,18 @@ object GameController extends Controller
     updateGame(model => gameService.addGame(model.toEntity(seasonId)))
   }
 
-  def edit(implicit seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request =>
+  def edit(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request =>
     gameService.getGame(gameId) map { game => 
-      Ok("")
+      implicit val iSeasonId = seasonId
+
+      Ok(views.html.admin.games.edit(EditGameModel.toModel(seasonId, game), EditGameErrors.empty))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
   def saveExisting(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
     Ok("")
   }
+
   private def updateGame(saveAction: EditGamePostModel => Boolean)(implicit request: Request[AnyContent], seasonId: Int) : Result = 
     EditGameForm().bindFromRequest.fold(
       content => {
@@ -58,7 +61,7 @@ object GameController extends Controller
 
         val editGameModel = EditGameModel.toModel(seasonId, gameIdError._1.toInt, weekIdError._1.toInt, team1IdError._1.toInt, team2IdError._1.toInt)
         val errorsModel = EditGameErrors(gameIdError._2, weekIdError._2, team1IdError._2, team2IdError._2, content.formattedMessages)
-        
+
         BadRequest(views.html.admin.games.edit(editGameModel, errorsModel))
       },
       model => 
