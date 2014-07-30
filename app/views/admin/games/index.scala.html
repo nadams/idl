@@ -7,37 +7,43 @@
 }
 
 @views.html.admin.games.gamesTemplate("Games") {
-	<div class="panel panel-default">
-		<div class="panel-heading"><h4>Games</h4></div>
-		<div class="panel-body">
-			<table class="table table-striped table-hover">
-				<thead>
-					<tr>
-						<th>Team 1</th>
-						<th>Team 2</th>
-						<th>Scheduled Week</th>
-						<th>Status</th>
-						<th>Edit</th>
-						<th>Remove</th>
-					</tr>
-				</thead>
-				<tbody>
-					@for(game <- model.games) {
-						<tr>
-							<td>@game.team1</td>
-							<td>@game.team2</td>
-							<td>@game.scheduledWeek</td>
-							<td>@game.gameStatus</td>
-							<td><a href="@game.editLink" class="btn btn-default" @canAlter(game)>Edit</a></td>
-							<td>
-								<form method="post" action="@game.removeLink">
-									<button class="btn btn-danger" @canAlter(game))>Remove</button>
-								</form>
-							</td>
-						</tr>
-					}
-				</tbody>
-			</table>
+	@if(model.games.isEmpty) {
+		<div class="jumbotron">
+			<h1>There are no games for this season yet.</h1>
 		</div>
-	</div>
+	} else {
+		<div class="panel panel-default">
+			<div class="panel-heading"><h4>Games</h4></div>
+			<div class="panel-body">
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>Team 1</th>
+								<th>Team 2</th>
+								<th>Scheduled Week</th>
+								<th>Status</th>
+								<th>Edit</th>
+								<th>Remove</th>
+							</tr>
+						</thead>
+						<tbody>
+							@for(game <- model.games) {
+								<tr>
+									<td>@game.team1</td>
+									<td>@game.team2</td>
+									<td>@game.scheduledWeek</td>
+									<td>@game.gameStatus</td>
+									<td><a href="@game.editLink" class="btn btn-default" @canAlter(game)>Edit</a></td>
+									<td>
+										<form method="post" action="@game.removeLink">
+											<button class="btn btn-danger" @canAlter(game))>Remove</button>
+										</form>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+			</div>
+		</div>
+	}
 }
