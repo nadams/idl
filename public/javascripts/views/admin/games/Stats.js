@@ -30,9 +30,12 @@ admin.games.stats.StatsModel = (function(ko) {
 (function($, ko, admin) {
 	'use strict';
 
-	// $('#statsUpload').fileUpload({
+	var statsUpload = $('#statsUpload');
+	if(statsUpload.length) {
+		statsUpload.fileupload({
 
-	// });
+		});
+	}
 
 	var model = new admin.games.stats.StatsModel(admin.games.stats.data);
 	ko.applyBindings(model);
