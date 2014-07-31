@@ -20,7 +20,8 @@ admin.games.stats.StatsModel = (function(ko) {
 			this.seasonId = data.seasonId;
 			this.gameId = data.gameId;
 			this.stats(data.stats);
-		}
+		},
+		uploadStats: function() {}
 	});
 
 	return Model;
