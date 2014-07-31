@@ -2,9 +2,7 @@ package models.admin.games
 
 import play.api.libs.json.Json
 
-case class StatsModel(seasonId: Int, gameId: Int, stats: Option[GameStatsModel]) {
-  val hasUploadedStats = stats.isDefined
-}
+case class StatsModel(seasonId: Int, gameId: Int, stats: Option[GameStatsModel])
 
 object StatsModel {
   implicit val writesGameStatsModel = Json.writes[GameStatsModel]
