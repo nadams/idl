@@ -30,12 +30,16 @@ admin.games.stats.StatsModel = (function(ko) {
 (function($, ko, admin) {
 	'use strict';
 
-	var statsUpload = $('#statsUpload');
-	if(statsUpload.length) {
-		statsUpload.fileupload({
+	// var statsUpload = $('#statsUpload');
+	// if(statsUpload.length) {
+	// 	var routes = admin.games.stats.routes,
+	// 		seasonId = admin.games.stats.data.seasonId,
+	// 		gameId = admin.games.stats.data.gameId;
 
-		});
-	}
+	// 	statsUpload.fileupload({
+	// 		url: routes.controllers.GameController.uploadStats(seasonId, gameId)
+	// 	});
+	// }
 
 	var model = new admin.games.stats.StatsModel(admin.games.stats.data);
 	ko.applyBindings(model);

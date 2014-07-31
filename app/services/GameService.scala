@@ -13,7 +13,7 @@ trait GameServiceComponent {
     def addGame(game: Game) : Boolean
     def updateGame(game: Game) : Boolean
     def removeGame(gameId: Int) : Boolean
-    def addGameResult(gameId: Int, data: Array[Byte]) : Unit
+    def addGameResult(gameId: Int, data: Source) : Unit
   }
 }
 
@@ -28,9 +28,8 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def addGame(game: Game) = gameRepository.addGame(game)
     def updateGame(game: Game) = gameRepository.updateGame(game)
     def removeGame(gameId: Int) = gameRepository.removeGame(gameId)
-    def addGameResult(gameId: Int, data: Array[Byte]) = {
-      val source = Source.fromBytes(data)(Codec.ISO8859)
-      val playerStats = ZandronumLogParser.parseLog(source)
+    def addGameResult(gameId: Int, data: Source) = {
+      val playerStats = ZandronumLogParser.parseLog(data)
       val stats = playerStats.keys.map { key => 
         val value = playerStats(key)
 

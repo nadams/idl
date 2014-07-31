@@ -65,7 +65,18 @@ object GameController extends Controller
   }
 
   def uploadStats(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { username => implicit request => 
-    ???
+    request.body.asMultipartFormData map { data => 
+      import scala.io.{ Source, Codec }
+      import java.io.File
+      
+      data.file("log") map { log => 
+        val source = Source.fromFile(log.ref.file)(Codec.ISO8859)
+
+        gameService.addGameResult(gameId, source)
+      }
+    }
+
+    Ok("")
   }
 
   private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 
