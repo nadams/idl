@@ -61,7 +61,11 @@ object GameController extends Controller
   def stats(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { username => implicit request => 
     implicit val iSeasonId = seasonId
 
-    Ok(views.html.admin.games.stats())
+    Ok(views.html.admin.games.stats(StatsModel(seasonId, gameId, None)))
+  }
+
+  def uploadStats(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { username => implicit request => 
+    ???
   }
 
   private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 

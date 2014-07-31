@@ -1,5 +1,42 @@
-@()(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
+@(model: models.admin.games.StatsModel)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
 
-@views.html.admin.games.gamesTemplate("Stats") {
+@import play.api.libs.json.Json
 
+@extraScripts = {
+	<script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
+	<script src="@routes.Assets.at("fileupload/js/jquery.iframe-transport.js")"></script>
+	<script src="@routes.Assets.at("fileupload/js/jquery.fileupload.js")"></script>
+	<script src="@routes.Assets.at("javascripts/views/admin/games/Stats.js")"></script>
+
+	<script>
+		admin.games.stats = {
+			data: @Html(Json.toJson(model).toString) || {}
+		};
+	</script>
+
+	@helper.javascriptRouter("routes")(
+		routes.javascript.GameController.uploadStats
+	)
 }
+
+@extraCss = {
+	<link rel="stylesheet" href="fileupload/css/jquery.fileupload.css" />
+}
+
+@views.html.admin.games.gamesTemplate("Stats", extraScripts = extraScripts, extraCss = extraCss) {
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>Stats</h4></div>
+		<div class="panel-body">
+			@if(model.hasUploadedStats) {
+
+			} else {
+				<form method="post" action="@routes.GameController.uploadStats(seasonId, model.gameId)">
+					<label for="statsUpload">Upload a demo...</label>
+					<input type="file" name="demo" id="statsUpload" />
+					<button>Upload</button>
+				</form>
+			}
+		</div>
+	</div>
+}
+
