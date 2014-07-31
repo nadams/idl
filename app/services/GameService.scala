@@ -13,7 +13,8 @@ trait GameServiceComponent {
     def addGame(game: Game) : Boolean
     def updateGame(game: Game) : Boolean
     def removeGame(gameId: Int) : Boolean
-    def addGameResult(gameId: Int, data: Source) : Unit
+    def parseGameResults(gameId: Int, source: Source) : Seq[(String, GameResult)]
+    def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) : Unit
   }
 }
 
@@ -28,15 +29,18 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def addGame(game: Game) = gameRepository.addGame(game)
     def updateGame(game: Game) = gameRepository.updateGame(game)
     def removeGame(gameId: Int) = gameRepository.removeGame(gameId)
-    def addGameResult(gameId: Int, data: Source) = {
-      val playerStats = ZandronumLogParser.parseLog(data)
-      val stats = playerStats.keys.map { key => 
+    def parseGameResults(gameId: Int, source: Source) = {
+      val playerStats = ZandronumLogParser.parseLog(source)
+      
+      playerStats.filter(_._2.team != Teams.Spectator).keys.map { key => 
         val value = playerStats(key)
 
         (key, GameResult(0, gameId, 0, value.captures, value.pCaptures, value.drops, value.frags, value.deaths))
       } toSeq
+    }
 
-      gameRepository.addGameResults(gameId, stats)
+    def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) = {
+      gameRepository.addGameResults(gameId, data)
     }
   }
 }

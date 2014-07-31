@@ -72,11 +72,11 @@ object GameController extends Controller
       data.file("log") map { log => 
         val source = Source.fromFile(log.ref.file)(Codec.ISO8859)
 
-        gameService.addGameResult(gameId, source)
-      }
-    }
-
-    Ok("")
+        play.Logger.info(gameService.parseGameResults(gameId, source).head._2.toString)
+        
+        Ok("")
+      } getOrElse(BadRequest("File `log` was not found."))
+    } getOrElse(BadRequest("Invalid form submission."))
   }
 
   private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 
