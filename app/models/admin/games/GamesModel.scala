@@ -13,7 +13,8 @@ case class GameModel(
   status: GameStatus.Value,
   gameStatus: String,
   removeLink: String,
-  editLink: String
+  editLink: String,
+  resultsLink: String
 )
 
 object GamesModel {
@@ -37,7 +38,8 @@ object GameModel {
       game.status,
       status, 
       routes.remove(seasonId, game.gameId).url, 
-      routes.edit(seasonId, game.gameId).url 
+      routes.edit(seasonId, game.gameId).url,
+      routes.stats(seasonId, game.gameId).url
     )
   }
 }

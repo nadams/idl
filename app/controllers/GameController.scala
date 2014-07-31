@@ -58,11 +58,17 @@ object GameController extends Controller
     else InternalServerError(s"Could not remove game: $gameId")
   }
 
+  def stats(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { username => implicit request => 
+    implicit val iSeasonId = seasonId
+
+    Ok(views.html.admin.games.stats())
+  }
+
   private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 
     gameService.getGame(gameId).map { game => 
       if(game.status == GameStatus.Pending) f(game)(request)
       else BadRequest("Cannot alter an already completed game.")
-    }.getOrElse(NotFound(s"Game with Id: $gameId not found."))
+    } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
   private def updateGame(saveAction: EditGamePostModel => Boolean)(implicit request: Request[AnyContent], seasonId: Int) : Result = 

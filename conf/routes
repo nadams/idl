@@ -45,12 +45,14 @@ POST    /admin/seasons/remove/:id               controllers.SeasonController.rem
 GET     /admin/season/:id/teams                 controllers.SeasonController.teamSeasons(id: Int)
 POST    /admin/season/:id/teams/remove          controllers.SeasonController.removeTeamsFromSeason(id: Int)
 POST    /admin/season/:id/teams/add             controllers.SeasonController.assignTeamsToSeason(id: Int)
-GET     /admin/season/:seasonId/games           controllers.GameController.index(seasonId: Int)
-GET     /admin/season/:seasonId/games/create    controllers.GameController.create(seasonId: Int)
-POST    /admin/season/:seasonId/games/create    controllers.GameController.saveNew(seasonId: Int)
+
+GET     /admin/season/:seasonId/games                   controllers.GameController.index(seasonId: Int)
+GET     /admin/season/:seasonId/games/create            controllers.GameController.create(seasonId: Int)
+POST    /admin/season/:seasonId/games/create            controllers.GameController.saveNew(seasonId: Int)
 GET     /admin/season/:seasonId/games/edit/:gameId      controllers.GameController.edit(seasonId: Int, gameId: Int)
 POST    /admin/season/:seasonId/games/edit/:gameId      controllers.GameController.saveExisting(seasonId: Int, gameId: Int)
 POST    /admin/season/:seasonId/games/:gameId/remove    controllers.GameController.remove(seasonId: Int, gameId: Int)
+GET     /admin/season/:seasonId/games/:gameId/stats     controllers.GameController.stats(seasonId: Int, gameId: Int)
         
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)

@@ -32,7 +32,7 @@
 									<td>@game.team1</td>
 									<td>@game.team2</td>
 									<td>@game.scheduledWeek</td>
-									<td>@game.gameStatus</td>
+									<td><a href="@game.resultsLink">@game.gameStatus</a></td>
 									<td><a href="@game.editLink" class="btn btn-default" @canAlter(game)>Edit</a></td>
 									<td>
 										<form method="post" action="@game.removeLink">
