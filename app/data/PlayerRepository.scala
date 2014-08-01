@@ -9,6 +9,10 @@ trait PlayerRepositoryComponent {
     def getPlayerById(playerId: Int) : Option[Player]
     def insertPlayerWithProfile(player: Player, profileId: Int) : Boolean
     def insertPlayerProfile(playerId: Int, profileId: Int) : Boolean
+    def getPlayerByName(name: String) : Option[Player]
+    def getPlayerNamesThatExist(names: Set[String]) : Set[String]
+    def createPlayerFromName(name: String) : Player
+    def batchCreatePlayerFromName(names: Set[String]) : Set[Player]
   }
 }
 
@@ -115,5 +119,59 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       )
       .executeUpdate > 0
     }
+
+    def getPlayerByName(name: String) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          $selectAllPlayersSql
+          WHERE p.${PlayerSchema.name} = {name}
+        """
+      ).on('name -> name)
+      .as(singleRowParser singleOpt)
+      .map(Player(_))
+    }
+
+    def getPlayerNamesThatExist(names: Set[String]) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT
+            p.${PlayerSchema.name}
+          FROM ${PlayerSchema.tableName} AS p
+          WHERE p.${PlayerSchema.name} IN ('{name}')
+        """
+      ).on('names -> s"""${names.mkString("','")}""")
+      .as(scalar[String] *)
+      .toSet
+    }
+
+    def createPlayerFromName(name: String) = DB.withConnection { implicit connection =>
+      insertPlayerFromName(name)
+    }
+
+    def batchCreatePlayerFromName(names: Set[String]) = DB.withTransaction { implicit connection => 
+      names.map(insertPlayerFromName(_))
+    }
+
+    private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
+      Player(
+        SQL(
+          s"""
+            INSERT INTO ${PlayerSchema.tableName} (
+              ${PlayerSchema.name},
+              ${PlayerSchema.isActive}
+            ) VALUES (
+              {name},
+              {isActive}
+            )
+          """
+        ).on(
+          'name -> name,
+          'isActive -> true
+        ).executeInsert(scalar[Long] single)
+        .toInt,
+        name,
+        true,
+        None
+      )
   }
 }

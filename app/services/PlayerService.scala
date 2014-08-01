@@ -8,6 +8,10 @@ trait PlayerServiceComponent {
   trait PlayerService {
     def profileIsPlayer(profileId: Int) : Boolean
     def makeProfileAPlayer(profile: Profile) : Boolean
+    def getPlayerNamesThatExist(names: Set[String]) : Set[String]
+    def getPlayerByName(name: String) : Option[Player]
+    def createPlayerFromName(name: String) : Player
+    def batchCreatePlayerFromName(names: Set[String]) : Set[Player]
   }
 }
 
@@ -16,10 +20,16 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
   val playerService = new PlayerServiceImpl
 
   class PlayerServiceImpl extends PlayerService {
+    def getPlayerByName(name: String) = playerRepository.getPlayerByName(name)
+    def getPlayerNamesThatExist(names: Set[String]) = playerRepository.getPlayerNamesThatExist(names)
+    def createPlayerFromName(name: String) = playerRepository.createPlayerFromName(name)
     def profileIsPlayer(profileId: Int) = 
       playerRepository.getPlayerByProfileId(profileId).isDefined
 
-    def makeProfileAPlayer(profile: Profile) =
+    def makeProfileAPlayer(profile: Profile) = 
       playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, None), profile.profileId)
+
+    def batchCreatePlayerFromName(names: Set[String]) = 
+      playerRepository.batchCreatePlayerFromName(names.diff(playerService.getPlayerNamesThatExist(names)))
   }
 }

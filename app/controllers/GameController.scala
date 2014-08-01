@@ -23,7 +23,8 @@ object GameController extends Controller
   with SeasonIsRequired 
   with ProvidesHeader 
   with TeamComponentImpl 
-  with GameComponentImpl {
+  with GameComponentImpl
+  with PlayerComponentImpl {
   
   def index(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
     val data = gameService.getGamesBySeasonId(seasonId) map(game => (game, teamService.getTeamsForGame(game.gameId)))
@@ -71,9 +72,11 @@ object GameController extends Controller
       
       data.file("log") map { log => 
         val source = Source.fromFile(log.ref.file)(Codec.ISO8859)
+        val stats = gameService.parseGameResults(gameId, source)
+        val playerNames = stats.map(_._1).toSet
+        playerService.batchCreatePlayerFromName(playerNames)
+        gameService.addGameResult(gameId, stats)
 
-        play.Logger.info(gameService.parseGameResults(gameId, source).head._2.toString)
-        
         Ok("")
       } getOrElse(BadRequest("File `log` was not found."))
     } getOrElse(BadRequest("Invalid form submission."))
