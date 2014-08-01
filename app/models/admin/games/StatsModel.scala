@@ -11,4 +11,4 @@ object StatsModel {
   def empty = StatsModel(0, 0, None)
 }
 
-case class GameStatsModel(test: Int)
+case class GameStatsModel(playerName: String, demoUrl: Option[String])

@@ -59,10 +59,12 @@ object GameController extends Controller
     else InternalServerError(s"Could not remove game: $gameId")
   }
 
-  def stats(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { username => implicit request => 
+  def stats(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
     implicit val iSeasonId = seasonId
 
-    Ok(views.html.admin.games.stats(StatsModel(seasonId, gameId, None)))
+    gameService.getGame(gameId).map { game =>
+      Ok(views.html.admin.games.stats(StatsModel(seasonId, gameId, None)))
+    } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
   def uploadStats(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { username => implicit request => 
@@ -77,7 +79,7 @@ object GameController extends Controller
         playerService.batchCreatePlayerFromName(playerNames)
         gameService.addGameResult(gameId, stats)
 
-        Ok("")
+        Ok("Stats uploaded")
       } getOrElse(BadRequest("File `log` was not found."))
     } getOrElse(BadRequest("Invalid form submission."))
   }

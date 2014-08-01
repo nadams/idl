@@ -30,6 +30,16 @@
 		<div class="panel-body">
 
 			<!-- ko if: hasStats -->
+			<table>
+				<tr>
+					<th>Player Name</th>
+					<th>Demo</th>
+				</tr>
+				<tr data-bind="foreach: stats">
+					<td data-bind="text: playerName"></td>
+					<td data-bind="text: demoUrl"></td>
+				</tr>
+			</table>
 			<!-- /ko -->
 
 			<!-- ko ifnot: hasStats -->

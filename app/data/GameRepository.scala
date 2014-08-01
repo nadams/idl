@@ -11,6 +11,7 @@ trait GameRepositoryComponent {
     def updateGame(game: Game) : Boolean
     def removeGame(gameId: Int) : Boolean
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
+    def gameHasResults(gameId: Int) : Boolean
   }
 }
 
@@ -267,6 +268,17 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         )
         .executeUpdate
       } 
+    }
+
+    def gameHasResults(gameId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT COUNT(*)
+          FROM ${GameResultSchema.tableName}
+          WHERE ${GameResultSchema.gameId} = {gameId}
+        """
+      ).on('gameId -> gameId)
+      .as(scalar[Long] single) > 0
     }
   }
 }

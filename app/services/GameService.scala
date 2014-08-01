@@ -2,6 +2,7 @@ package services
 
 import scala.io.{ Source, Codec }
 import data.{ GameRepositoryComponent, Game, GameResult }
+import org.joda.time.{ DateTime, DateTimeZone }
 
 trait GameServiceComponent {
   val gameService: GameService
@@ -39,8 +40,11 @@ trait GameServiceComponentImpl extends GameServiceComponent {
       } toSeq
     }
 
-    def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) = {
-      gameRepository.addGameResults(gameId, data)
-    }
+    def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) = 
+      if(!gameRepository.gameHasResults(gameId))
+        gameRepository.getGame(gameId) map { game => 
+          gameRepository.addGameResults(gameId, data)
+          gameRepository.updateGame(game.copy(dateCompleted = Some(new DateTime(DateTimeZone.UTC))))
+        }
   }
 }
