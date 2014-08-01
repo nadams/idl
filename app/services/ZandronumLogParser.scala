@@ -5,6 +5,7 @@ import scala.util.matching._
 import scala.collection.immutable._
 import scala.collection.mutable.{ Map => MutableMap }
 import java.io.InputStream
+import math.Ordering._
 
 class ZandronumLogParser {
   type PlayerStats = Map[String, PlayerData]
@@ -29,12 +30,13 @@ class ZandronumLogParser {
   }
 
   private def populatePlayers(lines: Array[String]) : PlayerStats =
-    lines.flatMap(playerNameRegex.findFirstMatchIn(_))
-      .map(regex => (regex.group("name"), PlayerData.empty))
-      .toMap ++ 
-    lines.flatMap(playerRenameRegex.findFirstMatchIn(_))
-      .map(regex => (regex.group("newName"), PlayerData.empty))
-      .toMap
+    new TreeMap[String, PlayerData]()(Ordering.by(_.toLowerCase)) ++
+      lines.flatMap(playerNameRegex.findFirstMatchIn(_))
+        .map(regex => (regex.group("name"), PlayerData.empty))
+        .toMap ++ 
+      lines.flatMap(playerRenameRegex.findFirstMatchIn(_))
+        .map(regex => (regex.group("newName"), PlayerData.empty))
+        .toMap
 
   private def getFragCounts(lines: Array[String]) = lines
     .flatMap(fragRegex.findFirstMatchIn(_))
