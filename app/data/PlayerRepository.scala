@@ -137,10 +137,10 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
           SELECT
             p.${PlayerSchema.name}
           FROM ${PlayerSchema.tableName} AS p
-          WHERE p.${PlayerSchema.name} IN ('{name}')
+          WHERE p.${PlayerSchema.name} IN ({names})
         """
-      ).on('names -> s"""${names.mkString("','")}""")
-      .as(scalar[String] *)
+      ).on('names -> names.toSeq)
+      .as(str(PlayerSchema.name) *)
       .toSet
     }
 
