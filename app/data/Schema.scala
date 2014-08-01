@@ -102,3 +102,12 @@ object GameResultSchema {
   val frags = "Frags"
   val deaths = "Deaths"
 }
+
+object GameDemoSchema {
+  val tableName = "GameDemo"
+  val gameId = "GameId"
+  val playerId = "PlayerId"
+  val filename = "Filename"
+  val dateUploaded = "dateUploaded"
+  val demoFile = "demoFile"
+}

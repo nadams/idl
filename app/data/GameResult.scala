@@ -6,3 +6,8 @@ case class GameResult(gameResultId: Int, gameId: Int, playerId: Int, captures: I
   def pickupPercentage : Double = 0.0
   def stopPercentage : Double = 0.0
 }
+
+object GameResult {
+  def apply(x: (Int, Int, Int, Int, Int, Int, Int, Int)) : GameResult = 
+    GameResult(x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8)
+}

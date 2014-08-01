@@ -12,6 +12,7 @@ trait GameRepositoryComponent {
     def removeGame(gameId: Int) : Boolean
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
     def gameHasResults(gameId: Int) : Boolean
+    def getGameResults(gameId: Int) : Map[String, GameResult]
   }
 }
 
@@ -50,7 +51,15 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       get[Option[Int]](TeamGameSchema.team1Id) ~ 
       get[Option[Int]](TeamGameSchema.team2Id) map flatten
 
+    val gameDemoParser = 
+      int(GameDemoSchema.gameDemoId) ~
+      int(GameDemoSchema.gameId) ~
+      int(GameDemoSchema.playerId) ~
+      str(GameDemoSchema.filename) ~
+      get[DateTime](GameDemoSchema.dateUploaded) map flatten
+
     val multiRowParser = gameParser *
+    val gameDemoMultiRow = gameDemoParser *
 
     def getGame(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
@@ -279,6 +288,55 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         """
       ).on('gameId -> gameId)
       .as(scalar[Long] single) > 0
+    }
+
+    def getGameResults(gameId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT
+            gr.${GameResultSchema.gameResultId},
+            gr.${GameResultSchema.gameId},
+            gr.${GameResultSchema.playerId},
+            gr.${GameResultSchema.captures},
+            gr.${GameResultSchema.pCaptures},
+            gr.${GameResultSchema.drops},
+            gr.${GameResultSchema.frags},
+            gr.${GameResultSchema.deaths},
+            p.${PlayerSchema.name}
+          FROM ${GameResultSchema.tableName} AS gr
+            INNER JOIN ${PlayerSchema.tableName} AS p ON gr.${GameResultSchema.playerId} = ${PlayerSchema.playerId}
+          WHERE ${GameResultSchema.gameId} = {gameId}
+        """
+      ).on('gameId -> gameId)
+      .as(
+        int(GameResultSchema.gameResultId) ~
+        int(GameResultSchema.gameId) ~ 
+        int(GameResultSchema.playerId) ~
+        int(GameResultSchema.captures) ~
+        int(GameResultSchema.pCaptures) ~
+        int(GameResultSchema.drops) ~
+        int(GameResultSchema.frags) ~
+        int(GameResultSchema.deaths) ~ 
+        str(PlayerSchema.name) map flatten *
+      ).map(x => (x._9, GameResult(x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8)))
+      .toMap
+    }
+
+    def getGameDemo(gameId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT
+            ${GameDemoSchema.gameDemoId},
+            ${GameDemoSchema.gameId},
+            ${GameDemoSchema.playerId},
+            ${GameDemoSchema.filename},
+            ${GameDemoSchema.dateUploaded}
+          FROM ${GameDemoSchema.tableName} AS gd
+          WHERE ${GameDemoSchema.gameId} = {gameId}
+        """
+      ).on('gameId -> gameId)
+      .as(gameDemoMultiRow)
+      .map(GameDemo(_))
     }
   }
 }

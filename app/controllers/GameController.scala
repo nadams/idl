@@ -63,7 +63,7 @@ object GameController extends Controller
     implicit val iSeasonId = seasonId
 
     gameService.getGame(gameId).map { game =>
-      Ok(views.html.admin.games.stats(StatsModel(seasonId, gameId, None)))
+      Ok(views.html.admin.games.stats(StatsModel(seasonId, gameId, Seq.empty[GameDemoModel])))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
