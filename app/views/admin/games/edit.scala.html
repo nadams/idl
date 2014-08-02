@@ -1,0 +1,84 @@
+@(model: models.admin.games.EditGameModel, errors: models.admin.games.EditGameErrors)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
+
+@title() = {
+	@if(model.isNewGame) {
+		Create Game
+	} else { 
+		Edit Game
+	}
+}
+
+@views.html.admin.games.gamesTemplate(title.toString) {
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4>@title</h4></div>
+		<form 
+			method="post" 
+			action="@if(model.isNewGame) {@routes.GameController.saveNew(seasonId)} else {@routes.GameController.saveExisting(seasonId, model.gameId)}" 
+			role="form" 
+			class="panel-body form-horizontal">
+			<input type="hidden" name="gameId" value="@model.gameId" />
+
+			<fieldset>
+				@if(errors.globalErrors.nonEmpty) {
+					<div class="alert alert-danger">
+						@for(error <- errors.globalErrors) {
+							<p class="error">@error</p>
+						}
+					</div>
+				}
+
+				<div class="row form-group">
+					<div class="col-xs-4 @if(errors.weekError.nonEmpty) { has-error }">
+						<label for="selectedWeekId" class="control-label">Week</label>
+						<select id="selectedWeekId" name="selectedWeekId" class="form-control">
+							@for(week <- model.availableWeeks) {
+								@if(week.weekId == model.selectedWeekId || (!model.hasWeekSelected && week.weekId == 1)) {
+									<option value="@week.weekId" selected="selected">@week.weekName</option>
+								} else {
+									<option value="@week.weekId">@week.weekName</option>
+								}
+							}
+						</select>
+						@if(errors.weekError.nonEmpty) {
+							<span class="help-block">@errors.weekError.get</span>
+						}
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-4 @if(errors.team1Error.nonEmpty) { has-error }">
+						<label for="selectedTeam1Id" class="control-label">Team 1</label>
+						<select id="selectedTeam1Id" name="selectedTeam1Id" class="form-control">
+							<option selected="selected" value="0">Select a team...</option>
+							@for(team <- model.availableTeams) {
+								<option value="@team.teamId" @if(team.teamId == model.selectedTeam1Id) {selected="selected"}>@team.teamName</option>
+							}
+						</select>
+						@if(errors.team1Error.nonEmpty) {
+							<span class="help-block">@errors.team1Error.get</span>
+						}
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-4 @if(errors.team2Error.nonEmpty) { has-error }">
+						<label for="selectedTeam2Id" class="control-label">Team 2</label>
+						<select id="selectedTeam2Id" name="selectedTeam2Id" class="form-control">
+							<option selected="selected" value="0">Select a team...</option>
+							@for(team <- model.availableTeams) {
+								<option value="@team.teamId" @if(team.teamId == model.selectedTeam2Id) {selected="selected"}>@team.teamName</option>
+							}
+						</select>
+						@if(errors.team2Error.nonEmpty) {
+							<span class="help-block">@errors.team2Error.get</span>
+						}
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-4">
+						<button type="submit" class="btn btn-primary">Save</button>
+						<a class="btn btn-default" href="@routes.GameController.index(seasonId)">Cancel</a>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+}

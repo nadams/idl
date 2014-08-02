@@ -1,53 +1,27 @@
-@(errors: models.profile.ProfileModelErrors)(implicit header: MenuModel)
+@(model: models.profile.IndexModel)(implicit header: MenuModel, flash: Flash)
 
-@main("Manage Profile") {
-	<form method="post" action="@routes.ProfileController.updateProfile" class="panel panel-default" role="form">
+@views.html.profile.profileTemplate("Profile") {
+	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h4>Change Password</h4>
+			<h4>Manage Profile</h4>
 		</div>
-		<fieldset class="panel-body">
-
-			@if(errors.globalErrors.nonEmpty) {
-				<div class="alert alert-danger">
-					@for(error <- errors.globalErrors) {
-						<p class="error">@error</p>
-					}
+		<div class="panel-body">
+			@if(flash.get("profileIsNowPlayer").nonEmpty) {
+				<div class="alert alert-success">
+					<p>@flash.get("profileIsNowPlayer")</p>
 				</div>
 			}
 
-			<div class="row form-group">
-				<div class="col-xs-4 @if(errors.currentPasswordError.nonEmpty) { has-error }">
-					<label for="currentPassword" class="control-label">Current Password</label>
-					<input type="password" class="form-control" id="currentPassword" name="currentPassword" />
-					@if(errors.currentPasswordError.nonEmpty) {
-						<span class="help-block">@errors.currentPasswordError.get</span>
-					}
-				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-xs-4 @if(errors.newPasswordError.nonEmpty) { has-error }">
-					<label for="newPassword" class="control-label">New Password</label>
-					<input type="password" class="form-control" id="newPassword" name="newPassword" />
-					@if(errors.newPasswordError.nonEmpty) {
-						<span class="help-block">@errors.newPasswordError.get</span>
-					}
-				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-xs-4 @if(errors.confirmPasswordError.nonEmpty) { has-error }">
-					<label for="confirmPassword" class="control-label">Confirm Password</label>
-					<input type="password" class="form-control" id="confirmPassword" name="confirmPassword" />
-					
-					@if(errors.confirmPasswordError.nonEmpty) {
-						<span class="help-block">@errors.confirmPasswordError.get</span>
-					}
-				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-xs-4">
-					<button type="submit" class="btn btn-primary">Update Password</button>
-				</div>
-			</div>
-		</fieldset>
-	</form>
+			@if(!model.profileIsPlayer) {
+				<form action="@routes.ProfileController.becomePlayer" method="post" role="form">
+					<div class="form-group alert alert-info">
+						<h5>You are not currently an IDL player, would you like to become an IDL player?</h5>
+						<button type="submit" class="btn btn-primary">Yes Please</button>
+					</div>
+				</form>
+			} else {
+				<p>Welcom Player</p>
+			}
+		</div>
+	</div>
 }

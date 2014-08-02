@@ -1,0 +1,53 @@
+@(model: models.registration.RegisterModel, errors: models.registration.RegisterModelErrors)(implicit header: MenuModel)
+
+@main("Register") {
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>Register</h4>
+		</div>
+		<div class="panel-body">
+			<form role="form" class="form-horizontal" method="post">
+				@if(errors.globalErrors.nonEmpty) {
+					<div class="alert alert-danger">
+						@for(error <- errors.globalErrors) {
+							<p class="error">@error</p>
+						}
+					</div>
+				}
+
+				<div class="form-group">
+					<label for="email" class="col-sm-2 control-label">Email</label>
+					<div class="col-sm-4 @if(errors.emailError.nonEmpty) { has-error }">
+						<input type="email" id="email" name="email" class="form-control" value="@model.email" />
+						@if(errors.emailError.nonEmpty) {
+							<span class="help-block">@errors.emailError.get</span>
+						}
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="password" class="col-sm-2 control-label">Password</label>
+					<div class="col-sm-4 @if(errors.passwordError.nonEmpty) { has-error }">
+						<input type="password" id="password" name="password" class="form-control" />
+						@if(errors.passwordError.nonEmpty) {
+							<span class="help-block">@errors.passwordError.get</span>
+						}
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="passwordConfirm" class="col-sm-2 control-label">Confirm Password</label>
+					<div class="col-sm-4 @if(errors.passwordConfirmError.nonEmpty) { has-error }">
+						<input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control" />
+						@if(errors.passwordConfirmError.nonEmpty) {
+							<span class="help-block">@errors.passwordConfirmError.get</span>
+						}
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-4">
+						<button type="submit" class="btn btn-primary">Register</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+}

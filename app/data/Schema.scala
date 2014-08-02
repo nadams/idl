@@ -68,3 +68,46 @@ object NewsSchema {
   val content = "Content"
   val postedByProfileId = "PostedByProfileId"
 }
+
+object PlayerProfileSchema {
+  val tableName = "PlayerProfile"
+  val playerId = "PlayerId"
+  val profileId = "ProfileId"
+}
+
+object GameSchema {
+  val tableName = "Game"
+  val gameId = "GameId"
+  val weekId = "WeekId"
+  val seasonId = "SeasonId"
+  val scheduledPlayTime = "ScheduledPlayTime"
+  val dateCompleted = "DateCompleted"
+}
+
+object TeamGameSchema {
+  val tableName = "TeamGame"
+  val gameId = "GameId"
+  val team1Id = "Team1Id"
+  val team2Id = "Team2Id"
+}
+
+object GameResultSchema {
+  val tableName = "GameResult"
+  val gameResultId = "GameResultId"
+  val gameId = "GameId"
+  val playerId = "PlayerId"
+  val captures = "Captures"
+  val pCaptures = "PCaptures"
+  val drops = "Drops"
+  val frags = "Frags"
+  val deaths = "Deaths"
+}
+
+object GameDemoSchema {
+  val tableName = "GameDemo"
+  val gameId = "GameId"
+  val playerId = "PlayerId"
+  val filename = "Filename"
+  val dateUploaded = "dateUploaded"
+  val demoFile = "demoFile"
+}

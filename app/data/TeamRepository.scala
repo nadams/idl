@@ -14,6 +14,7 @@ trait TeamRepositoryComponent {
     def getTeam(teamId: Int) : Option[Team]
     def getAllTeams() : Seq[Team]
     def removeTeam(teamId: Int) : Boolean
+    def getTeamsForGame(gameId: Int) : Option[(Team, Team)]
   }
 }
 
@@ -31,18 +32,25 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
     val selectAllTeamsSql = 
       s"""
         SELECT
-          t.${TeamSchema.teamId},
-          t.${TeamSchema.name},
-          t.${TeamSchema.isActive} ,
-          t.${TeamSchema.dateCreated}
+          ${teamProjection("t")}
         FROM ${TeamSchema.tableName} AS t
       """
+
     val teamParser = 
       int(TeamSchema.teamId) ~ 
       str(TeamSchema.name) ~ 
       bool(TeamSchema.isActive) ~ 
       get[DateTime](TeamSchema.dateCreated) map flatten
+
     val multiRowParser = teamParser *
+
+    def teamProjection(alias: String) = 
+      s"""
+        $alias.${TeamSchema.teamId},
+        $alias.${TeamSchema.name},
+        $alias.${TeamSchema.isActive} ,
+        $alias.${TeamSchema.dateCreated}
+      """
 
     def getTeamsForSeason(seasonId: Int) = DB.withConnection { implicit connection =>
       SQL(
@@ -214,6 +222,41 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         'teamId -> teamId
       )
       .executeUpdate > 0
+    }
+
+    def getTeamsForGame(gameId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT 
+            t1.${TeamSchema.teamId} AS Team1Id,
+            t1.${TeamSchema.name} AS Team1Name,
+            t1.${TeamSchema.isActive} AS Team1IsActive,
+            t1.${TeamSchema.dateCreated} AS Team1DateCreated,
+            t2.${TeamSchema.teamId} AS Team2Id,
+            t2.${TeamSchema.name} AS Team2Name,
+            t2.${TeamSchema.isActive} AS Team2IsActive,
+            t2.${TeamSchema.dateCreated} AS Team2DateCreated
+          FROM ${TeamGameSchema.tableName} AS tg
+            INNER JOIN ${TeamSchema.tableName} AS t1 on tg.${TeamGameSchema.team1Id} = t1.${TeamSchema.teamId}
+            INNER JOIN ${TeamSchema.tableName} AS t2 on tg.${TeamGameSchema.team2Id} = t2.${TeamSchema.teamId}
+          WHERE ${TeamGameSchema.gameId} = {gameId}
+        """
+      )
+      .on('gameId -> gameId)
+      .as(
+        int("Team1Id") ~
+        str("Team1Name") ~
+        bool("Team1IsActive") ~
+        get[DateTime]("Team1DateCreated") ~
+        int("Team2Id") ~
+        str("Team2Name") ~
+        bool("Team2IsActive") ~
+        get[DateTime]("Team2DateCreated") map flatten singleOpt
+      )
+      .map { data => (
+        Team(data._1, data._2, data._3, data._4), 
+        Team(data._5, data._6, data._7, data._8)
+      )}
     }
   }
 }
