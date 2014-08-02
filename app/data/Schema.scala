@@ -105,9 +105,10 @@ object GameResultSchema {
 
 object GameDemoSchema {
   val tableName = "GameDemo"
+  val gameDemoId = "GameDemoId"
   val gameId = "GameId"
   val playerId = "PlayerId"
   val filename = "Filename"
-  val dateUploaded = "dateUploaded"
-  val demoFile = "demoFile"
+  val dateUploaded = "DateUploaded"
+  val demoFile = "DemoFile"
 }

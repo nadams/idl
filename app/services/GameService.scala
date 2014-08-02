@@ -16,7 +16,7 @@ trait GameServiceComponent {
     def removeGame(gameId: Int) : Boolean
     def parseGameResults(gameId: Int, source: Source) : Seq[(String, GameResult)]
     def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) : Unit
-    def getGameResult(gameId: Int) : Map[String, GameResult]
+    //def getGameResult(gameId: Int) : Map[String, GameResult]
   }
 }
 
