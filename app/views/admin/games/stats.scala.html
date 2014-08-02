@@ -8,6 +8,7 @@
 	)
 
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/ko-bindings/fileupload.binding.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/jquery.iframe-transport.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/jquery.fileupload.js")"></script>
@@ -29,6 +30,16 @@
 		<div class="panel-heading"><h4>Stats</h4></div>
 		<div class="panel-body">
 
+			<div class="alert alert-success alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<span>Stats uploaded successfully.</span>
+			</div>
+
+			<div class="alert alert-danger alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<span>Something went wrong when uploading stats.</span>
+			</div>
+
 			<!-- ko if: hasStats -->
 			<table>
 				<tr>
@@ -44,22 +55,14 @@
 
 			<!-- ko ifnot: hasStats -->
 				<p>This game has no stats, upload a Zandronum demo log file.</p>
-				<form 
-					method="post" 
-					action="@routes.GameController.uploadStats(seasonId, model.gameId)" 
-					enctype="multipart/form-data"
-					role="form" 
-					class="form-horizontal">
 					<div class="form-group">
 						<label for="statsUpload" class="col-sm-2 control-label">Upload a demo...</label>
-						<input type="file" name="log" id="statsUpload" />
+						<input 
+							type="file" 
+							name="log" 
+							id="statsUpload" 
+							data-bind="fileupload: { url: uploadStatsUrl(), multipart: true, done: statsUploadDone, fail: statsUploadFail }" />
 					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-2 col-sm-10">
-							<button class="btn btn-primary">Upload</button>
-						</div>
-					</div>
-				</form>
 			<!-- /ko -->
 		</div>
 	</div>
