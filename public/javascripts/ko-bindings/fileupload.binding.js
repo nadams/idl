@@ -31,6 +31,18 @@
           eventHandler(e, data, options.fail);
         });
       }
+
+      if (options.start) {
+        fileUpload.on('fileuploadstart', function(e) {
+          eventHandler(e, {}, options.start);
+        });
+      }
+
+      if (options.always) {
+        fileUpload.on('fileuploadalways', function(e) {
+          eventHandler(e, {}, options.always);
+        });
+      }
     }
   };
 })(ko, jQuery);

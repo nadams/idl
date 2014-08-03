@@ -76,7 +76,18 @@
 							<input 
 								type="file" 
 								name="demo"
-								data-bind="fileupload: { url: uploadUrl, multipart: true }" />
+								data-bind="fileupload: { 
+									url: uploadUrl, 
+									multipart: true,
+									always: uploadAlways,
+									start: uploadStart,
+									done: uploadDone,
+									fail: uploadFail }" />
+
+							<!-- ko if: isUploading() -->
+							<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
+							<!-- /ko -->
+
 							<!-- /ko -->
 						</td>
 						<!-- /ko -->
@@ -95,7 +106,18 @@
 							<input 
 								type="file" 
 								name="demo"
-								data-bind="fileupload: { url: uploadUrl, multipart: true }" />
+								data-bind="fileupload: { 
+									url: uploadUrl, 
+									multipart: true,
+									always: uploadAlways,
+									start: uploadStart,
+									done: uploadDone,
+									fail: uploadFail }" />
+
+							<!-- ko if: isUploading() -->
+							<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Uploading..." />
+							<!-- /ko -->
+
 							<!-- /ko -->
 						</td>
 						<!-- /ko -->
