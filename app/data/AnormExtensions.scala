@@ -25,4 +25,12 @@ object AnormExtensions {
       s.setTimestamp(index, new Timestamp(aValue.withMillisOfSecond(0).getMillis()))
     }
   }
+
+  implicit object byteArrayToStatement extends ToStatement[Array[Byte]] {
+    import java.sql.PreparedStatement
+    import java.io.ByteArrayInputStream
+
+    def set(s: PreparedStatement, i: Int, data: Array[Byte]) : Unit = 
+      s.setBinaryStream(i, new ByteArrayInputStream(data), data.length)
+  }
 }

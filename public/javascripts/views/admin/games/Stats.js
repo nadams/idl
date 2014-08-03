@@ -13,11 +13,9 @@ admin.games.stats.StatsModel = (function(ko, _) {
     this.uploadStatsSuccess = ko.observable();
     this.uploadStatsFailure = ko.observable();
 
-    this.initialize(data);
+    this.initialize(data, routes);
 
-    this.uploadStatsUrl = ko.computed(function() {
-      return this.routes.controllers.GameController.uploadStats(this.seasonId, this.gameId).url;
-    }, this);
+    this.uploadStatsUrl = this.routes.controllers.GameController.uploadStats(this.seasonId, this.gameId).url;
 
     this.statsUploadFail = function() {
       this.uploadStatsFailure('Something went wrong when uploading stats.');
@@ -29,13 +27,13 @@ admin.games.stats.StatsModel = (function(ko, _) {
   };
 
   ko.utils.extend(Model.prototype, {
-    initialize: function(data) {
+    initialize: function(data, routes) {
       this.seasonId = data.seasonId;
       this.gameId = data.gameId;
       this.statsUploaded(data.statsUploaded);
       this.stats(_.map(data.stats, function(data) {
-        return new admin.games.stats.StatsDemoModel(data);
-      }));
+        return new admin.games.stats.StatsDemoModel(this.seasonId, this.gameId, data, routes);
+      }, this));
     }
   });
 
@@ -45,7 +43,10 @@ admin.games.stats.StatsModel = (function(ko, _) {
 admin.games.stats.StatsDemoModel = (function(ko) {
   'use strict';
 
-  var Model = function(data) {
+  var Model = function(seasonId, gameId, data, routes) {
+    this.routes = routes;
+    this.seasonId = seasonId;
+    this.gameId = gameId;
     this.playerId = 0;
     this.playerName = '';
     this.demo = ko.observable();
@@ -54,6 +55,8 @@ admin.games.stats.StatsDemoModel = (function(ko) {
     this.isDemoUploadShown = ko.observable(false);
 
     this.initialize(data);
+
+    this.uploadUrl = this.routes.controllers.GameController.uploadDemo(this.seasonId, this.gameId, this.playerId).url;
   };
 
   ko.utils.extend(Model.prototype, {

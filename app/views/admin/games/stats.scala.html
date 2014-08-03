@@ -4,7 +4,8 @@
 
 @extraScripts = {
 	@helper.javascriptRouter("routes")(
-		routes.javascript.GameController.uploadStats
+		routes.javascript.GameController.uploadStats,
+		routes.javascript.GameController.uploadDemo
 	)
 
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
@@ -74,8 +75,8 @@
 							</button>
 							<input 
 								type="file" 
-								name="demoFile"
-								data-bind="fileupload: { multipart: true }" />
+								name="demo"
+								data-bind="fileupload: { url: uploadUrl, multipart: true }" />
 							<!-- /ko -->
 						</td>
 						<!-- /ko -->
@@ -93,8 +94,8 @@
 							</button>
 							<input 
 								type="file" 
-								name="demoFile"
-								data-bind="fileupload: { multipart: true }" />
+								name="demo"
+								data-bind="fileupload: { url: uploadUrl, multipart: true }" />
 							<!-- /ko -->
 						</td>
 						<!-- /ko -->

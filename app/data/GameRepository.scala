@@ -1,5 +1,7 @@
 package data
 
+import java.io.File
+
 trait GameRepositoryComponent {
   val gameRepository: GameRepository
 
@@ -14,6 +16,7 @@ trait GameRepositoryComponent {
     def gameHasResults(gameId: Int) : Boolean
     def getGameResults(gameId: Int) : Map[String, GameResult]
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
+    def addDemo(gameId: Int, playerId: Int, file: File) : Option[GameDemo]
   }
 }
 
@@ -344,6 +347,48 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       ).on('gameId -> gameId)
       .as(DemoStatusRecord.multiRowParser)
       .map(DemoStatusRecord(_))
+    }
+
+    def addDemo(gameId: Int, playerId: Int, file: File) = DB.withConnection { implicit connection => 
+      import java.nio.file.{ Files, Paths }
+
+      val data : scala.Array[Byte] = Files.readAllBytes(Paths.get(file.getAbsolutePath))
+      val now = new DateTime(DateTimeZone.UTC)
+      val gameDemoId = SQL(
+        s"""
+          INSERT INTO ${GameDemoSchema.tableName} (
+            ${GameDemoSchema.gameId},
+            ${GameDemoSchema.playerId},
+            ${GameDemoSchema.filename},
+            ${GameDemoSchema.dateUploaded},
+            ${GameDemoSchema.demoFile}
+          )
+          VALUES (
+            {gameId},
+            {playerId},
+            {filename},
+            {date},
+            {data}
+          )
+        """
+      ).on(
+        'gameId -> gameId,
+        'playerId -> playerId,
+        'filename -> file.getName,
+        'date -> now,
+        'data -> data
+      ).executeInsert(scalar[Long] single).toInt
+
+      if(gameDemoId > 0)
+        Some(GameDemo(
+          gameDemoId,
+          gameId,
+          playerId,
+          file.getName,
+          now,
+          ""
+        ))
+      else None
     }
   }
 }

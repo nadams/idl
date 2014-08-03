@@ -84,6 +84,20 @@ object GameController extends Controller
     } getOrElse(BadRequest("Invalid form submission."))
   }
 
+  def uploadDemo(seasonId: Int, gameId: Int, playerId: Int) = HasSeason(seasonId) { username => implicit request => 
+    gameService.getGame(gameId) map { game => 
+      playerService.getPlayer(playerId) map { player => 
+        request.body.asMultipartFormData map { data => 
+          data.file("demo") map { demo => 
+            gameService.addDemo(gameId, playerId, demo.ref.file) map { result => 
+              Ok("Demo uploaded")
+            } getOrElse(InternalServerError("Unable to upload demo"))
+          } getOrElse(BadRequest("File `demo` was not found."))
+        } getOrElse(BadRequest("Invalid form submission."))
+      } getOrElse(NotFound(s"Player with Id $playerId was not found."))
+    } getOrElse(NotFound(s"Game with Id: $gameId not found."))
+  }
+
   private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 
     gameService.getGame(gameId).map { game => 
       if(game.status == GameStatus.Pending) f(game)(request)

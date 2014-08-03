@@ -6,7 +6,7 @@ trait PlayerRepositoryComponent {
   trait PlayerRepository {
     def getAllPlayers() : Seq[Player]
     def getPlayerByProfileId(profileId: Int) : Option[Player]
-    def getPlayerById(playerId: Int) : Option[Player]
+    def getPlayer(playerId: Int) : Option[Player]
     def insertPlayerWithProfile(player: Player, profileId: Int) : Boolean
     def insertPlayerProfile(playerId: Int, profileId: Int) : Boolean
     def getPlayerByName(name: String) : Option[Player]
@@ -60,7 +60,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .map(Player(_))
     } 
 
-    def getPlayerById(playerId: Int) : Option[Player] = DB.withConnection { implicit connection => 
+    def getPlayer(playerId: Int) : Option[Player] = DB.withConnection { implicit connection => 
       SQL(
         s"""
           SELECT 
@@ -68,7 +68,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
             p.${PlayerSchema.name},
             p.${PlayerSchema.isActive},
             NULL AS ${TeamPlayerSchema.teamId}
-          FROM ${PlayerSchema.tableName}
+          FROM ${PlayerSchema.tableName} AS p
           WHERE ${PlayerSchema.playerId} = {playerId}
         """
       )
