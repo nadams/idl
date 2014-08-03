@@ -46,24 +46,28 @@
 			<!-- /ko -->
 
 			<!-- ko if: statsUploaded -->
-			<table>
+			<table class="table table-bordered table-hover">
 				<thead>
 					<tr>
 						<th>Player Name</th>
 						<th>Demo</th>
 					</tr>
 				</thead>
-				<tbody data-bind="foreach: stats">
+				<tbody class="table-striped" data-bind="foreach: stats">
 					<tr>
 						<td data-bind="text: playerName"></td>
-						<td>
-							<!-- ko if: demo -->
-							<span class="bg-success">Uploaded</span>
-							<!-- /ko -->
-							<!-- ko ifnot: demo -->
-							<span class="bg-danger">Missing</span>
-							<!-- /ko -->
+						
+						<!-- ko if: demo -->
+						<td class="bg-success">
+							<span>Uploaded</span>
 						</td>
+						<!-- /ko -->
+
+						<!-- ko ifnot: demo -->
+						<td class="bg-danger">
+							<span>Missing</span>
+						</td>
+						<!-- /ko -->
 					</tr>
 				</tbody>
 			</table>
