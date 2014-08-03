@@ -101,7 +101,7 @@ admin.games.stats.DemoModel = (function(ko, moment) {
     initialize: function(data) {
       this.gameDemoId(data.gameDemoId);
       this.filename(data.filename);
-      this.dateUploaded(data.filename);
+      this.dateUploaded(data.dateUploaded);
     }
   });
 
