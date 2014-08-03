@@ -13,6 +13,7 @@ trait GameRepositoryComponent {
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
     def gameHasResults(gameId: Int) : Boolean
     def getGameResults(gameId: Int) : Map[String, GameResult]
+    def getDemosForGame(gameId: Int) : Seq[GameDemo]
   }
 }
 
@@ -56,7 +57,8 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       int(GameDemoSchema.gameId) ~
       int(GameDemoSchema.playerId) ~
       str(GameDemoSchema.filename) ~
-      get[DateTime](GameDemoSchema.dateUploaded) map flatten
+      get[DateTime](GameDemoSchema.dateUploaded) ~
+      str(PlayerSchema.name) map flatten
 
     val multiRowParser = gameParser *
     val gameDemoMultiRow = gameDemoParser *
@@ -322,16 +324,18 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .toMap
     }
 
-    def getGameDemo(gameId: Int) = DB.withConnection { implicit connection => 
+    def getDemosForGame(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
           SELECT
-            ${GameDemoSchema.gameDemoId},
-            ${GameDemoSchema.gameId},
-            ${GameDemoSchema.playerId},
-            ${GameDemoSchema.filename},
-            ${GameDemoSchema.dateUploaded}
+            gd.${GameDemoSchema.gameDemoId},
+            gd.${GameDemoSchema.gameId},
+            gd.${GameDemoSchema.playerId},
+            gd.${GameDemoSchema.filename},
+            gd.${GameDemoSchema.dateUploaded},
+            p.${PlayerSchema.name}
           FROM ${GameDemoSchema.tableName} AS gd
+            INNER JOIN ${PlayerSchema.tableName} AS p on gd.${GameDemoSchema.playerId} = p.${PlayerSchema.playerId}
           WHERE ${GameDemoSchema.gameId} = {gameId}
         """
       ).on('gameId -> gameId)

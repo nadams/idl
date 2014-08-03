@@ -1,7 +1,7 @@
 package services
 
 import scala.io.{ Source, Codec }
-import data.{ GameRepositoryComponent, Game, GameResult }
+import data.{ GameRepositoryComponent, Game, GameResult, GameDemo }
 import org.joda.time.{ DateTime, DateTimeZone }
 
 trait GameServiceComponent {
@@ -16,7 +16,7 @@ trait GameServiceComponent {
     def removeGame(gameId: Int) : Boolean
     def parseGameResults(gameId: Int, source: Source) : Seq[(String, GameResult)]
     def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) : Unit
-    //def getGameResult(gameId: Int) : Map[String, GameResult]
+    def getDemosForGame(gameId: Int) : Seq[GameDemo]
   }
 }
 
@@ -31,6 +31,7 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def addGame(game: Game) = gameRepository.addGame(game)
     def updateGame(game: Game) = gameRepository.updateGame(game)
     def removeGame(gameId: Int) = gameRepository.removeGame(gameId)
+    def getDemosForGame(gameId: Int) = gameRepository.getDemosForGame(gameId)
     def parseGameResults(gameId: Int, source: Source) = {
       val playerStats = ZandronumLogParser.parseLog(source)
       
