@@ -14,11 +14,17 @@ object StatsModel {
 
   def empty = StatsModel(0, 0, false, Seq.empty[GameDemoModel])
 
-  def toModel(seasonId: Int, gameId: Int, demoUploaded: Boolean) : StatsModel = ???
+  def toModel(seasonId: Int, gameId: Int, demoUploaded: Boolean, demos: Seq[GameDemo]) : StatsModel = 
+    StatsModel(
+      seasonId,
+      gameId,
+      demoUploaded,
+      demos.map(GameDemoModel.toModel(_))
+    )
 }
 
 object GameDemoModel {
-  def toModel() : GameDemoModel = ???
+  def toModel(demo: GameDemo) : GameDemoModel = ???
 }
 
 object DemoData {
