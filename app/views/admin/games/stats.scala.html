@@ -10,6 +10,7 @@
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/ko-bindings/fileupload.binding.js")"></script>
 	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/jquery.iframe-transport.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/jquery.fileupload.js")"></script>
@@ -46,26 +47,55 @@
 			<!-- /ko -->
 
 			<!-- ko if: statsUploaded -->
-			<table class="table table-bordered table-hover">
+			<table class="table table-hover table-condensed">
+				<col style="width: 25%" />
+				<col style="width: 75%" />
 				<thead>
 					<tr>
 						<th>Player Name</th>
 						<th>Demo</th>
 					</tr>
 				</thead>
-				<tbody class="table-striped" data-bind="foreach: stats">
+				<tbody data-bind="foreach: stats">
 					<tr>
 						<td data-bind="text: playerName"></td>
 						
 						<!-- ko if: demo -->
-						<td class="bg-success">
-							<span>Uploaded</span>
+						<td data-bind="css: { danger: !demo(), success: demo() }">
+							<!-- ko ifnot: isDemoUploadShown -->
+							<span>Uploaded: <span data-bind="text: demo().dateUploadedNiceFormat"></span></span>
+							<button class="btn btn-link" data-bind="click: showDemoUpload">Replace?</button>
+							<!-- /ko -->
+
+							<!-- ko if: isDemoUploadShown -->
+							<button type="button" class="close" data-bind="click: hideDemoUpload">
+								<span aria-hidden="true">&times;</span>
+								<span class="sr-only">Close</span>
+							</button>
+							<input 
+								type="file" 
+								name="demoFile"
+								data-bind="fileupload: { multipart: true }" />
+							<!-- /ko -->
 						</td>
 						<!-- /ko -->
 
 						<!-- ko ifnot: demo -->
-						<td class="bg-danger">
-							<span>Missing</span>
+						<td data-bind="css: { danger: !demo(), success: demo() }">
+							<!-- ko ifnot: isMissingDemoUploadShown -->
+							<button class="btn btn-link" data-bind="click: showMissingDemoUpload">Missing</button>
+							<!-- /ko -->
+
+							<!-- ko if: isMissingDemoUploadShown -->
+							<button type="button" class="close" data-bind="click: hideMissingDemoUpload">
+								<span aria-hidden="true">&times;</span>
+								<span class="sr-only">Close</span>
+							</button>
+							<input 
+								type="file" 
+								name="demoFile"
+								data-bind="fileupload: { multipart: true }" />
+							<!-- /ko -->
 						</td>
 						<!-- /ko -->
 					</tr>

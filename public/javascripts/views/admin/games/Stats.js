@@ -1,4 +1,4 @@
-/* global ko, _, admin */
+/* global ko, _, moment, admin */
 
 admin.games.stats.StatsModel = (function(ko, _) {
   'use strict';
@@ -50,6 +50,9 @@ admin.games.stats.StatsDemoModel = (function(ko) {
     this.playerName = '';
     this.demo = ko.observable();
 
+    this.isMissingDemoUploadShown = ko.observable(false);
+    this.isDemoUploadShown = ko.observable(false);
+
     this.initialize(data);
   };
 
@@ -61,13 +64,25 @@ admin.games.stats.StatsDemoModel = (function(ko) {
       if (data.demoData) {
         this.demo(new admin.games.stats.DemoModel(data.demoData));
       }
+    },
+    showMissingDemoUpload: function() {
+      this.isMissingDemoUploadShown(true);
+    },
+    hideMissingDemoUpload: function() {
+      this.isMissingDemoUploadShown(false);
+    },
+    showDemoUpload: function() {
+      this.isDemoUploadShown(true);
+    },
+    hideDemoUpload: function() {
+      this.isDemoUploadShown(false);
     }
   });
 
   return Model;
 })(ko);
 
-admin.games.stats.DemoModel = (function(ko) {
+admin.games.stats.DemoModel = (function(ko, moment) {
   'use strict';
 
   var Model = function(data) {
@@ -76,6 +91,10 @@ admin.games.stats.DemoModel = (function(ko) {
     this.dateUploaded = ko.observable();
 
     this.initialize(data);
+
+    this.dateUploadedNiceFormat = ko.computed(function() {
+      return moment.utc(this.dateUploaded()).fromNow();
+    }, this);
   };
 
   ko.utils.extend(Model.prototype, {
@@ -87,7 +106,7 @@ admin.games.stats.DemoModel = (function(ko) {
   });
 
   return Model;
-})(ko);
+})(ko, moment);
 
 (function(ko, admin) {
   'use strict';
