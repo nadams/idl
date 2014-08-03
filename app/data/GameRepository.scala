@@ -332,40 +332,18 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
             p.${PlayerSchema.name},
             gd.${GameDemoSchema.gameDemoId},
             gd.${GameDemoSchema.filename},
-            gd.${GameDemoSchema.dateUploaded},
-            CASE
-              WHEN g.DateCompleted IS NULL THEN false
-              ELSE true
-            END AS StatsUploaded
+            gd.${GameDemoSchema.dateUploaded}
           FROM ${PlayerSchema.tableName} AS p 
             INNER JOIN ${TeamPlayerSchema.tableName} AS tp on p.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
             INNER JOIN ${GameResultSchema.tableName} AS gr on p.${PlayerSchema.playerId} = gr.${GameResultSchema.playerId}
             INNER JOIN ${GameSchema.tableName} AS g on gr.${GameResultSchema.gameId} = g.${GameSchema.gameId}
             LEFT OUTER JOIN ${GameDemoSchema.tableName} AS gd on gr.${GameResultSchema.gameId} = gd.${GameDemoSchema.gameId}
+              AND gd.${GameDemoSchema.playerId} = p.${PlayerSchema.playerId}
           WHERE gr.${GameResultSchema.gameId} = {gameId}
         """
       ).on('gameId -> gameId)
       .as(DemoStatusRecord.multiRowParser)
       .map(DemoStatusRecord(_))
     }
-
-    // def getDemosForGame(gameId: Int) = DB.withConnection { implicit connection => 
-    //   SQL(
-    //     s"""
-    //       SELECT
-    //         gd.${GameDemoSchema.gameDemoId},
-    //         gd.${GameDemoSchema.gameId},
-    //         gd.${GameDemoSchema.playerId},
-    //         gd.${GameDemoSchema.filename},
-    //         gd.${GameDemoSchema.dateUploaded},
-    //         p.${PlayerSchema.name}
-    //       FROM ${GameDemoSchema.tableName} AS gd
-    //         INNER JOIN ${PlayerSchema.tableName} AS p on gd.${GameDemoSchema.playerId} = p.${PlayerSchema.playerId}
-    //       WHERE ${GameDemoSchema.gameId} = {gameId}
-    //     """
-    //   ).on('gameId -> gameId)
-    //   .as(gameDemoMultiRow)
-    //   .map(GameDemo(_))
-    // }
   }
 }
