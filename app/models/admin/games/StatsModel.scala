@@ -1,10 +1,9 @@
 package models.admin.games
 
 import play.api.libs.json.Json
-import org.joda.time.format.ISODateTimeFormat
-import com.github.nscala_time.time.Imports._
-import formatters.DateTimeFormatter
-import _root_.data._
+import org.joda.time.DateTime
+import formatters.DateTimeFormatter._
+import data._
 
 
 case class StatsModel(seasonId: Int, gameId: Int, statsUploaded: Boolean, stats: Seq[GameDemoModel])
