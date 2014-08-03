@@ -9,6 +9,7 @@
 
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/ko-bindings/fileupload.binding.js")"></script>
+	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/jquery.iframe-transport.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/jquery.fileupload.js")"></script>
@@ -44,20 +45,31 @@
 			</div>
 			<!-- /ko -->
 
-			<!-- ko if: hasStats -->
+			<!-- ko if: statsUploaded -->
 			<table>
-				<tr>
-					<th>Player Name</th>
-					<th>Demo</th>
-				</tr>
-				<tr data-bind="foreach: stats">
-					<td data-bind="text: playerName"></td>
-					<td data-bind="text: demoUrl"></td>
-				</tr>
+				<thead>
+					<tr>
+						<th>Player Name</th>
+						<th>Demo</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: stats">
+					<tr>
+						<td data-bind="text: playerName"></td>
+						<td>
+							<!-- ko if: demo -->
+							<span class="bg-success">Uploaded</span>
+							<!-- /ko -->
+							<!-- ko ifnot: demo -->
+							<span class="bg-danger">Missing</span>
+							<!-- /ko -->
+						</td>
+					</tr>
+				</tbody>
 			</table>
 			<!-- /ko -->
 
-			<!-- ko ifnot: hasStats -->
+			<!-- ko ifnot: statsUploaded -->
 			<p>This game has no stats, upload a Zandronum demo log file.</p>
 			<div class="form-group">
 				<label for="statsUpload" class="col-sm-2 control-label">Upload a demo...</label>
@@ -70,5 +82,6 @@
 			<!-- /ko -->
 		</div>
 	</div>
+	<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 }
 
