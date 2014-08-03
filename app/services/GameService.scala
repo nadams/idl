@@ -18,7 +18,7 @@ trait GameServiceComponent {
     def parseGameResults(gameId: Int, source: Source) : Seq[(String, GameResult)]
     def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) : Unit
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
-    def addDemo(gameId: Int, playerId: Int, file: File) : Option[GameDemo]
+    def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
   }
 }
 
@@ -34,7 +34,7 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def updateGame(game: Game) = gameRepository.updateGame(game)
     def removeGame(gameId: Int) = gameRepository.removeGame(gameId)
     def getDemoStatusForGame(gameId: Int) = gameRepository.getDemoStatusForGame(gameId)
-    def addDemo(gameId: Int, playerId: Int, file: File) = gameRepository.addDemo(gameId, playerId, file)
+    def addDemo(gameId: Int, playerId: Int, filename: String, file: File) = gameRepository.addDemo(gameId, playerId, filename, file)
 
     def parseGameResults(gameId: Int, source: Source) = {
       val playerStats = ZandronumLogParser.parseLog(source)

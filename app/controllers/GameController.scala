@@ -89,7 +89,7 @@ object GameController extends Controller
       playerService.getPlayer(playerId) map { player => 
         request.body.asMultipartFormData map { data => 
           data.file("demo") map { demo => 
-            gameService.addDemo(gameId, playerId, demo.ref.file) map { result => 
+            gameService.addDemo(gameId, playerId, demo.filename, demo.ref.file) map { result => 
               Ok("Demo uploaded")
             } getOrElse(InternalServerError("Unable to upload demo"))
           } getOrElse(BadRequest("File `demo` was not found."))

@@ -16,7 +16,7 @@ trait GameRepositoryComponent {
     def gameHasResults(gameId: Int) : Boolean
     def getGameResults(gameId: Int) : Map[String, GameResult]
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
-    def addDemo(gameId: Int, playerId: Int, file: File) : Option[GameDemo]
+    def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
   }
 }
 
@@ -349,7 +349,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .map(DemoStatusRecord(_))
     }
 
-    def addDemo(gameId: Int, playerId: Int, file: File) = DB.withConnection { implicit connection => 
+    def addDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
       import java.nio.file.{ Files, Paths }
 
       val data : scala.Array[Byte] = Files.readAllBytes(Paths.get(file.getAbsolutePath))
@@ -374,7 +374,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       ).on(
         'gameId -> gameId,
         'playerId -> playerId,
-        'filename -> file.getName,
+        'filename -> filename,
         'date -> now,
         'data -> data
       ).executeInsert(scalar[Long] single).toInt
