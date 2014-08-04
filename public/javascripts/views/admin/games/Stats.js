@@ -5,31 +5,41 @@ admin.games.stats.StatsModel = (function(ko, _) {
 
   var Model = function(data, routes) {
     this.routes = routes;
-    this.seasonId = 0;
-    this.gameId = 0;
+    this.seasonId = ko.observable(0);
+    this.gameId = ko.observable(0);
     this.statsUploaded = ko.observable(false);
     this.stats = ko.observableArray();
 
     this.uploadStatsSuccess = ko.observable();
     this.uploadStatsFailure = ko.observable();
+    this.isUploading = ko.observable(false);
 
     this.initialize(data, routes);
 
-    this.uploadStatsUrl = this.routes.controllers.GameController.uploadStats(this.seasonId, this.gameId).url;
+    this.uploadStatsUrl = this.routes.controllers.GameController.uploadStats(this.seasonId(), this.gameId()).url;
+
+    this.statsUploadStart = function() {
+      this.isUploading(true);
+    }.bind(this);
 
     this.statsUploadFail = function() {
       this.uploadStatsFailure('Something went wrong when uploading stats.');
     }.bind(this);
 
-    this.statsUploadDone = function(data) {
+    this.statsUploadDone = function(e, data) {
       this.uploadStatsSuccess('Stats uploaded successfully.');
+      this.initialize(data.result, this.routes);
+    }.bind(this);
+
+    this.statsUploadAlways = function() {
+      this.isUploading(false);
     }.bind(this);
   };
 
   ko.utils.extend(Model.prototype, {
     initialize: function(data, routes) {
-      this.seasonId = data.seasonId;
-      this.gameId = data.gameId;
+      this.seasonId(data.seasonId);
+      this.gameId(data.gameId);
       this.statsUploaded(data.statsUploaded);
       this.stats(_.map(data.stats, function(data) {
         return new admin.games.stats.StatsDemoModel(this.seasonId, this.gameId, data, routes);

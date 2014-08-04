@@ -390,5 +390,38 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         ))
       else None
     }
+
+    // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
+    //   import java.nio.file.{ Files, Paths }
+
+    //   val data : scala.Array[Byte] = Files.readAllBytes(Paths.get(file.getAbsolutePath))
+    //   val now = new DateTime(DateTimeZone.UTC)
+    //   val result = SQL(
+    //     s"""
+    //       UPDATE ${GameDemoSchema.tableName}
+    //         SET ${GameDemoSchema.filename} = {filename},
+    //         SET ${GameDemoSchema.dateUploaded} = {date},
+    //         SET ${GameDemoSchema.demoFile} = {data}
+    //       WHERE ${GameDemoSchema.gameId} = {gameId}
+    //         AND ${GameDemoSchema.playerId} = {playerId}
+    //     """
+    //   ).on(
+    //     'gameId -> gameId,
+    //     'playerId -> playerId,
+    //     'filename -> filename,
+    //     'date -> now,
+    //     'data -> data
+    //   ).executeUpdate > 0
+
+    //   if(result > 0)
+    //     Some(GameDemo(
+    //       gameDemoId,
+    //       gameId,
+    //       playerId,
+    //       filename,
+    //       now,
+    //       ""
+    //     ))
+    // }
   }
 }

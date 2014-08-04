@@ -48,6 +48,11 @@
 			<!-- /ko -->
 
 			<!-- ko if: statsUploaded -->
+
+			<!-- ko if: stats().length === 0 -->
+			<p>It looks like something may have gone wrong with the stats uploading...</p>
+			<!-- /ko -->
+
 			<table class="table table-hover table-condensed">
 				<col style="width: 25%" />
 				<col style="width: 75%" />
@@ -132,7 +137,17 @@
 					type="file" 
 					name="log" 
 					id="statsUpload" 
-					data-bind="fileupload: { url: uploadStatsUrl(), multipart: true, done: statsUploadDone, fail: statsUploadFail }" />
+					data-bind="fileupload: { 
+						url: uploadStatsUrl, 
+						multipart: true, 
+						always: statsUploadAlways,
+						start: statsUploadStart,
+						done: statsUploadDone,
+						fail: statsUploadFail }" />
+
+				<!-- ko if: isUploading() -->
+				<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
+				<!-- /ko -->
 			</div>
 			<!-- /ko -->
 		</div>
