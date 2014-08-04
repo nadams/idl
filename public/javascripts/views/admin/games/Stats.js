@@ -42,7 +42,7 @@ admin.games.stats.StatsModel = (function(ko, _) {
       this.gameId(data.gameId);
       this.statsUploaded(data.statsUploaded);
       this.stats(_.map(data.stats, function(data) {
-        return new admin.games.stats.StatsDemoModel(this.seasonId, this.gameId, data, routes);
+        return new admin.games.stats.StatsDemoModel(this.seasonId(), this.gameId(), data, routes);
       }, this));
     }
   });

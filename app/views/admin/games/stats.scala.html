@@ -25,7 +25,7 @@
 }
 
 @extraCss = {
-	<link rel="stylesheet" href="fileupload/css/jquery.fileupload.css" />
+	<link rel="stylesheet" href="@routes.Assets.at("fileupload/css/jquery.fileupload.css")" />
 }
 
 @views.html.admin.games.gamesTemplate("Stats", extraScripts = extraScripts, extraCss = extraCss) {
