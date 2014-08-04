@@ -33,52 +33,27 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
     import play.api.Play.current
     import AnormExtensions._
 
-    val selectAllGamesSql = 
-      s"""
-        SELECT
-          g.${GameSchema.gameId},
-          g.${GameSchema.weekId},
-          g.${GameSchema.seasonId},
-          g.${GameSchema.scheduledPlayTime},
-          g.${GameSchema.dateCompleted},
-          tg.${TeamGameSchema.team1Id},
-          tg.${TeamGameSchema.team2Id}
-        FROM ${GameSchema.tableName} AS g
-          LEFT OUTER JOIN ${TeamGameSchema.tableName} as tg on g.${GameSchema.gameId} = tg.${TeamGameSchema.gameId}
-      """
-
-    val gameParser = 
-      int(GameSchema.gameId) ~
-      int(GameSchema.weekId) ~
-      int(GameSchema.seasonId) ~
-      get[DateTime](GameSchema.scheduledPlayTime) ~
-      get[Option[DateTime]](GameSchema.dateCompleted) ~
-      get[Option[Int]](TeamGameSchema.team1Id) ~ 
-      get[Option[Int]](TeamGameSchema.team2Id) map flatten
-
-    val multiRowParser = gameParser *
-
     def getGame(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          $selectAllGamesSql
+          ${Game.selectAllSql}
           WHERE g.${GameSchema.gameId} = {gameId}
         """
       )
       .on('gameId -> gameId)
-      .as(gameParser singleOpt)
+      .as(Game.singleRowParser singleOpt)
       .map(Game(_))
     }
 
     def getGamesBySeasonId(seasonId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          $selectAllGamesSql
+          ${Game.selectAllSql}
           WHERE g.${GameSchema.seasonId} = {seasonId}
         """
       )
       .on('seasonId -> seasonId)
-      .as(multiRowParser)
+      .as(Game.multiRowParser)
       .map(Game(_))
     }
 
@@ -115,7 +90,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         """
       )
       .on('email -> username)
-      .as(multiRowParser)
+      .as(Game.multiRowParser)
       .map(Game(_))
     }
 
