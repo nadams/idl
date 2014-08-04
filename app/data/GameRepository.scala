@@ -55,16 +55,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       get[Option[Int]](TeamGameSchema.team1Id) ~ 
       get[Option[Int]](TeamGameSchema.team2Id) map flatten
 
-    val gameDemoParser = 
-      int(GameDemoSchema.gameDemoId) ~
-      int(GameDemoSchema.gameId) ~
-      int(GameDemoSchema.playerId) ~
-      str(GameDemoSchema.filename) ~
-      get[DateTime](GameDemoSchema.dateUploaded) ~
-      str(PlayerSchema.name) map flatten
-
     val multiRowParser = gameParser *
-    val gameDemoMultiRow = gameDemoParser *
 
     def getGame(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
