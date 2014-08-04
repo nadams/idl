@@ -8,7 +8,6 @@ import org.joda.time.DateTime
 case class GameDemo(gameDemoId: Int, gameId: Int, playerId: Int, filename: String, dateUploaded: DateTime)
 
 object GameDemo {
-
   lazy val selectAllSql = 
     s"""
       SELECT 
@@ -25,8 +24,7 @@ object GameDemo {
     int(GameDemoSchema.gameId) ~
     int(GameDemoSchema.playerId) ~
     str(GameDemoSchema.filename) ~
-    get[DateTime](GameDemoSchema.dateUploaded) ~
-    str(PlayerSchema.name) map flatten
+    get[DateTime](GameDemoSchema.dateUploaded) map flatten
 
   lazy val multiRowParser = singleRowParser *
 

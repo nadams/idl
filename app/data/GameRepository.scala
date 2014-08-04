@@ -17,6 +17,7 @@ trait GameRepositoryComponent {
     def getGameResults(gameId: Int) : Map[String, GameResult]
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
+    def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) : Option[GameDemo]
   }
 }
 
@@ -379,6 +380,20 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
           now
         ))
       else None
+    }
+
+    def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          ${GameDemo.selectAllSql}
+          WHERE ${GameDemoSchema.gameId} = {gameId}
+            AND ${GameDemoSchema.playerId} = {playerId}
+        """
+      ).on(
+        'gameId -> gameId,
+        'playerId -> playerId
+      ).as(GameDemo.singleRowParser singleOpt)
+      .map(GameDemo(_))
     }
 
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
