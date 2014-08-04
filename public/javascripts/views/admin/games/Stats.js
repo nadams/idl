@@ -47,8 +47,8 @@ admin.games.stats.StatsDemoModel = (function(ko) {
     this.routes = routes;
     this.seasonId = seasonId;
     this.gameId = gameId;
-    this.playerId = 0;
-    this.playerName = '';
+    this.playerId = ko.observable();
+    this.playerName = ko.observable();
     this.demo = ko.observable();
 
     this.isMissingDemoUploadShown = ko.observable(false);
@@ -57,14 +57,14 @@ admin.games.stats.StatsDemoModel = (function(ko) {
 
     this.initialize(data);
 
-    this.uploadUrl = this.routes.controllers.GameController.uploadDemo(this.seasonId, this.gameId, this.playerId).url;
+    this.uploadUrl = this.routes.controllers.GameController.uploadDemo(this.seasonId, this.gameId, this.playerId()).url;
 
     this.uploadStart = function() {
       this.isUploading(true);
     }.bind(this);
 
-    this.uploadDone = function() {
-      alert('done');
+    this.uploadDone = function(e, data) {
+      this.initialize(data.result);
     }.bind(this);
 
     this.uploadFail = function() {
@@ -78,8 +78,8 @@ admin.games.stats.StatsDemoModel = (function(ko) {
 
   ko.utils.extend(Model.prototype, {
     initialize: function(data) {
-      this.playerId = data.playerId;
-      this.playerName = data.playerName;
+      this.playerId(data.playerId);
+      this.playerName(data.playerName);
 
       if (data.demoData) {
         this.demo(new admin.games.stats.DemoModel(data.demoData));

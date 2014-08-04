@@ -31,6 +31,16 @@ object GameDemoModel {
     demo.playerName,
     demo.demoDetails.map(DemoData.toModel(_))
   )
+
+  def toModel(playerName: String, demo: GameDemo) = GameDemoModel(
+    demo.playerId,
+    playerName,
+    Some(DemoData(
+      demo.gameDemoId,
+      demo.filename,
+      demo.dateUploaded
+    ))
+  )
 }
 
 case class DemoData(gameDemoId: Int, filename: String, dateUploaded: DateTime)

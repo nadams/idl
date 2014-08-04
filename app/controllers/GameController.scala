@@ -90,7 +90,9 @@ object GameController extends Controller
         request.body.asMultipartFormData map { data => 
           data.file("demo") map { demo => 
             gameService.addDemo(gameId, playerId, demo.filename, demo.ref.file) map { result => 
-              Ok("Demo uploaded")
+              import StatsModel._
+
+              Ok(Json.toJson(GameDemoModel.toModel(player.name, result)))
             } getOrElse(InternalServerError("Unable to upload demo"))
           } getOrElse(BadRequest("File `demo` was not found."))
         } getOrElse(BadRequest("Invalid form submission."))
