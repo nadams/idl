@@ -81,8 +81,7 @@
 									multipart: true,
 									always: uploadAlways,
 									start: uploadStart,
-									done: uploadDone,
-									fail: uploadFail }" />
+									done: uploadDone }" />
 
 							<!-- ko if: isUploading() -->
 							<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
@@ -111,8 +110,7 @@
 									multipart: true,
 									always: uploadAlways,
 									start: uploadStart,
-									done: uploadDone,
-									fail: uploadFail }" />
+									done: uploadDone }" />
 
 							<!-- ko if: isUploading() -->
 							<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Uploading..." />

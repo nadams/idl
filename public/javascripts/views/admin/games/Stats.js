@@ -67,10 +67,6 @@ admin.games.stats.StatsDemoModel = (function(ko) {
       this.initialize(data.result);
     }.bind(this);
 
-    this.uploadFail = function() {
-      alert('fail');
-    }.bind(this);
-
     this.uploadAlways = function() {
       this.isUploading(false);
     }.bind(this);

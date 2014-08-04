@@ -384,7 +384,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
           gameDemoId,
           gameId,
           playerId,
-          file.getName,
+          filename,
           now,
           ""
         ))
