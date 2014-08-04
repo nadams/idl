@@ -32,16 +32,16 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
   }
 
   def edit(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request =>
-    newsService.getNewsById(id) match {
-      case Some(x) => Ok(views.html.admin.news.edit(EditNews.toModel(x), EditNewsErrors()))
-      case None => Redirect(routes.NewsController.create)
-    }
+    newsService.getNewsById(id)
+      .map(newsItem => Ok(views.html.admin.news.edit(EditNews.toModel(newsItem), EditNewsErrors())))
+      .getOrElse(Redirect(routes.NewsController.create))
   }
 
   def remove(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request =>
-    newsService.removeNewsItem(id) match {
-      case true => Redirect(routes.NewsController.index)
-      case false => InternalServerError("Could not remove news item")
+    if(newsService.removeNewsItem(id)) {
+      Redirect(routes.NewsController.index)
+    } else {
+      InternalServerError("Could not remove news item")
     }
   }
 
@@ -56,15 +56,13 @@ object NewsController extends Controller with ProvidesHeader with Secured with N
         BadRequest(views.html.admin.news.edit(editNewsModel, errorsModel))
       },
       news => {
-        profileService.getProfileIdByUsername(username) match {
-          case Some(id) => {
-            saveAction(news, id) match {
-              case true => Redirect(routes.NewsController.index)
-              case false => couldNotUpdateNewsItem
-            }
+        profileService.getProfileIdByUsername(username).map { id =>
+          if(saveAction(news, id)) {
+            Redirect(routes.NewsController.index)
+          } else {
+            couldNotUpdateNewsItem
           }
-          case None => couldNotUpdateNewsItem
-        }
+        }.getOrElse(couldNotUpdateNewsItem)
       }
     )
 }

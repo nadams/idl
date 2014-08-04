@@ -1,0 +1,67 @@
+@(model: models.admin.games.StatsModel)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
+
+@import play.api.libs.json.Json
+
+@extraScripts = {
+	@helper.javascriptRouter("routes")(
+		routes.javascript.GameController.uploadStats
+	)
+
+	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
+	<script src="@routes.Assets.at("fileupload/js/jquery.iframe-transport.js")"></script>
+	<script src="@routes.Assets.at("fileupload/js/jquery.fileupload.js")"></script>
+	<script>
+		admin.games.stats = {
+			data: @Html(Json.toJson(model).toString) || {},
+			routes: routes
+		};
+	</script>
+	<script src="@routes.Assets.at("javascripts/views/admin/games/Stats.js")"></script>
+}
+
+@extraCss = {
+	<link rel="stylesheet" href="fileupload/css/jquery.fileupload.css" />
+}
+
+@views.html.admin.games.gamesTemplate("Stats", extraScripts = extraScripts, extraCss = extraCss) {
+	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
+		<div class="panel-heading"><h4>Stats</h4></div>
+		<div class="panel-body">
+
+			<!-- ko if: hasStats -->
+			<table>
+				<tr>
+					<th>Player Name</th>
+					<th>Demo</th>
+				</tr>
+				<tr data-bind="foreach: stats">
+					<td data-bind="text: playerName"></td>
+					<td data-bind="text: demoUrl"></td>
+				</tr>
+			</table>
+			<!-- /ko -->
+
+			<!-- ko ifnot: hasStats -->
+				<p>This game has no stats, upload a Zandronum demo log file.</p>
+				<form 
+					method="post" 
+					action="@routes.GameController.uploadStats(seasonId, model.gameId)" 
+					enctype="multipart/form-data"
+					role="form" 
+					class="form-horizontal">
+					<div class="form-group">
+						<label for="statsUpload" class="col-sm-2 control-label">Upload a demo...</label>
+						<input type="file" name="log" id="statsUpload" />
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button class="btn btn-primary">Upload</button>
+						</div>
+					</div>
+				</form>
+			<!-- /ko -->
+		</div>
+	</div>
+}
+
