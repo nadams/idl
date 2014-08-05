@@ -18,6 +18,7 @@ trait GameRepositoryComponent {
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
     def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) : Option[GameDemo]
+    def getDemoData(gameDemoId: Int) : Option[Array[Byte]]
   }
 }
 
@@ -369,6 +370,17 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         'playerId -> playerId
       ).as(GameDemo.singleRowParser singleOpt)
       .map(GameDemo(_))
+    }
+
+    def getDemoData(gameDemoId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT ${GameDemoSchema.demoFile}
+          FROM ${GameDemoSchema.tableName}
+          WHERE ${GameDemoSchema.gameDemoId} = {gameDemoId}
+        """
+      ).on('gameDemoId -> gameDemoId)
+      .as(bytes(GameDemoSchema.demoFile) singleOpt)
     }
 
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
