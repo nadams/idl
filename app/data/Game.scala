@@ -36,7 +36,7 @@ object Game {
     int(GameSchema.gameId) ~
     int(GameSchema.weekId) ~
     int(GameSchema.seasonId) ~
-    get[DateTime](GameSchema.scheduledPlayTime) ~
+    datetime(GameSchema.scheduledPlayTime) ~
     get[Option[DateTime]](GameSchema.dateCompleted) ~
     get[Option[Int]](TeamGameSchema.team1Id) ~ 
     get[Option[Int]](TeamGameSchema.team2Id) map flatten

@@ -28,8 +28,8 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
     val newsParser = 
       int(NewsSchema.newsId) ~ 
       str(NewsSchema.subject) ~ 
-      get[DateTime](NewsSchema.dateCreated) ~ 
-      get[DateTime](NewsSchema.dateModified) ~ 
+      datetime(NewsSchema.dateCreated) ~ 
+      datetime(NewsSchema.dateModified) ~ 
       str(NewsSchema.content) ~ 
       int(NewsSchema.postedByProfileId) map(flatten)
 
