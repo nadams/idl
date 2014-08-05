@@ -25,42 +25,21 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
     import play.api.Play.current
     import AnormExtensions._
 
-    val newsParser = 
-      int(NewsSchema.newsId) ~ 
-      str(NewsSchema.subject) ~ 
-      datetime(NewsSchema.dateCreated) ~ 
-      datetime(NewsSchema.dateModified) ~ 
-      str(NewsSchema.content) ~ 
-      int(NewsSchema.postedByProfileId) map(flatten)
-
-    val multiRowNewsParser = newsParser *
-    val selectAllNewsSql = 
-      s"""
-        SELECT 
-          ${NewsSchema.newsId},
-          ${NewsSchema.subject},
-          ${NewsSchema.dateCreated},
-          ${NewsSchema.dateModified},
-          ${NewsSchema.content},
-          ${NewsSchema.postedByProfileId}
-        FROM ${NewsSchema.tableName}
-      """
-
     def getAllNews() : Seq[News] = DB.withConnection { implicit connection => 
-      SQL(selectAllNewsSql)
-      .as(multiRowNewsParser)
+      SQL(News.selectAllSql)
+      .as(News.multiRowParser)
       .map(News(_))
     }
 
     def getPagedNews(currentPage: Int, pageSize: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          $selectAllNewsSql
+          ${News.selectAllSql}
           ORDER BY ${NewsSchema.dateCreated}
           LIMIT ${(currentPage - 1) * pageSize}, $pageSize
         """
       )
-      .as(multiRowNewsParser)
+      .as(News.multiRowParser)
       .map(News(_))
     }
 
@@ -106,12 +85,12 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
     def getNewsById(id: Int) : Option[News] = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          $selectAllNewsSql
+          ${News.selectAllSql}
           WHERE ${NewsSchema.newsId} = {newsId}
         """
       )
       .on('newsId -> id)
-      .as(newsParser singleOpt)
+      .as(News.singleRowParser singleOpt)
       .map(News(_))
     }
 
