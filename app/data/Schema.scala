@@ -112,3 +112,9 @@ object GameDemoSchema {
   val dateUploaded = "DateUploaded"
   val demoFile = "DemoFile"
 }
+
+object WeekSchema {
+  val tableName = "Week"
+  val weekId = "WeekId"
+  val name = "Name"
+}
