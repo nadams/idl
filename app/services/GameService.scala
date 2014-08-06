@@ -1,8 +1,9 @@
 package services
 
 import scala.io.{ Source, Codec }
-import data.{ GameRepositoryComponent, Game, GameResult, GameDemo }
+import java.io.File
 import org.joda.time.{ DateTime, DateTimeZone }
+import data._
 
 trait GameServiceComponent {
   val gameService: GameService
@@ -16,7 +17,9 @@ trait GameServiceComponent {
     def removeGame(gameId: Int) : Boolean
     def parseGameResults(gameId: Int, source: Source) : Seq[(String, GameResult)]
     def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) : Unit
-    def getDemosForGame(gameId: Int) : Seq[GameDemo]
+    def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
+    def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
+    def getDemoData(demoDataId: Int) : Option[Array[Byte]]
   }
 }
 
@@ -31,7 +34,10 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def addGame(game: Game) = gameRepository.addGame(game)
     def updateGame(game: Game) = gameRepository.updateGame(game)
     def removeGame(gameId: Int) = gameRepository.removeGame(gameId)
-    def getDemosForGame(gameId: Int) = gameRepository.getDemosForGame(gameId)
+    def getDemoStatusForGame(gameId: Int) = gameRepository.getDemoStatusForGame(gameId)
+    def addDemo(gameId: Int, playerId: Int, filename: String, file: File) = gameRepository.addDemo(gameId, playerId, filename, file)
+    def getDemoData(demoDataId: Int) = gameRepository.getDemoData(demoDataId)
+
     def parseGameResults(gameId: Int, source: Source) = {
       val playerStats = ZandronumLogParser.parseLog(source)
       

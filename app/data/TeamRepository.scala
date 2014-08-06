@@ -40,7 +40,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       int(TeamSchema.teamId) ~ 
       str(TeamSchema.name) ~ 
       bool(TeamSchema.isActive) ~ 
-      get[DateTime](TeamSchema.dateCreated) map flatten
+      datetime(TeamSchema.dateCreated) map flatten
 
     val multiRowParser = teamParser *
 
@@ -247,11 +247,11 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         int("Team1Id") ~
         str("Team1Name") ~
         bool("Team1IsActive") ~
-        get[DateTime]("Team1DateCreated") ~
+        datetime("Team1DateCreated") ~
         int("Team2Id") ~
         str("Team2Name") ~
         bool("Team2IsActive") ~
-        get[DateTime]("Team2DateCreated") map flatten singleOpt
+        datetime("Team2DateCreated") map flatten singleOpt
       )
       .map { data => (
         Team(data._1, data._2, data._3, data._4), 

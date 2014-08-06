@@ -63,25 +63,47 @@ object GameController extends Controller
     implicit val iSeasonId = seasonId
 
     gameService.getGame(gameId).map { game =>
-      Ok(views.html.admin.games.stats(StatsModel.empty))
+      Ok(views.html.admin.games.stats(StatsModel.toModel(seasonId, game, gameService.getDemoStatusForGame(gameId))))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
-  def uploadStats(seasonId: Int, gameId: Int) = HasGame(seasonId, gameId) { username => implicit request => 
-    request.body.asMultipartFormData map { data => 
-      import scala.io.{ Source, Codec }
-      import java.io.File
-      
-      data.file("log") map { log => 
-        val source = Source.fromFile(log.ref.file)(Codec.ISO8859)
-        val stats = gameService.parseGameResults(gameId, source)
-        val playerNames = stats.map(_._1).toSet
-        playerService.batchCreatePlayerFromName(playerNames)
-        gameService.addGameResult(gameId, stats)
+  def uploadStats(seasonId: Int, gameId: Int) = HasSeason(seasonId) { username => implicit request => 
+    gameService.getGame(gameId) map { game => 
+      request.body.asMultipartFormData map { data => 
+        import scala.io.{ Source, Codec }
+        import java.io.File
+        
+        data.file("log") map { log => 
+          import StatsModel._
 
-        Ok("Stats uploaded")
-      } getOrElse(BadRequest("File `log` was not found."))
-    } getOrElse(BadRequest("Invalid form submission."))
+          val source = Source.fromFile(log.ref.file)(Codec.ISO8859)
+          val stats = gameService.parseGameResults(gameId, source)
+          val playerNames = stats.map(_._1).toSet
+          playerService.batchCreatePlayerFromName(playerNames)
+          gameService.addGameResult(gameId, stats)
+
+          val updatedGame = gameService.getGame(gameId).get
+
+          Ok(Json.toJson(StatsModel.toModel(seasonId, updatedGame, gameService.getDemoStatusForGame(gameId))))
+        } getOrElse(BadRequest("File `log` was not found."))
+      } getOrElse(BadRequest("Invalid form submission."))
+    } getOrElse(NotFound(s"Game with Id: $gameId not found."))
+  }
+
+  def uploadDemo(seasonId: Int, gameId: Int, playerId: Int) = HasSeason(seasonId) { username => implicit request => 
+    gameService.getGame(gameId) map { game => 
+      playerService.getPlayer(playerId) map { player => 
+        request.body.asMultipartFormData map { data => 
+          data.file("demo") map { demo => 
+            gameService.addDemo(gameId, playerId, demo.filename, demo.ref.file) map { result => 
+              import StatsModel._
+
+              Ok(Json.toJson(GameDemoModel.toModel(player.name, result)))
+            } getOrElse(InternalServerError("Unable to upload demo"))
+          } getOrElse(BadRequest("File `demo` was not found."))
+        } getOrElse(BadRequest("Invalid form submission."))
+      } getOrElse(NotFound(s"Player with Id $playerId was not found."))
+    } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
   private def HasGame(seasonId: Int, gameId: Int)(f: => Game => Request[AnyContent] => Result) = HasSeason(seasonId) { username => implicit request => 

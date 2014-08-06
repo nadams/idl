@@ -1,5 +1,7 @@
 package data
 
+import java.io.File
+
 trait GameRepositoryComponent {
   val gameRepository: GameRepository
 
@@ -13,7 +15,10 @@ trait GameRepositoryComponent {
     def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
     def gameHasResults(gameId: Int) : Boolean
     def getGameResults(gameId: Int) : Map[String, GameResult]
-    def getDemosForGame(gameId: Int) : Seq[GameDemo]
+    def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
+    def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
+    def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) : Option[GameDemo]
+    def getDemoData(gameDemoId: Int) : Option[Array[Byte]]
   }
 }
 
@@ -29,61 +34,27 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
     import play.api.Play.current
     import AnormExtensions._
 
-    val selectAllGamesSql = 
-      s"""
-        SELECT
-          g.${GameSchema.gameId},
-          g.${GameSchema.weekId},
-          g.${GameSchema.seasonId},
-          g.${GameSchema.scheduledPlayTime},
-          g.${GameSchema.dateCompleted},
-          tg.${TeamGameSchema.team1Id},
-          tg.${TeamGameSchema.team2Id}
-        FROM ${GameSchema.tableName} AS g
-          LEFT OUTER JOIN ${TeamGameSchema.tableName} as tg on g.${GameSchema.gameId} = tg.${TeamGameSchema.gameId}
-      """
-
-    val gameParser = 
-      int(GameSchema.gameId) ~
-      int(GameSchema.weekId) ~
-      int(GameSchema.seasonId) ~
-      get[DateTime](GameSchema.scheduledPlayTime) ~
-      get[Option[DateTime]](GameSchema.dateCompleted) ~
-      get[Option[Int]](TeamGameSchema.team1Id) ~ 
-      get[Option[Int]](TeamGameSchema.team2Id) map flatten
-
-    val gameDemoParser = 
-      int(GameDemoSchema.gameDemoId) ~
-      int(GameDemoSchema.gameId) ~
-      int(GameDemoSchema.playerId) ~
-      str(GameDemoSchema.filename) ~
-      get[DateTime](GameDemoSchema.dateUploaded) ~
-      str(PlayerSchema.name) map flatten
-
-    val multiRowParser = gameParser *
-    val gameDemoMultiRow = gameDemoParser *
-
     def getGame(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          $selectAllGamesSql
+          ${Game.selectAllSql}
           WHERE g.${GameSchema.gameId} = {gameId}
         """
       )
       .on('gameId -> gameId)
-      .as(gameParser singleOpt)
+      .as(Game.singleRowParser singleOpt)
       .map(Game(_))
     }
 
     def getGamesBySeasonId(seasonId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          $selectAllGamesSql
+          ${Game.selectAllSql}
           WHERE g.${GameSchema.seasonId} = {seasonId}
         """
       )
       .on('seasonId -> seasonId)
-      .as(multiRowParser)
+      .as(Game.multiRowParser)
       .map(Game(_))
     }
 
@@ -120,7 +91,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         """
       )
       .on('email -> username)
-      .as(multiRowParser)
+      .as(Game.multiRowParser)
       .map(Game(_))
     }
 
@@ -324,23 +295,125 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .toMap
     }
 
-    def getDemosForGame(gameId: Int) = DB.withConnection { implicit connection => 
+    def getDemoStatusForGame(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          SELECT
+          SELECT 
+            p.${PlayerSchema.playerId},
+            p.${PlayerSchema.name},
             gd.${GameDemoSchema.gameDemoId},
-            gd.${GameDemoSchema.gameId},
-            gd.${GameDemoSchema.playerId},
             gd.${GameDemoSchema.filename},
-            gd.${GameDemoSchema.dateUploaded},
-            p.${PlayerSchema.name}
-          FROM ${GameDemoSchema.tableName} AS gd
-            INNER JOIN ${PlayerSchema.tableName} AS p on gd.${GameDemoSchema.playerId} = p.${PlayerSchema.playerId}
-          WHERE ${GameDemoSchema.gameId} = {gameId}
+            gd.${GameDemoSchema.dateUploaded}
+          FROM ${PlayerSchema.tableName} AS p 
+            INNER JOIN ${TeamPlayerSchema.tableName} AS tp on p.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
+            INNER JOIN ${GameResultSchema.tableName} AS gr on p.${PlayerSchema.playerId} = gr.${GameResultSchema.playerId}
+            INNER JOIN ${GameSchema.tableName} AS g on gr.${GameResultSchema.gameId} = g.${GameSchema.gameId}
+            LEFT OUTER JOIN ${GameDemoSchema.tableName} AS gd on gr.${GameResultSchema.gameId} = gd.${GameDemoSchema.gameId}
+              AND gd.${GameDemoSchema.playerId} = p.${PlayerSchema.playerId}
+          WHERE gr.${GameResultSchema.gameId} = {gameId}
         """
       ).on('gameId -> gameId)
-      .as(gameDemoMultiRow)
+      .as(DemoStatusRecord.multiRowParser)
+      .map(DemoStatusRecord(_))
+    }
+
+    def addDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
+      import java.nio.file.{ Files, Paths }
+
+      val data : scala.Array[Byte] = Files.readAllBytes(Paths.get(file.getAbsolutePath))
+      val now = new DateTime(DateTimeZone.UTC)
+      val gameDemoId = SQL(
+        s"""
+          INSERT INTO ${GameDemoSchema.tableName} (
+            ${GameDemoSchema.gameId},
+            ${GameDemoSchema.playerId},
+            ${GameDemoSchema.filename},
+            ${GameDemoSchema.dateUploaded},
+            ${GameDemoSchema.demoFile}
+          )
+          VALUES (
+            {gameId},
+            {playerId},
+            {filename},
+            {date},
+            {data}
+          )
+        """
+      ).on(
+        'gameId -> gameId,
+        'playerId -> playerId,
+        'filename -> filename,
+        'date -> now,
+        'data -> data
+      ).executeInsert(scalar[Long] single).toInt
+
+      if(gameDemoId > 0)
+        Some(GameDemo(
+          gameDemoId,
+          gameId,
+          playerId,
+          filename,
+          now
+        ))
+      else None
+    }
+
+    def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          ${GameDemo.selectAllSql}
+          WHERE ${GameDemoSchema.gameId} = {gameId}
+            AND ${GameDemoSchema.playerId} = {playerId}
+        """
+      ).on(
+        'gameId -> gameId,
+        'playerId -> playerId
+      ).as(GameDemo.singleRowParser singleOpt)
       .map(GameDemo(_))
     }
+
+    def getDemoData(gameDemoId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT ${GameDemoSchema.demoFile}
+          FROM ${GameDemoSchema.tableName}
+          WHERE ${GameDemoSchema.gameDemoId} = {gameDemoId}
+        """
+      ).on('gameDemoId -> gameDemoId)
+      .as(bytes(GameDemoSchema.demoFile) singleOpt)
+    }
+
+    // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
+    //   import java.nio.file.{ Files, Paths }
+
+    //   val data : scala.Array[Byte] = Files.readAllBytes(Paths.get(file.getAbsolutePath))
+    //   val now = new DateTime(DateTimeZone.UTC)
+    //   val result = SQL(
+    //     s"""
+    //       UPDATE ${GameDemoSchema.tableName}
+    //         SET ${GameDemoSchema.filename} = {filename},
+    //         SET ${GameDemoSchema.dateUploaded} = {date},
+    //         SET ${GameDemoSchema.demoFile} = {data}
+    //       WHERE ${GameDemoSchema.gameId} = {gameId}
+    //         AND ${GameDemoSchema.playerId} = {playerId}
+    //     """
+    //   ).on(
+    //     'gameId -> gameId,
+    //     'playerId -> playerId,
+    //     'filename -> filename,
+    //     'date -> now,
+    //     'data -> data
+    //   ).executeUpdate > 0
+
+    //   if(result > 0)
+    //     Some(GameDemo(
+    //       gameDemoId,
+    //       gameId,
+    //       playerId,
+    //       filename,
+    //       now,
+    //       ""
+    //     ))
+    // }
   }
 }

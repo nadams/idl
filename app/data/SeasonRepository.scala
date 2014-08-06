@@ -28,8 +28,8 @@ trait SeasonRepositoryComponentImpl extends SeasonRepositoryComponent {
 
     val seasonParser = int(SeasonSchema.seasonId) ~ 
       str(SeasonSchema.name) ~ 
-      get[DateTime](SeasonSchema.startDate) ~ 
-      get[DateTime](SeasonSchema.endDate) map flatten
+      datetime(SeasonSchema.startDate) ~ 
+      datetime(SeasonSchema.endDate) map flatten
       
     val multiRowParser = seasonParser *
     val selectAllNewsSql = 

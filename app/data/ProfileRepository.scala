@@ -32,8 +32,8 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       str(ProfileSchema.displayName) ~ 
       str(ProfileSchema.password) ~ 
       bool(ProfileSchema.passwordExpired) ~ 
-      get[DateTime](ProfileSchema.dateCreated) ~ 
-      get[DateTime](ProfileSchema.lastLoginDate) map(flatten)
+      datetime(ProfileSchema.dateCreated) ~ 
+      datetime(ProfileSchema.lastLoginDate) map(flatten)
 
     def getByUsername(username: String) : Option[Profile] = DB.withConnection { implicit connection =>
       SQL(
