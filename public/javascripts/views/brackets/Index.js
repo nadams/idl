@@ -4,9 +4,33 @@ brackets.index.IndexModel = (function(ko, _) {
 	'use strict';
 
 	var Model = function(data) {
+		this.collectionUtils = new brackets.index.CollectionUtils();
+
+		this.groupByWeek = function() {
+			return this.collectionUtils.multiGroup(this.stats(), function(item) {
+				return item.weekId();
+			});
+		};
+
 		this.stats = ko.observableArray();
 
 		this.initialize(data);
+
+		this.teams = ko.computed(function() {
+			return _.map(this.groupByWeek(), function(item) {
+				return this.collectionUtils.splitArray(_.map(item, function(data) {
+					return data.teamName();
+				}), 2);
+			}, this);
+		}, this);
+
+		this.results = ko.computed(function() {
+			return _.map(this.groupByWeek(), function(item) {
+				return this.collectionUtils.splitArray(_.map(item, function(data) {
+					return data.captures();
+				}), 2);
+			}, this);
+		}, this);
 	};
 
 	ko.utils.extend(Model.prototype, {
@@ -19,6 +43,44 @@ brackets.index.IndexModel = (function(ko, _) {
 
 	return Model;
 })(ko, _);
+
+brackets.index.CollectionUtils = (function(_) {
+	'use strict';
+
+	var Utils = function() {
+		return {
+			multiGroup: function(arr, keySelector) {
+				var grouped = _.groupBy(arr, function(item) {
+					return keySelector(item);
+				});
+
+				var result = [];
+
+				for (var key in grouped) {
+					if (grouped.hasOwnProperty(key)) {
+						var val = grouped[key];
+
+						result.push(val);
+					}
+				}
+
+				return result;
+			},
+			splitArray: function(arr, chunk) {
+				var result = [];
+				var i, j;
+
+				for (i = 0, j = arr.length; i < j; i += chunk) {
+					result.push(arr.slice(i, i + chunk));
+				}
+
+				return result;
+			}
+		};
+	};
+
+	return Utils;
+})(_);
 
 brackets.index.TeamStatsModel = (function(ko) {
 	'use strict';

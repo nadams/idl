@@ -4,6 +4,7 @@
 
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/ko-bindings/brackets.binding.js")"></script>
 	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
 	<script src="@routes.Assets.at("brackets/jquery.bracket.min.js")"></script>
 	<script>
@@ -19,7 +20,7 @@
 }
 
 @main("Brackets", extraScripts = extraScripts, extraCss = extraCss) {
-
+	<div data-bind="brackets: { teams: teams, results: results }"></div>
 	
 	<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 }
