@@ -40,8 +40,7 @@ object TeamGameResultRecord {
             INNER JOIN ${TeamSchema.tableName} AS t1 ON ts.${TeamSeasonSchema.teamId} = t1.${TeamSchema.teamId}
             INNER JOIN ${TeamSchema.tableName} AS t2 ON ts.${TeamSeasonSchema.teamId} = t2.${TeamSchema.teamId}
             INNER JOIN ${TeamGameSchema.tableName} AS tg ON t1.${TeamSchema.teamId} = tg.${TeamGameSchema.team1Id}
-              OR t2.${TeamSchema.teamId} = tg.${TeamGameSchema.team1Id}
-            }
+              OR t2.${TeamSchema.teamId} = tg.${TeamGameSchema.team2Id}
             INNER JOIN ${TeamPlayerSchema.tableName} AS tp ON t1.${TeamSchema.teamId} = tp.${TeamPlayerSchema.teamId}
               OR t2.${TeamSchema.teamId} = tp.${TeamPlayerSchema.teamId}
           WHERE ({seasonId} IS NULL AND NOW() BETWEEN s.${SeasonSchema.startDate} AND s.${SeasonSchema.endDate})
