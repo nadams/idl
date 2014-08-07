@@ -26,8 +26,8 @@ object TeamGameResultRecord {
         t.${TeamSchema.name},
         g.${GameSchema.gameId},
         g.${GameSchema.weekId},
-        SUM(gr.${GameResultSchema.captures}) AS Captures,
-        SUM(gr.${GameResultSchema.frags}) AS Frags
+        CAST(SUM(gr.${GameResultSchema.captures}) AS SIGNED INTEGER) AS Captures,
+        CAST(SUM(gr.${GameResultSchema.frags}) AS SIGNED INTEGER) AS Frags
       FROM ${GameSchema.tableName} AS g
         INNER JOIN ${GameResultSchema.tableName} AS gr ON g.${GameSchema.gameId} = gr.${GameResultSchema.gameId}
         INNER JOIN (
@@ -56,10 +56,10 @@ object TeamGameResultRecord {
     str(TeamSchema.name) ~
     int(GameSchema.gameId) ~
     int(WeekSchema.weekId) ~
-    int("Captures") map flatten
+    long("Captures") map flatten
 
   lazy val multiRowParser = singleRowParser *
 
-  def apply(x: (Int, String, Int, Int, Int)) : TeamGameResultRecord = 
-    TeamGameResultRecord(x._1, x._2, x._3, x._4, x._5)
+  def apply(x: (Int, String, Int, Int, Long)) : TeamGameResultRecord = 
+    TeamGameResultRecord(x._1, x._2, x._3, x._4, x._5.toInt)
 }
