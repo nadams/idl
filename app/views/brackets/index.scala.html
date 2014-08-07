@@ -1,0 +1,14 @@
+@()(implicit header: MenuModel)
+
+@extraScripts = {
+	<script src="@routes.Assets.at("brackets/jquery.bracket.min.js")"></script>
+}
+
+@extraCss = {
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("brackets/jquery.bracket.min.css")" />	
+}
+
+@main("Brackets", extraScripts = extraScripts, extraCss = extraCss) {
+
+
+}
