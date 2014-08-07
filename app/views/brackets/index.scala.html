@@ -3,11 +3,15 @@
 @import play.api.libs.json.Json
 
 @extraScripts = {
+	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
 	<script src="@routes.Assets.at("brackets/jquery.bracket.min.js")"></script>
 	<script>
 		var brackets = brackets || {};
-		brackets.data = @Html(Json.toJson(model).toString) || {};
+		brackets.index = brackets.index || {};
+		brackets.index.data = @Html(Json.toJson(model).toString) || {};
 	</script>
+	<script src="@routes.Assets.at("javascripts/views/brackets/Index.js")"></script>
 }
 
 @extraCss = {
@@ -16,5 +20,6 @@
 
 @main("Brackets", extraScripts = extraScripts, extraCss = extraCss) {
 
-
+	
+	<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 }
