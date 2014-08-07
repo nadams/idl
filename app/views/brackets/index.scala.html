@@ -1,7 +1,13 @@
-@()(implicit header: MenuModel)
+@(model: models.brackets.IndexModel)(implicit header: MenuModel)
+
+@import play.api.libs.json.Json
 
 @extraScripts = {
 	<script src="@routes.Assets.at("brackets/jquery.bracket.min.js")"></script>
+	<script>
+		var brackets = brackets || {};
+		brackets.data = @Html(Json.toJson(model).toString) || {};
+	</script>
 }
 
 @extraCss = {
