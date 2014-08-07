@@ -49,6 +49,7 @@ object TeamGameResultRecord {
           AND gr.${GameResultSchema.playerId} = stats.${TeamPlayerSchema.playerId}
         INNER JOIN ${TeamSchema.tableName} AS t ON stats.${TeamPlayerSchema.teamId} = t.${TeamSchema.teamId}
       GROUP BY t.${TeamSchema.teamId}
+      ORDER BY g.${GameSchema.weekId} DESC
     """
 
   lazy val singleRowParser = 
