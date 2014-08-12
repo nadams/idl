@@ -33,7 +33,7 @@ object GameController extends Controller
   }
 
   def create(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
-    Ok(views.html.admin.games.edit(EditGameModel.toModel(seasonId, 0, 0, 0, 0), EditGameErrors.empty))
+    Ok(views.html.admin.games.edit(EditGameModel.toModel(seasonId, 0, 0, GameTypes.Regular.id, 0, 0), EditGameErrors.empty))
   }
 
   def saveNew(implicit seasonId: Int) = HasSeason(seasonId) { username => implicit request => 
@@ -118,11 +118,12 @@ object GameController extends Controller
       content => {
         val gameIdError = content("gameId").formattedMessage
         val weekIdError = content("selectedWeekId").formattedMessage
+        val gameTypeIdError = content("selectedGameTypeId").formattedMessage
         val team1IdError = content("selectedTeam1Id").formattedMessage
         val team2IdError = content("selectedTeam2Id").formattedMessage
 
-        val editGameModel = EditGameModel.toModel(seasonId, gameIdError._1.toInt, weekIdError._1.toInt, team1IdError._1.toInt, team2IdError._1.toInt)
-        val errorsModel = EditGameErrors(gameIdError._2, weekIdError._2, team1IdError._2, team2IdError._2, content.formattedMessages)
+        val editGameModel = EditGameModel.toModel(seasonId, gameIdError._1.toInt, weekIdError._1.toInt, gameTypeIdError._1.toInt, team1IdError._1.toInt, team2IdError._1.toInt)
+        val errorsModel = EditGameErrors(gameIdError._2, weekIdError._2, gameTypeIdError._2, team1IdError._2, team2IdError._2, content.formattedMessages)
 
         BadRequest(views.html.admin.games.edit(editGameModel, errorsModel))
       },

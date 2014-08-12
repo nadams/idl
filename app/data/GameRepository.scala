@@ -102,11 +102,13 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
           INSERT INTO ${GameSchema.tableName} (
             ${GameSchema.weekId},
             ${GameSchema.seasonId},
+            ${GameSchema.gameTypeId},
             ${GameSchema.scheduledPlayTime},
             ${GameSchema.dateCompleted}
           ) VALUES (
             {weekId},
             {seasonId},
+            {gameTypeId},
             {scheduledPlayTime},
             {dateCompleted}
           )
@@ -114,6 +116,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       ).on(
         'weekId -> game.weekId,
         'seasonId -> game.seasonId,
+        'gameTypeId -> game.gameTypeId,
         'scheduledPlayTime -> game.scheduledPlayTime,
         'dateCompleted -> game.dateCompleted
       ).executeInsert(scalar[Long] single).toInt
@@ -150,6 +153,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
           SET
             ${GameSchema.weekId} = {weekId},
             ${GameSchema.seasonId} = {seasonId},
+            ${GameSchema.gameTypeId} = {gameTypeId},
             ${GameSchema.scheduledPlayTime} = {scheduledPlayTime},
             ${GameSchema.dateCompleted} = {dateCompleted}
           WHERE ${GameSchema.gameId} = {gameId}
@@ -158,6 +162,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         'gameId -> game.gameId,
         'weekId -> game.weekId,
         'seasonId -> game.seasonId,
+        'gameTypeId -> game.gameTypeId,
         'scheduledPlayTime -> game.scheduledPlayTime,
         'dateCompleted -> game.dateCompleted
       ).executeUpdate > 0
