@@ -3,17 +3,17 @@ package models.brackets
 import play.api.libs.json.Json
 import data._
 
-case class IndexModel(stats: Seq[TeamStatsModel])
-case class TeamStatsModel(teamId: Int, teamName: String, gameId: Int, weekId: Int, captures: Int)
+case class IndexModel(playoffStats: Seq[PlayoffStatsModel])
+case class PlayoffStatsModel(teamId: Int, teamName: String, gameId: Int, weekId: Int, captures: Int)
 
 object IndexModel {
-  implicit val writesTeamStatsModel = Json.writes[TeamStatsModel]
+  implicit val writesPlayoffStatsModel = Json.writes[PlayoffStatsModel]
   implicit val writesIndexModel = Json.writes[IndexModel]
 
-  def toModel(stats: Seq[TeamGameResultRecord]) = IndexModel(stats.map(TeamStatsModel.toModel(_)))
+  def toModel(playoffStats: Seq[TeamGameResultRecord]) = IndexModel(playoffStats.map(PlayoffStatsModel.toModel(_)))
 }
 
-object TeamStatsModel {
+object PlayoffStatsModel {
   def toModel(data: TeamGameResultRecord) = 
-    TeamStatsModel(data.teamId, data.teamName, data.gameId, data.weekId, data.captures)
+    PlayoffStatsModel(data.teamId, data.teamName, data.gameId, data.weekId, data.captures)
 }
