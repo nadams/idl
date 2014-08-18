@@ -12,7 +12,7 @@ object GameResult {
     GameResult(x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8)
 }
 
-case class TeamGameResultRecord(teamId: Int, teamName: String, gameId: Int, weekId: Int, captures: Int)
+case class TeamGameResultRecord(teamId: Int, teamName: String, gameId: Int, weekId: Int, gameTypeId: Int, captures: Int)
 
 object TeamGameResultRecord {
   import anorm._ 
@@ -26,8 +26,9 @@ object TeamGameResultRecord {
         t.${TeamSchema.name},
         g.${GameSchema.gameId},
         g.${GameSchema.weekId},
-        SUM(gr.${GameResultSchema.captures}) AS Captures,
-        SUM(gr.${GameResultSchema.frags}) AS Frags
+        g.${GameSchema.gameTypeId},
+        CAST(SUM(gr.${GameResultSchema.captures}) AS SIGNED INTEGER) AS Captures,
+        CAST(SUM(gr.${GameResultSchema.frags}) AS SIGNED INTEGER) AS Frags
       FROM ${GameSchema.tableName} AS g
         INNER JOIN ${GameResultSchema.tableName} AS gr ON g.${GameSchema.gameId} = gr.${GameResultSchema.gameId}
         INNER JOIN (
@@ -40,8 +41,7 @@ object TeamGameResultRecord {
             INNER JOIN ${TeamSchema.tableName} AS t1 ON ts.${TeamSeasonSchema.teamId} = t1.${TeamSchema.teamId}
             INNER JOIN ${TeamSchema.tableName} AS t2 ON ts.${TeamSeasonSchema.teamId} = t2.${TeamSchema.teamId}
             INNER JOIN ${TeamGameSchema.tableName} AS tg ON t1.${TeamSchema.teamId} = tg.${TeamGameSchema.team1Id}
-              OR t2.${TeamSchema.teamId} = tg.${TeamGameSchema.team1Id}
-            }
+              OR t2.${TeamSchema.teamId} = tg.${TeamGameSchema.team2Id}
             INNER JOIN ${TeamPlayerSchema.tableName} AS tp ON t1.${TeamSchema.teamId} = tp.${TeamPlayerSchema.teamId}
               OR t2.${TeamSchema.teamId} = tp.${TeamPlayerSchema.teamId}
           WHERE ({seasonId} IS NULL AND NOW() BETWEEN s.${SeasonSchema.startDate} AND s.${SeasonSchema.endDate})
@@ -50,6 +50,7 @@ object TeamGameResultRecord {
           AND gr.${GameResultSchema.playerId} = stats.${TeamPlayerSchema.playerId}
         INNER JOIN ${TeamSchema.tableName} AS t ON stats.${TeamPlayerSchema.teamId} = t.${TeamSchema.teamId}
       GROUP BY t.${TeamSchema.teamId}
+      ORDER BY g.${GameSchema.weekId} DESC
     """
 
   lazy val singleRowParser = 
@@ -57,10 +58,11 @@ object TeamGameResultRecord {
     str(TeamSchema.name) ~
     int(GameSchema.gameId) ~
     int(WeekSchema.weekId) ~
-    int("Captures") map flatten
+    int(GameSchema.gameTypeId) ~
+    long("Captures") map flatten
 
   lazy val multiRowParser = singleRowParser *
 
-  def apply(x: (Int, String, Int, Int, Int)) : TeamGameResultRecord = 
-    TeamGameResultRecord(x._1, x._2, x._3, x._4, x._5)
+  def apply(x: (Int, String, Int, Int, Int, Long)) : TeamGameResultRecord = 
+    TeamGameResultRecord(x._1, x._2, x._3, x._4, x._5, x._6.toInt)
 }

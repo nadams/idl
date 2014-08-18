@@ -80,6 +80,7 @@ object GameSchema {
   val gameId = "GameId"
   val weekId = "WeekId"
   val seasonId = "SeasonId"
+  val gameTypeId = "GameTypeId"
   val scheduledPlayTime = "ScheduledPlayTime"
   val dateCompleted = "DateCompleted"
 }

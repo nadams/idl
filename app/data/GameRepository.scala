@@ -102,11 +102,13 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
           INSERT INTO ${GameSchema.tableName} (
             ${GameSchema.weekId},
             ${GameSchema.seasonId},
+            ${GameSchema.gameTypeId},
             ${GameSchema.scheduledPlayTime},
             ${GameSchema.dateCompleted}
           ) VALUES (
             {weekId},
             {seasonId},
+            {gameTypeId},
             {scheduledPlayTime},
             {dateCompleted}
           )
@@ -114,6 +116,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       ).on(
         'weekId -> game.weekId,
         'seasonId -> game.seasonId,
+        'gameTypeId -> game.gameTypeId,
         'scheduledPlayTime -> game.scheduledPlayTime,
         'dateCompleted -> game.dateCompleted
       ).executeInsert(scalar[Long] single).toInt
@@ -150,6 +153,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
           SET
             ${GameSchema.weekId} = {weekId},
             ${GameSchema.seasonId} = {seasonId},
+            ${GameSchema.gameTypeId} = {gameTypeId},
             ${GameSchema.scheduledPlayTime} = {scheduledPlayTime},
             ${GameSchema.dateCompleted} = {dateCompleted}
           WHERE ${GameSchema.gameId} = {gameId}
@@ -158,6 +162,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         'gameId -> game.gameId,
         'weekId -> game.weekId,
         'seasonId -> game.seasonId,
+        'gameTypeId -> game.gameTypeId,
         'scheduledPlayTime -> game.scheduledPlayTime,
         'dateCompleted -> game.dateCompleted
       ).executeUpdate > 0
@@ -306,11 +311,13 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
             gd.${GameDemoSchema.filename},
             gd.${GameDemoSchema.dateUploaded}
           FROM ${PlayerSchema.tableName} AS p 
-            INNER JOIN ${TeamPlayerSchema.tableName} AS tp on p.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
-            INNER JOIN ${GameResultSchema.tableName} AS gr on p.${PlayerSchema.playerId} = gr.${GameResultSchema.playerId}
-            INNER JOIN ${GameSchema.tableName} AS g on gr.${GameResultSchema.gameId} = g.${GameSchema.gameId}
-            LEFT OUTER JOIN ${GameDemoSchema.tableName} AS gd on gr.${GameResultSchema.gameId} = gd.${GameDemoSchema.gameId}
-              AND gd.${GameDemoSchema.playerId} = p.${PlayerSchema.playerId}
+            INNER JOIN ${TeamPlayerSchema.tableName} AS tp ON p.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
+            INNER JOIN ${TeamGameSchema.tableName} AS tg ON tp.${TeamPlayerSchema.teamId} = tg.${TeamGameSchema.team1Id} 
+              OR tp.${TeamPlayerSchema.teamId} = tg.${TeamGameSchema.team2Id}
+            INNER JOIN ${GameResultSchema.tableName} AS gr ON tp.${PlayerSchema.playerId} = gr.${GameResultSchema.playerId}
+              AND tg.${TeamGameSchema.gameId} = gr.${GameResultSchema.gameId}
+            INNER JOIN ${GameSchema.tableName} AS g ON gr.${GameResultSchema.gameId} = g.${GameSchema.gameId}
+            LEFT OUTER JOIN ${GameDemoSchema.tableName} AS gd ON gr.${GameResultSchema.gameId} = gd.${GameDemoSchema.gameId}
           WHERE gr.${GameResultSchema.gameId} = {gameId}
         """
       ).on('gameId -> gameId)

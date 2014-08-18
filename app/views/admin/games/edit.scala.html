@@ -45,6 +45,23 @@
 					</div>
 				</div>
 				<div class="row form-group">
+					<div class="col-xs-4 @if(errors.gameTypeError.nonEmpty) { has-error }">
+						<label for="selectedGameTypeId" class="control-label">Game Type</label>
+						<select id="selectedGameTypeId" name="selectedGameTypeId" class="form-control">
+							@for(gameType <- model.availableGameTypes) {
+								@if(gameType.gameTypeId == model.selectedGameTypeId || (!model.hasGameTypeSelected && gameType.gameTypeId == 1)) {
+									<option value="@gameType.gameTypeId" selected="selected">@gameType.gameTypeName</option>
+								} else {
+									<option value="@gameType.gameTypeId">@gameType.gameTypeName</option>
+								}
+							}
+						</select>
+						@if(errors.gameTypeError.nonEmpty) {
+							<span class="help-block">@errors.gameTypeError.get</span>
+						}
+					</div>
+				</div>
+				<div class="row form-group">
 					<div class="col-xs-4 @if(errors.team1Error.nonEmpty) { has-error }">
 						<label for="selectedTeam1Id" class="control-label">Team 1</label>
 						<select id="selectedTeam1Id" name="selectedTeam1Id" class="form-control">
