@@ -41,18 +41,18 @@ object RegularSeasonStatsModel {
       .mapValues(_.groupBy(_.captures).values.filter(_.size > 1).flatMap(x => x).toList)
       .filter(_._2.size > 1)
 
-    val models = scala.collection.mutable.List[RegularSeasonStatsModel]();
-    modes ++ winners.values.groupBy(_.teamId).map(_._2.size)
+    val tempStats = stats.map(x => x.teamId -> new TempStats(x.teamId, x.teamName, x.gameId, 0, 0, 0)).toMap[Int, TempStats]
+    winners.values.flatMap(x => x).foreach(x => tempStats.get(x.teamId).map(_.wins += 1))
+    losers.values.flatMap(x => x).foreach(x => tempStats.get(x.teamId).map(_.losses += 1))
+    ties.values.flatMap(x => x).foreach(x => tempStats.get(x.teamId).map(_.ties += 1))
 
-
-
-    models
-  }
-
-  def join[A, B, K, R](outer: Traversable[A], inner: Traversable[B])(outKey: A => K, inKey: B => K, f: (A, B) => R): Traversable[R] = {
-    for(o <- outer; i <- inner; if outKey(o) == inKey(i)) yield f(o, i)
+    tempStats.values.map(x => RegularSeasonStatsModel(
+      x.teamId,
+      x.teamName,
+      x.gameId,
+      x.wins,
+      x.losses,
+      x.ties
+    )).toSeq
   }
 }
-
-
-
