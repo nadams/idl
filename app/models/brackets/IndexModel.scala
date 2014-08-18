@@ -5,7 +5,7 @@ import data._
 
 case class IndexModel(playoffStats: Seq[PlayoffStatsModel], regularStats: Seq[RegularSeasonStatsModel])
 case class PlayoffStatsModel(teamId: Int, teamName: String, gameId: Int, weekId: Int, captures: Int)
-case class RegularSeasonStatsModel(teamId: Int, teamName: String, gameId: Int, wins: Int, losses: Int, ties: Int)
+case class RegularSeasonStatsModel(teamId: Int, teamName: String, wins: Int, losses: Int, ties: Int)
 
 object IndexModel {
   implicit val writesRegularSeasonStatsModel = Json.writes[RegularSeasonStatsModel]
@@ -24,7 +24,7 @@ object PlayoffStatsModel {
 }
 
 object RegularSeasonStatsModel {
-  class TempStats(val teamId: Int, val teamName: String, val gameId: Int, var wins: Int, var losses: Int, var ties: Int)
+  class TempStats(val teamId: Int, val teamName: String, var wins: Int, var losses: Int, var ties: Int)
 
   def toModel(stats: Seq[TeamGameResultRecord]) : Seq[RegularSeasonStatsModel] = {
     val winners = stats.groupBy(_.gameId).mapValues { x =>
@@ -41,7 +41,7 @@ object RegularSeasonStatsModel {
       .mapValues(_.groupBy(_.captures).values.filter(_.size > 1).flatMap(x => x).toList)
       .filter(_._2.size > 1)
 
-    val tempStats = stats.map(x => x.teamId -> new TempStats(x.teamId, x.teamName, x.gameId, 0, 0, 0)).toMap[Int, TempStats]
+    val tempStats = stats.map(x => x.teamId -> new TempStats(x.teamId, x.teamName, 0, 0, 0)).toMap[Int, TempStats]
     winners.values.flatMap(x => x).foreach(x => tempStats.get(x.teamId).map(_.wins += 1))
     losers.values.flatMap(x => x).foreach(x => tempStats.get(x.teamId).map(_.losses += 1))
     ties.values.flatMap(x => x).foreach(x => tempStats.get(x.teamId).map(_.ties += 1))
@@ -49,7 +49,6 @@ object RegularSeasonStatsModel {
     tempStats.values.map(x => RegularSeasonStatsModel(
       x.teamId,
       x.teamName,
-      x.gameId,
       x.wins,
       x.losses,
       x.ties
