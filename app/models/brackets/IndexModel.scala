@@ -13,8 +13,8 @@ object IndexModel {
   implicit val writesIndexModel = Json.writes[IndexModel]
 
   def toModel(stats: Seq[TeamGameResultRecord]) = IndexModel(
-    stats.map(PlayoffStatsModel.toModel(_)),
-    RegularSeasonStatsModel.toModel(stats)
+    stats.filter(_.gameTypeId == GameTypes.Playoff.id).map(PlayoffStatsModel.toModel(_)),
+    RegularSeasonStatsModel.toModel(stats.filter(_.gameTypeId == GameTypes.Regular.id))
   )
 }
 

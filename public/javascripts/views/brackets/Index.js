@@ -32,6 +32,14 @@ brackets.index.IndexModel = (function(ko, _) {
 				}), 2);
 			}, this);
 		}, this);
+
+		this.hasPlayoffStats = ko.computed(function() {
+			return this.playoffStats().length > 0;
+		}, this);
+
+		this.hasRegularSeasonStats = ko.computed(function() {
+			return this.regularSeasonStats().length > 0;
+		}, this);
 	};
 
 	ko.utils.extend(Model.prototype, {

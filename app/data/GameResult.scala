@@ -12,7 +12,7 @@ object GameResult {
     GameResult(x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8)
 }
 
-case class TeamGameResultRecord(teamId: Int, teamName: String, gameId: Int, weekId: Int, captures: Int)
+case class TeamGameResultRecord(teamId: Int, teamName: String, gameId: Int, weekId: Int, gameTypeId: Int, captures: Int)
 
 object TeamGameResultRecord {
   import anorm._ 
@@ -26,6 +26,7 @@ object TeamGameResultRecord {
         t.${TeamSchema.name},
         g.${GameSchema.gameId},
         g.${GameSchema.weekId},
+        g.${GameSchema.gameTypeId},
         CAST(SUM(gr.${GameResultSchema.captures}) AS SIGNED INTEGER) AS Captures,
         CAST(SUM(gr.${GameResultSchema.frags}) AS SIGNED INTEGER) AS Frags
       FROM ${GameSchema.tableName} AS g
@@ -57,10 +58,11 @@ object TeamGameResultRecord {
     str(TeamSchema.name) ~
     int(GameSchema.gameId) ~
     int(WeekSchema.weekId) ~
+    int(GameSchema.gameTypeId) ~
     long("Captures") map flatten
 
   lazy val multiRowParser = singleRowParser *
 
-  def apply(x: (Int, String, Int, Int, Long)) : TeamGameResultRecord = 
-    TeamGameResultRecord(x._1, x._2, x._3, x._4, x._5.toInt)
+  def apply(x: (Int, String, Int, Int, Int, Long)) : TeamGameResultRecord = 
+    TeamGameResultRecord(x._1, x._2, x._3, x._4, x._5, x._6.toInt)
 }
