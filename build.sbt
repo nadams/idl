@@ -10,6 +10,8 @@ scalacOptions += "-language:postfixOps"
 
 scalacOptions += "-feature"
 
+javaOptions += "-XX:MaxPermSize=1024"
+
 libraryDependencies ++= Seq(
   jdbc,
   anorm,
