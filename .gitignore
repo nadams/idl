@@ -73,3 +73,4 @@ server.pid
 #sftp configuration file
 sftp-config.json
 
+.sass-cache
