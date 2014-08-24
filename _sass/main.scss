@@ -1,6 +1,6 @@
 .navbar-default {
   background-color: #1e2639;
-  background-image: -moz-linear-gradient(center top , #28334d, #2b3954);
+  @include background-image(linear-gradient(#28334d, #2b3954));
   background-repeat: repeat-x;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 -1px 0 rgba(0, 0, 0, 0.1) inset;
   border: none;
