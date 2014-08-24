@@ -60,6 +60,7 @@ server.pid
 /RUNNING_PID
 /.settings
 .fuse_hidden*
+public/stylesheets/**/*.css
 
 
 ### SublimeText ###
