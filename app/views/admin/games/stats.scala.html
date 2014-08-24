@@ -1,0 +1,156 @@
+@(model: models.admin.games.StatsModel)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
+
+@import play.api.libs.json.Json
+
+@extraScripts = {
+	@helper.javascriptRouter("routes")(
+		routes.javascript.GameController.uploadStats,
+		routes.javascript.GameController.uploadDemo
+	)
+
+	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/ko-bindings/fileupload.binding.js")"></script>
+	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+	<script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
+	<script src="@routes.Assets.at("fileupload/js/jquery.iframe-transport.js")"></script>
+	<script src="@routes.Assets.at("fileupload/js/jquery.fileupload.js")"></script>
+	<script>
+		admin.games.stats = {
+			data: @Html(Json.toJson(model).toString) || {},
+			routes: routes
+		};
+	</script>
+	<script src="@routes.Assets.at("javascripts/views/admin/games/Stats.js")"></script>
+}
+
+@extraCss = {
+	<link rel="stylesheet" href="@routes.Assets.at("fileupload/css/jquery.fileupload.css")" />
+}
+
+@views.html.admin.games.gamesTemplate("Stats", extraScripts = extraScripts, extraCss = extraCss) {
+	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
+		<div class="panel-heading"><h4>Stats</h4></div>
+		<div class="panel-body">
+
+			<!-- ko if: uploadStatsSuccess() -->
+			<div class="alert alert-success alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<span>Stats uploaded successfully.</span>
+			</div>
+			<!-- /ko -->
+
+			<!-- ko if: uploadStatsFailure() -->
+			<div class="alert alert-danger alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<span data-bind="text: uploadStatsFailure"></span>
+			</div>
+			<!-- /ko -->
+
+			<!-- ko if: statsUploaded -->
+
+			<!-- ko if: stats().length === 0 -->
+			<p>The players uploaded in the log might not be assigned to a team.</p>
+			<!-- /ko -->
+
+			<table class="table table-hover table-condensed">
+				<col style="width: 25%" />
+				<col style="width: 75%" />
+				<thead>
+					<tr>
+						<th>Player Name</th>
+						<th>Demo</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: stats">
+					<tr>
+						<td data-bind="text: playerName"></td>
+						
+						<!-- ko if: demo -->
+						<td data-bind="css: { danger: !demo(), success: demo() }">
+							<!-- ko ifnot: isDemoUploadShown -->
+							<span>Uploaded: <span data-bind="text: demo().dateUploadedNiceFormat"></span></span>
+							<button class="btn btn-link" data-bind="click: showDemoUpload">Replace?</button>
+							<!-- /ko -->
+
+							<!-- ko if: isDemoUploadShown -->
+							<button type="button" class="close" data-bind="click: hideDemoUpload">
+								<span aria-hidden="true">&times;</span>
+								<span class="sr-only">Close</span>
+							</button>
+							<input 
+								type="file" 
+								name="demo"
+								data-bind="fileupload: { 
+									url: uploadUrl, 
+									multipart: true,
+									always: uploadAlways,
+									start: uploadStart,
+									done: uploadDone }" />
+
+							<!-- ko if: isUploading() -->
+							<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
+							<!-- /ko -->
+
+							<!-- /ko -->
+						</td>
+						<!-- /ko -->
+
+						<!-- ko ifnot: demo -->
+						<td data-bind="css: { danger: !demo(), success: demo() }">
+							<!-- ko ifnot: isMissingDemoUploadShown -->
+							<button class="btn btn-link" data-bind="click: showMissingDemoUpload">Missing</button>
+							<!-- /ko -->
+
+							<!-- ko if: isMissingDemoUploadShown -->
+							<button type="button" class="close" data-bind="click: hideMissingDemoUpload">
+								<span aria-hidden="true">&times;</span>
+								<span class="sr-only">Close</span>
+							</button>
+							<input 
+								type="file" 
+								name="demo"
+								data-bind="fileupload: { 
+									url: uploadUrl, 
+									multipart: true,
+									always: uploadAlways,
+									start: uploadStart,
+									done: uploadDone }" />
+
+							<!-- ko if: isUploading() -->
+							<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Uploading..." />
+							<!-- /ko -->
+
+							<!-- /ko -->
+						</td>
+						<!-- /ko -->
+					</tr>
+				</tbody>
+			</table>
+			<!-- /ko -->
+
+			<!-- ko ifnot: statsUploaded -->
+			<p>This game has no stats, upload a Zandronum demo log file.</p>
+			<div class="form-group">
+				<label for="statsUpload" class="col-sm-2 control-label">Upload a demo...</label>
+				<input 
+					type="file" 
+					name="log" 
+					id="statsUpload" 
+					data-bind="fileupload: { 
+						url: uploadStatsUrl, 
+						multipart: true, 
+						always: statsUploadAlways,
+						start: statsUploadStart,
+						done: statsUploadDone,
+						fail: statsUploadFail }" />
+
+				<!-- ko if: isUploading() -->
+				<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
+				<!-- /ko -->
+			</div>
+			<!-- /ko -->
+		</div>
+	</div>
+}
+

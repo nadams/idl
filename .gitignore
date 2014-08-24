@@ -59,6 +59,7 @@ server.pid
 /.project
 /RUNNING_PID
 /.settings
+.fuse_hidden*
 
 
 ### SublimeText ###

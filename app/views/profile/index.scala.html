@@ -1,0 +1,27 @@
+@(model: models.profile.IndexModel)(implicit header: MenuModel, flash: Flash)
+
+@views.html.profile.profileTemplate("Profile") {
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>Manage Profile</h4>
+		</div>
+		<div class="panel-body">
+			@if(flash.get("profileIsNowPlayer").nonEmpty) {
+				<div class="alert alert-success">
+					<p>@flash.get("profileIsNowPlayer")</p>
+				</div>
+			}
+
+			@if(!model.profileIsPlayer) {
+				<form action="@routes.ProfileController.becomePlayer" method="post" role="form">
+					<div class="form-group alert alert-info">
+						<h5>You are not currently an IDL player, would you like to become an IDL player?</h5>
+						<button type="submit" class="btn btn-primary">Yes Please</button>
+					</div>
+				</form>
+			} else {
+				<p>Welcom Player</p>
+			}
+		</div>
+	</div>
+}

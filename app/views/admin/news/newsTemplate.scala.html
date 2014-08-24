@@ -1,0 +1,25 @@
+@(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel)
+
+@extraNavItemsTemplate = {
+	<ul class="nav navbar-nav navbar-right nav-actions">
+		<li><a href="@routes.NewsController.create">Add</a></li>
+		<li><a href="@routes.NewsController.index">News List</a></li>
+	</ul>
+
+	@extraNavItems
+}
+
+@extraCssTemplate = {
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/general.css")" />
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/news.css")" />
+
+    @extraCss
+}
+
+@extraScriptsTemplate = { 
+	@extraScripts
+}
+
+@main(title, extraCssTemplate, extraScriptsTemplate, extraNavItemsTemplate) {
+	@content
+}

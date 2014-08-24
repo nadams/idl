@@ -3,7 +3,60 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                                       controllers.HomeController.index
+    
+GET     /login                                  controllers.ProfileController.login
+POST    /login                                  controllers.ProfileController.performLogin
+GET     /profile                                controllers.ProfileController.index
+GET     /profile/password                       controllers.ProfileController.password
+POST    /profile/password                       controllers.ProfileController.updatePassword
+POST    /profile/logout                         controllers.ProfileController.logout
+POST    /profile/becomePlayer                   controllers.ProfileController.becomePlayer
+GET     /profile/myGames                        controllers.ProfileController.myGames
+    
+#GET     /registration                           controllers.RegistrationController.index
+#POST    /registration                           controllers.RegistrationController.register
+    
+GET     /admin/news                             controllers.NewsController.index(page: Int = 1, size: Int = 15)
+GET     /admin/news/create                      controllers.NewsController.create
+POST    /admin/news/create                      controllers.NewsController.saveNew
+GET     /admin/news/edit/:id                    controllers.NewsController.edit(id: Int)
+POST    /admin/news/edit/:id/save               controllers.NewsController.saveExisting(id: Int)
+POST    /admin/news/remove/:id                  controllers.NewsController.remove(id: Int)
+    
+GET     /admin/teams                            controllers.TeamController.index
+GET     /admin/teams/players                    controllers.TeamController.players
+GET     /admin/teams/teamList/:seasonId         controllers.TeamController.getTeamList(seasonId: Int)
+GET     /admin/teams/players/list               controllers.TeamController.getPlayers
+POST    /admin/teams/assignPlayers              controllers.TeamController.assignPlayers
+POST    /admin/teams/removePlayers              controllers.TeamController.removePlayers
+GET     /admin/teams/create                     controllers.TeamController.create
+POST    /admin/teams/create                     controllers.TeamController.saveNew
+GET     /admin/teams/edit/:id                   controllers.TeamController.edit(id: Int)
+POST    /admin/teams/edit/:id                   controllers.TeamController.saveExisting(id: Int)
+POST    /admin/teams/remove/:id                 controllers.TeamController.remove(id: Int)
+    
+GET     /admin/seasons                          controllers.SeasonController.index
+GET     /admin/seasons/create                   controllers.SeasonController.create
+POST    /admin/seasons/create                   controllers.SeasonController.saveNew
+GET     /admin/seasons/edit/:id                 controllers.SeasonController.edit(id: Int)
+POST    /admin/seasons/edit/:id/save            controllers.SeasonController.saveExisting(id: Int)
+POST    /admin/seasons/remove/:id               controllers.SeasonController.remove(id: Int)
+GET     /admin/season/:id/teams                 controllers.SeasonController.teamSeasons(id: Int)
+POST    /admin/season/:id/teams/remove          controllers.SeasonController.removeTeamsFromSeason(id: Int)
+POST    /admin/season/:id/teams/add             controllers.SeasonController.assignTeamsToSeason(id: Int)
 
+GET     /admin/season/:seasonId/games                               controllers.GameController.index(seasonId: Int)
+GET     /admin/season/:seasonId/games/create                        controllers.GameController.create(seasonId: Int)
+POST    /admin/season/:seasonId/games/create                        controllers.GameController.saveNew(seasonId: Int)
+GET     /admin/season/:seasonId/games/edit/:gameId                  controllers.GameController.edit(seasonId: Int, gameId: Int)
+POST    /admin/season/:seasonId/games/edit/:gameId                  controllers.GameController.saveExisting(seasonId: Int, gameId: Int)
+POST    /admin/season/:seasonId/games/:gameId/remove                controllers.GameController.remove(seasonId: Int, gameId: Int)
+GET     /admin/season/:seasonId/games/:gameId/stats                 controllers.GameController.stats(seasonId: Int, gameId: Int)
+POST    /admin/season/:seasonId/games/:gameId/stats/upload          controllers.GameController.uploadStats(seasonId: Int, gameId: Int)
+POST    /admin/season/:seasonId/games/:gameId/stats/:playerId/demo  controllers.GameController.uploadDemo(seasonId: Int, gameId: Int, playerId: Int)
+
+GET     /brackets                               controllers.BracketsController.index
+        
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file                       controllers.Assets.at(path="/public", file)
