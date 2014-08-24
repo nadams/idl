@@ -32,10 +32,13 @@ class ZandronumLogParser {
   private def populatePlayers(lines: Array[String]) : PlayerStats =
     new TreeMap[String, PlayerData]()(Ordering.by(_.toLowerCase)) ++
       lines.flatMap(playerNameRegex.findFirstMatchIn(_))
-        .map(regex => (regex.group("name"), PlayerData.empty))
+        .map(regex => regex.group("name") -> PlayerData.empty)
         .toMap ++ 
       lines.flatMap(playerRenameRegex.findFirstMatchIn(_))
-        .map(regex => (regex.group("newName"), PlayerData.empty))
+        .map(regex => regex.group("newName") -> PlayerData.empty)
+        .toMap ++
+      lines.flatMap(playerJoinedTeamRegex.findFirstMatchIn(_))
+        .map(regex => regex.group("player") -> PlayerData.empty)
         .toMap
 
   private def getFragCounts(lines: Array[String]) = lines
