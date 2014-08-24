@@ -36,3 +36,4 @@ compassClean := {
 compile <<= (compile in Compile).dependsOn(compass)
 
 clean <<= clean.dependsOn(compassClean)
+
