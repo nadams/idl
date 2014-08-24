@@ -60,6 +60,7 @@ server.pid
 /RUNNING_PID
 /.settings
 .fuse_hidden*
+public/stylesheets/**/*.css
 
 
 ### SublimeText ###
@@ -73,3 +74,4 @@ server.pid
 #sftp configuration file
 sftp-config.json
 
+.sass-cache

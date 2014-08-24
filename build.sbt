@@ -1,6 +1,6 @@
 name := "idl"
 
-version := "idl-1.0"
+version := "idl-1.0.1"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -20,4 +20,20 @@ libraryDependencies ++= Seq(
 	"io.github.nremond" %% "pbkdf2-scala" % "0.4",
 	"com.github.nscala-time" %% "nscala-time" % "1.2.0"
 )
+
+val compass = taskKey[Int]("Compile sass")
+
+val compassClean = taskKey[Int]("Clean sass")
+
+compass := {
+  "compass compile" !
+}
+
+compassClean := {
+  "compass clean" !
+}
+
+compile <<= (compile in Compile).dependsOn(compass)
+
+clean <<= clean.dependsOn(compassClean)
 
