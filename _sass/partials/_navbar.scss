@@ -1,0 +1,38 @@
+@import "compass";
+
+.navbar {
+  .divider-vertical {
+    height: $navbar-height;
+    margin: 0 9px;
+    border-left: 1px solid #f2f2f2;
+    border-right: 1px solid #ffffff;
+  }
+}
+
+.navbar-default {
+  background-color: $navbar-default-bg;
+  @include background-image(linear-gradient(adjust-lightness($navbar-default-bg, -1%), adjust-lightness($navbar-default-bg, 1%)));
+  background-repeat: repeat-x;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 -1px 0 rgba(0, 0, 0, 0.1) inset;
+  border: none;
+  border-radius: 0;
+
+  .navbar-brand {
+    color: #fff;
+  }
+
+  .navbar-toggle {
+    border-color: #3c4c73;
+  }
+
+  .navbar-nav > li > a, .navbar-brand {
+    color: #eee;
+    text-shadow: none;
+
+    &:hover, &:focus {
+      background-color: transparent;
+      color: #ccc;
+      
+    }
+  }
+}
