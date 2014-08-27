@@ -119,3 +119,10 @@ object WeekSchema {
   val weekId = "WeekId"
   val name = "Name"
 }
+
+object RoundSchema {
+  val tableName = "Round"
+  val roundId = "RoundId"
+  val gameId = "GameId"
+  val mapName = "MapName"
+}

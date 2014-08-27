@@ -20,6 +20,9 @@ trait GameRepositoryComponent {
     def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) : Option[GameDemo]
     def getDemoData(gameDemoId: Int) : Option[Array[Byte]]
     def getTeamGameResults(seasonId: Option[Int]) : Seq[TeamGameResultRecord]
+    def addRound(gameId: Int, mapName: String) : Option[Round]
+    def hasRoundResults(gameId: Int) : Boolean
+    def addRoundResult(roundId: Int, data: (String, RoundResult)) : 
   }
 }
 
@@ -396,6 +399,27 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .on('seasonId -> seasonId)
       .as(TeamGameResultRecord.multiRowParser)
       .map(TeamGameResultRecord(_))
+    }
+
+    def addRound(gameId: Int, mapName: String) = DB.withConnection { implicit connection => 
+      SQL(Round.insertRound)
+        .on(
+          'gameId -> gameId,
+          'mapName -> mapName
+        )
+        .executeInsert(scalar[Int] singleOpt)
+      .map(Round(_, gameId, mapName))
+    }
+
+    def hasRoundResults(gameId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          SELECT COUNT(*)
+          FROM ${RoundResultSchema.tableName}
+          WHERE ${RoundResultSchema.gameId} = {gameId}
+        """
+      ).on('gameId -> gameId)
+      .as(scalar[Long] single) > 0      
     }
 
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 

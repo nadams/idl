@@ -16,11 +16,12 @@ trait GameServiceComponent {
     def updateGame(game: Game) : Boolean
     def removeGame(gameId: Int) : Boolean
     def parseGameResults(gameId: Int, source: Source) : Seq[(String, Seq[(String, RoundResult)])]
-    def addGameResult(gameId: Int, data: Map[String, Seq[(String, RoundResult)]]) : Unit
+    def addRoundResults(gameId: Int, data: Seq[(String, Seq[(String, GameResult)])]) : Unit
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
     def getDemoData(demoDataId: Int) : Option[Array[Byte]]
     def getTeamGameResults(seasonId: Option[Int]) : Seq[TeamGameResultRecord]
+    def addRound(gameId: Int, mapNumber: String) : Option[Round]
   }
 }
 
@@ -39,6 +40,7 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) = gameRepository.addDemo(gameId, playerId, filename, file)
     def getDemoData(demoDataId: Int) = gameRepository.getDemoData(demoDataId)
     def getTeamGameResults(seasonId: Option[Int]) = gameRepository.getTeamGameResults(seasonId)
+    def addRound(gameId: Int, mapNumber: String) = gameRepository.addRound(gameId, mapNumber)
 
     def parseGameResults(gameId: Int, source: Source) = 
       ZandronumLogParser.parseLog(source).map { case (roundName, playerStats) => 
@@ -48,13 +50,17 @@ trait GameServiceComponentImpl extends GameServiceComponent {
           playerName -> RoundResult(0, gameId, 0, 0, value.captures, value.pCaptures, value.drops, value.frags, value.deaths)
         }.toSeq
       }
-    }
 
-    def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) = 
-      if(!gameRepository.gameHasResults(gameId))
-        gameRepository.getGame(gameId) map { game => 
-          gameRepository.addGameResults(gameId, data)
-          gameRepository.updateGame(game.copy(dateCompleted = Some(new DateTime(DateTimeZone.UTC))))
+    def addRoundResults(gameId: Int, data: Seq[(String, Seq[(String, GameResult)])]) = 
+      if(!gameReposotory.hasRoundResults(gameId)) {
+        gameRepository.getGame(gameId).map { game => 
+          data.foreach { item => 
+            gameRepository.addRound(game.gameId, item._1).map { round => 
+              gameRepository.addRoundResult(round.roundId, item._2)
+              gameRepository.updateGame(game.copy(dateCompleted = Some(new DateTime(DateTimeZone.UTC))))            
+            }
+          }
         }
+      } 
   }
 }

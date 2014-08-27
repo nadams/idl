@@ -78,13 +78,15 @@ object GameController extends Controller
 
           val source = Source.fromFile(log.ref.file)(Codec.ISO8859)
           val stats = gameService.parseGameResults(gameId, source)
-          val playerNames = stats.map(_._1).toSet
+          val playerNames = stats.flatMap(_._2).map(_._1).toSet
+
           playerService.batchCreatePlayerFromName(playerNames)
-          gameService.addGameResult(gameId, stats)
+          // gameService.addGameResult(gameId, stats)
 
-          val updatedGame = gameService.getGame(gameId).get
+          // val updatedGame = gameService.getGame(gameId).get
 
-          Ok(Json.toJson(StatsModel.toModel(seasonId, updatedGame, gameService.getDemoStatusForGame(gameId))))
+          // Ok(Json.toJson(StatsModel.toModel(seasonId, updatedGame, gameService.getDemoStatusForGame(gameId))))
+          Ok("")
         } getOrElse(BadRequest("File `log` was not found."))
       } getOrElse(BadRequest("Invalid form submission."))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
