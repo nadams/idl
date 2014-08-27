@@ -40,10 +40,8 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def getDemoData(demoDataId: Int) = gameRepository.getDemoData(demoDataId)
     def getTeamGameResults(seasonId: Option[Int]) = gameRepository.getTeamGameResults(seasonId)
 
-    def parseGameResults(gameId: Int, source: Source) = {
-      val roundStats : Seq[(String, Map[String, PlayerData])] = ZandronumLogParser.parseLog(source)
-
-      roundStats.map { case (roundName, playerStats) => 
+    def parseGameResults(gameId: Int, source: Source) = 
+      ZandronumLogParser.parseLog(source).map { case (roundName, playerStats) => 
         roundName -> playerStats.filter(_._2.team != Teams.Spectator).keys.map { playerName => 
           val value = playerStats(playerName)
 
