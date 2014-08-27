@@ -8,7 +8,7 @@ import math.Ordering._
 
 class ZandronumLogParser {
   type PlayerStats = Map[String, PlayerData]
-  type RoundStats = Map[String, PlayerStats] 
+  type RoundStats = Seq[(String, PlayerStats)] 
   
   private val roundRegex = new Regex("""(?i)(map\d\d|e\dm\d) - (.+) - (.+)""", "mapNumber", "mapName", "wad")
   private val playerNameRegex = new Regex("""(?i)\[.+\] (.+) has connected.""", "name")
@@ -28,8 +28,8 @@ class ZandronumLogParser {
       setFragCounts(getFragCounts(roundLines), players)
       setSuicides(getSuicides(roundLines), players)
 
-      s"$index|${roundLines(0)}" -> players
-    }.toMap 
+      roundLines(0) -> players
+    }.to[collection.immutable.Seq]
   }
 
   private def populatePlayers(lines: Array[String]) : PlayerStats =
