@@ -21,14 +21,14 @@ class ZandronumLogParser {
 
   def parseLog(source: Source) : RoundStats = {
     val lines = source.getLines.toArray
-    splitLogByRound(lines).map { roundLines =>
+    splitLogByRound(lines).zipWithIndex.map { case(roundLines, index) =>
       val players = populatePlayers(roundLines)
 
       setTeams(getTeams(roundLines), players)
       setFragCounts(getFragCounts(roundLines), players)
       setSuicides(getSuicides(roundLines), players)
 
-      roundLines(1) -> players
+      s"$index|${roundLines(0)}" -> players
     }.toMap 
   }
 
