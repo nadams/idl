@@ -15,8 +15,8 @@ trait GameServiceComponent {
     def addGame(game: Game) : Boolean
     def updateGame(game: Game) : Boolean
     def removeGame(gameId: Int) : Boolean
-    def parseGameResults(gameId: Int, source: Source) : Seq[(String, GameResult)]
-    def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) : Unit
+    def parseGameResults(gameId: Int, source: Source) : Seq[(String, Seq[(String, RoundResult)])]
+    def addGameResult(gameId: Int, data: Map[String, Seq[(String, RoundResult)]]) : Unit
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
     def getDemoData(demoDataId: Int) : Option[Array[Byte]]
@@ -41,13 +41,15 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def getTeamGameResults(seasonId: Option[Int]) = gameRepository.getTeamGameResults(seasonId)
 
     def parseGameResults(gameId: Int, source: Source) = {
-      val playerStats = ZandronumLogParser.parseLog(source)
-      
-      playerStats.filter(_._2.team != Teams.Spectator).keys.map { key => 
-        val value = playerStats(key)
+      val roundStats : Seq[(String, Map[String, PlayerData])] = ZandronumLogParser.parseLog(source)
 
-        (key, GameResult(0, gameId, 0, value.captures, value.pCaptures, value.drops, value.frags, value.deaths))
-      } toSeq
+      roundStats.map { case (roundName, playerStats) => 
+        roundName -> playerStats.filter(_._2.team != Teams.Spectator).keys.map { playerName => 
+          val value = playerStats(playerName)
+
+          playerName -> RoundResult(0, gameId, 0, 0, value.captures, value.pCaptures, value.drops, value.frags, value.deaths)
+        }.toSeq
+      }
     }
 
     def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) = 
