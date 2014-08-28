@@ -9,8 +9,10 @@
 		routes.javascript.GameController.removeRound
 	)
 
+	<script src="@routes.Assets.at("editable/js/bootstrap-editable.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/ko-bindings/fileupload.binding.js")"></script>
+	<script src="@routes.Assets.at("javascripts/ko-bindings/editable.binding.js")"></script>
 	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
 	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
 	<script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
@@ -27,6 +29,7 @@
 
 @extraCss = {
 	<link rel="stylesheet" href="@routes.Assets.at("fileupload/css/jquery.fileupload.css")" />
+	<link rel="stylesheet" href="@routes.Assets.at("editable/css/bootstrap-editable.css")" />
 }
 
 @views.html.admin.games.gamesTemplate("Stats", extraScripts = extraScripts, extraCss = extraCss) {
@@ -157,11 +160,11 @@
 						<tbody data-bind="foreach: playerData">
 							<tr>
 								<td data-bind="text: playerName"></td>
-								<td data-bind="text: captures"></td>
-								<td data-bind="text: pCaptures"></td>
-								<td data-bind="text: drops"></td>
-								<td data-bind="text: frags"></td>
-								<td data-bind="text: deaths"></td>
+								<td><span data-bind="editable: { value: captures, required: 'Captures is required' }"></span></td>
+								<td><span data-bind="editable: { value: pCaptures, required: 'PCaptures is required' }"></span></td>
+								<td><span data-bind="editable: { value: drops, required: 'Drops is required' }"></span></td>
+								<td><span data-bind="editable: { value: frags, required: 'Frags is required' }"></span></td>
+								<td><span data-bind="editable: { value: deaths, required: 'Deaths is required' }"></span></td>
 							</tr>
 						</tbody>
 					</table>
