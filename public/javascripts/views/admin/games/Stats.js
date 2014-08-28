@@ -35,12 +35,6 @@ admin.games.stats.StatsModel = (function(ko, _) {
     this.statsUploadAlways = function() {
       this.isUploading(false);
     }.bind(this);
-
-    this.sortedRounds = ko.computed(function() {
-      return this.rounds.sort(function(left, right) {
-        return left.roundId() > right.roundId();
-      });
-    }, this);
   };
 
   ko.utils.extend(Model.prototype, {

@@ -64,7 +64,7 @@ object RoundModel {
   def toModel(data: Seq[RoundStatsRecord]) : Seq[RoundModel] = 
     data.groupBy(_.roundId).map { case(roundId, data) =>
       RoundModel(roundId, data.head.mapNumber, data.map(RoundStatsModel.toModel(_)))
-    } toSeq
+    }.toSeq.sortBy(_.roundId)
 }
 
 case class RoundStatsModel(
