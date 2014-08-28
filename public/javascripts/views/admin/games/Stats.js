@@ -1,6 +1,6 @@
-/* global ko, _, moment, admin */
+/* global ko, _, moment, jQuery, admin */
 
-admin.games.stats.StatsModel = (function(ko, _) {
+admin.games.stats.StatsModel = (function(ko, _, $) {
   'use strict';
 
   var Model = function(data, routes) {
@@ -35,6 +35,26 @@ admin.games.stats.StatsModel = (function(ko, _) {
     this.statsUploadAlways = function() {
       this.isUploading(false);
     }.bind(this);
+
+    this.removeRound = function(round) {
+      var url = this.routes.controllers.GameController.removeRound(this.seasonId(), this.gameId(), round.roundId()).url;
+      var promise = $.ajax({
+        url: url,
+        data: '{}',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        context: this
+      });
+
+      promise.done(function() {
+        this.rounds.remove(round);
+      });
+
+      promise.fail(function() {
+        alert('unable to remove round');
+      });
+    }.bind(this);
   };
 
   ko.utils.extend(Model.prototype, {
@@ -54,7 +74,7 @@ admin.games.stats.StatsModel = (function(ko, _) {
   });
 
   return Model;
-})(ko, _);
+})(ko, _, jQuery);
 
 admin.games.stats.StatsDemoModel = (function(ko) {
   'use strict';
@@ -164,9 +184,6 @@ admin.games.stats.RoundModel = (function(ko) {
       this.playerData(_.map(data.playerData, function(item) {
         return new admin.games.stats.RoundResultModel(item, this.routes);
       }, this));
-    },
-    removeRound: function() {
-      alert('removing ' + this.roundId());
     }
   });
 

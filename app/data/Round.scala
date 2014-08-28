@@ -14,4 +14,9 @@ object Round {
       )
     """
 
+  lazy val removeRound =
+    s"""
+      DELETE FROM ${RoundSchema.tableName}
+      WHERE ${RoundSchema.roundId} = {roundId}
+    """
 }

@@ -23,6 +23,7 @@ trait GameServiceComponent {
     def getTeamGameResults(seasonId: Option[Int]) : Seq[TeamGameResultRecord]
     def addRound(gameId: Int, mapNumber: String) : Option[Round]
     def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
+    def removeRound(roundId: Int) : Boolean
   }
 }
 
@@ -43,6 +44,7 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def getTeamGameResults(seasonId: Option[Int]) = gameRepository.getTeamGameResults(seasonId)
     def addRound(gameId: Int, mapNumber: String) = gameRepository.addRound(gameId, mapNumber)
     def getRoundStats(gameId: Int) = gameRepository.getRoundStats(gameId)
+    def removeRound(roundId: Int) = gameRepository.removeRound(roundId)
 
     def parseGameResults(gameId: Int, source: Source) = 
       ZandronumLogParser.parseLog(source).map { case (roundName, playerStats) => 

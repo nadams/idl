@@ -8,6 +8,12 @@ case class RoundResult(roundResultId: Int, gameId: Int, roundId: Int, playerId: 
 }
 
 object RoundResult {
+  lazy val removeRoundResult = 
+    s"""
+      DELETE FROM ${RoundResultSchema.tableName}
+      WHERE ${RoundResultSchema.roundId} = {roundId}
+    """
+
   def apply(x: (Int, Int, Int, Int, Int, Int, Int, Int, Int)) : RoundResult = 
     RoundResult(x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8, x._9)
 }

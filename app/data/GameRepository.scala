@@ -21,6 +21,7 @@ trait GameRepositoryComponent {
     def hasRoundResults(gameId: Int) : Boolean
     def addRoundResult(roundId: Int, data: (String, RoundResult)) : RoundResult
     def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
+    def removeRound(roundId: Int) : Boolean
   }
 }
 
@@ -381,6 +382,16 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .on('gameId -> gameId)
       .as(RoundStatsRecord.multiRowParser)
       .map(RoundStatsRecord(_))
+    }
+
+    def removeRound(roundId: Int) = DB.withTransaction { implicit connection => 
+      SQL(RoundResult.removeRoundResult)
+      .on('roundId -> roundId)
+      .executeUpdate > 0
+
+      SQL(Round.removeRound)
+      .on('roundId -> roundId)
+      .executeUpdate > 0
     }
 
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 

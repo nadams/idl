@@ -5,7 +5,8 @@
 @extraScripts = {
 	@helper.javascriptRouter("routes")(
 		routes.javascript.GameController.uploadStats,
-		routes.javascript.GameController.uploadDemo
+		routes.javascript.GameController.uploadDemo,
+		routes.javascript.GameController.removeRound
 	)
 
 	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
@@ -138,7 +139,7 @@
 					<div class="pull-right btn-group">
 						<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Remove <span class="caret"></span></button>
 						<ul class="dropdown-menu" role="menu">
-							<li><button class="btn btn-link" data-bind="click: removeRound">Are you sure?</button></li>
+							<li><button class="btn btn-link" data-bind="click: $parent.removeRound">Are you sure?</button></li>
 						</ul>
 					</div>
 					<h5 class="pull-left" data-bind="text: roundName()"></h5>
