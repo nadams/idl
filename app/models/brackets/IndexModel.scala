@@ -12,21 +12,21 @@ object IndexModel {
   implicit val writesPlayoffStatsModel = Json.writes[PlayoffStatsModel]
   implicit val writesIndexModel = Json.writes[IndexModel]
 
-  def toModel(stats: Seq[TeamGameResultRecord]) = IndexModel(
+  def toModel(stats: Seq[TeamGameRoundResultRecord]) = IndexModel(
     stats.filter(_.gameTypeId == GameTypes.Playoff.id).map(PlayoffStatsModel.toModel(_)),
     RegularSeasonStatsModel.toModel(stats.filter(_.gameTypeId == GameTypes.Regular.id))
   )
 }
 
 object PlayoffStatsModel {
-  def toModel(data: TeamGameResultRecord) = 
+  def toModel(data: TeamGameRoundResultRecord) = 
     PlayoffStatsModel(data.teamId, data.teamName, data.gameId, data.weekId, data.captures)
 }
 
 object RegularSeasonStatsModel {
   class TempStats(val teamId: Int, val teamName: String, var wins: Int, var losses: Int, var ties: Int)
 
-  def toModel(stats: Seq[TeamGameResultRecord]) : Seq[RegularSeasonStatsModel] = {
+  def toModel(stats: Seq[TeamGameRoundResultRecord]) : Seq[RegularSeasonStatsModel] = {
     val winners = stats.groupBy(_.gameId).mapValues { x =>
       val max = x.maxBy(_.captures).captures
       x.filter(y => y.captures == max)

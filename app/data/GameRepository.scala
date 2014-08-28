@@ -23,6 +23,7 @@ trait GameRepositoryComponent {
     def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
     def disableRound(round: Round) : Option[Round]
     def getRound(roundId: Int) : Option[Round]
+    def getTeamGameRoundResults(seasonId: Option[Int]) : Seq[TeamGameRoundResultRecord]
   }
 }
 
@@ -396,6 +397,14 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .as(Round.singleRowParser singleOpt)
       .map(Round(_))
     }
+
+    def getTeamGameRoundResults(seasonId: Option[Int]) = DB.withConnection { implicit connection => 
+      SQL(TeamGameRoundResultRecord.getRoundResultStatsBySeasonId)
+      .on('seasonId -> seasonId)
+      .as(TeamGameRoundResultRecord.multiRowParser)
+      .map(TeamGameRoundResultRecord(_))
+    }
+
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
     //   import java.nio.file.{ Files, Paths }
 
