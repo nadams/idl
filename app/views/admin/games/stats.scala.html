@@ -30,7 +30,7 @@
 
 @views.html.admin.games.gamesTemplate("Stats", extraScripts = extraScripts, extraCss = extraCss) {
 	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
-		<div class="panel-heading"><h4>Stats</h4></div>
+		<div class="panel-heading"><h3>Stats</h3></div>
 		<div class="panel-body">
 
 			<!-- ko if: uploadStatsSuccess() -->
@@ -56,6 +56,7 @@
 			<!-- /ko -->
 
 			<!-- ko if: stats().length > 0 -->
+			<h4 class="status-header">Demo Status</h4>
 			<table class="table table-hover table-condensed">
 				<col style="width: 25%" />
 				<col style="width: 75%" />
@@ -130,6 +131,41 @@
 					</tr>
 				</tbody>
 			</table>
+
+			<h4 class="status-header">Round Stats</h4>
+			<ol class="list-group">
+				<li class="list-group-item">
+					<div class="pull-right btn-group">
+						<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Remove <span class="caret"></span></button>
+						<ul class="dropdown-menu" role="menu">
+							<li><button class="btn btn-link">Are you sure?</button></li>
+						</ul>
+					</div>
+					<h5 class="pull-left">ROUND NAME</h5>
+					<table class="table table-hover table-condensed">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Captures</th>
+								<th>PCaptures</th>
+								<th>Drops</th>
+								<th>Frags</th>
+								<th>Deaths</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+				</li>
+			</ol>
 			<!-- /ko -->
 			<!-- /ko -->
 
