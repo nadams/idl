@@ -210,7 +210,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
     def getDemoStatusForGame(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
-          SELECT 
+          SELECT
             p.${PlayerSchema.playerId},
             p.${PlayerSchema.name},
             gd.${GameDemoSchema.gameDemoId},
@@ -220,11 +220,9 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
             INNER JOIN ${TeamPlayerSchema.tableName} AS tp ON p.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
             INNER JOIN ${TeamGameSchema.tableName} AS tg ON tp.${TeamPlayerSchema.teamId} = tg.${TeamGameSchema.team1Id} 
               OR tp.${TeamPlayerSchema.teamId} = tg.${TeamGameSchema.team2Id}
-            INNER JOIN ${GameResultSchema.tableName} AS gr ON tp.${PlayerSchema.playerId} = gr.${GameResultSchema.playerId}
-              AND tg.${TeamGameSchema.gameId} = gr.${GameResultSchema.gameId}
-            INNER JOIN ${GameSchema.tableName} AS g ON gr.${GameResultSchema.gameId} = g.${GameSchema.gameId}
-            LEFT OUTER JOIN ${GameDemoSchema.tableName} AS gd ON gr.${GameResultSchema.gameId} = gd.${GameDemoSchema.gameId}
-          WHERE gr.${GameResultSchema.gameId} = {gameId}
+            LEFT OUTER JOIN ${GameDemoSchema.tableName} AS gd ON tg.${GameSchema.gameId} = gd.${GameDemoSchema.gameId}
+              AND gd.${GameDemoSchema.playerId} = p.${PlayerSchema.playerId}
+          WHERE tg.${TeamGameSchema.gameId} = {gameId}
         """
       ).on('gameId -> gameId)
       .as(DemoStatusRecord.multiRowParser)
