@@ -8,7 +8,8 @@ admin.games.stats.StatsModel = (function(ko, _) {
     this.seasonId = ko.observable(0);
     this.gameId = ko.observable(0);
     this.statsUploaded = ko.observable(false);
-    this.stats = ko.observableArray();
+    this.demoInfo = ko.observableArray();
+    this.rounds = ko.observableArray();
 
     this.uploadStatsSuccess = ko.observable();
     this.uploadStatsFailure = ko.observable();
@@ -34,6 +35,12 @@ admin.games.stats.StatsModel = (function(ko, _) {
     this.statsUploadAlways = function() {
       this.isUploading(false);
     }.bind(this);
+
+    this.sortedRounds = ko.computed(function() {
+      return this.rounds.sort(function(left, right) {
+        return left.roundId() > right.roundId();
+      });
+    }, this);
   };
 
   ko.utils.extend(Model.prototype, {
@@ -41,8 +48,13 @@ admin.games.stats.StatsModel = (function(ko, _) {
       this.seasonId(data.seasonId);
       this.gameId(data.gameId);
       this.statsUploaded(data.statsUploaded);
-      this.stats(_.map(data.stats, function(data) {
+
+      this.demoInfo(_.map(data.demoInfo, function(data) {
         return new admin.games.stats.StatsDemoModel(this.seasonId(), this.gameId(), data, routes);
+      }, this));
+
+      this.rounds(_.map(data.rounds, function(data) {
+        return new admin.games.stats.RoundModel(data, routes);
       }, this));
     }
   });
@@ -133,6 +145,73 @@ admin.games.stats.DemoModel = (function(ko, moment) {
 
   return Model;
 })(ko, moment);
+
+admin.games.stats.RoundModel = (function(ko) {
+  'use strict';
+
+  var Model = function(data, routes) {
+    this.routes = routes;
+
+    this.roundId = ko.observable();
+    this.mapNumber = ko.observable();
+    this.playerData = ko.observableArray();
+
+    this.initialize(data);
+
+    this.roundName = ko.computed(function() {
+      return this.roundId() + ' - ' + this.mapNumber();
+    }, this);
+  };
+
+  ko.utils.extend(Model.prototype, {
+    initialize: function(data) {
+      this.roundId(data.roundId);
+      this.mapNumber(data.mapNumber);
+      this.playerData(_.map(data.playerData, function(item) {
+        return new admin.games.stats.RoundResultModel(item, this.routes);
+      }, this));
+    },
+    removeRound: function() {
+      alert('removing ' + this.roundId());
+    }
+  });
+
+  return Model;
+})(ko);
+
+admin.games.stats.RoundResultModel = (function(ko) {
+  'use strict';
+
+  var Model = function(data, routes) {
+    this.routes = routes;
+
+    this.roundResultId = ko.observable();
+    this.playerId = ko.observable();
+    this.playerName = ko.observable();
+    this.captures = ko.observable();
+    this.pCaptures = ko.observable();
+    this.drops = ko.observable();
+    this.frags = ko.observable();
+    this.deaths = ko.observable();
+
+    this.initialize(data);
+  };
+
+  ko.utils.extend(Model.prototype, {
+    initialize: function(data) {
+      this.roundResultId(data.roundResultId);
+      this.playerId(data.playerId);
+      this.playerName(data.playerName);
+      this.captures(data.captures);
+      this.pCaptures(data.pCaptures);
+      this.drops(data.drops);
+      this.frags(data.frags);
+      this.deaths(data.deaths);
+    }
+  });
+
+  return Model;
+})(ko);
 
 (function(ko, admin) {
   'use strict';

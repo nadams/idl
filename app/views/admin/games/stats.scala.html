@@ -49,13 +49,13 @@
 
 			<!-- ko if: statsUploaded -->
 
-			<!-- ko if: stats().length === 0 -->
+			<!-- ko if: demoInfo().length === 0 -->
 			<div class="alert alert-warning" role="alert">
 				<p>The players uploaded in the log might not be assigned to a team.</p>
 			</div>
 			<!-- /ko -->
 
-			<!-- ko if: stats().length > 0 -->
+			<!-- ko if: demoInfo().length > 0 -->
 			<h4 class="status-header">Demo Status</h4>
 			<table class="table table-hover table-condensed">
 				<col style="width: 25%" />
@@ -66,7 +66,7 @@
 						<th>Demo</th>
 					</tr>
 				</thead>
-				<tbody data-bind="foreach: stats">
+				<tbody data-bind="foreach: demoInfo">
 					<tr>
 						<td data-bind="text: playerName"></td>
 						
@@ -133,15 +133,15 @@
 			</table>
 
 			<h4 class="status-header">Round Stats</h4>
-			<ol class="list-group">
+			<ol class="list-group" data-bind="foreach: sortedRounds">
 				<li class="list-group-item">
 					<div class="pull-right btn-group">
 						<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Remove <span class="caret"></span></button>
 						<ul class="dropdown-menu" role="menu">
-							<li><button class="btn btn-link">Are you sure?</button></li>
+							<li><button class="btn btn-link" data-bind="click: removeRound">Are you sure?</button></li>
 						</ul>
 					</div>
-					<h5 class="pull-left">ROUND NAME</h5>
+					<h5 class="pull-left" data-bind="text: roundName()"></h5>
 					<table class="table table-hover table-condensed">
 						<thead>
 							<tr>
@@ -153,14 +153,14 @@
 								<th>Deaths</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody data-bind="foreach: playerData">
 							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
+								<td data-bind="text: playerName"></td>
+								<td data-bind="text: captures"></td>
+								<td data-bind="text: pCaptures"></td>
+								<td data-bind="text: drops"></td>
+								<td data-bind="text: frags"></td>
+								<td data-bind="text: deaths"></td>
 							</tr>
 						</tbody>
 					</table>
@@ -192,5 +192,6 @@
 			<!-- /ko -->
 		</div>
 	</div>
+	<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 }
 

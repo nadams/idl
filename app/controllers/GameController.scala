@@ -63,7 +63,7 @@ object GameController extends Controller
     implicit val iSeasonId = seasonId
 
     gameService.getGame(gameId).map { game =>
-      Ok(views.html.admin.games.stats(StatsModel.toModel(seasonId, game, gameService.getDemoStatusForGame(gameId))))
+      Ok(views.html.admin.games.stats(StatsModel.toModel(seasonId, game, gameService.getDemoStatusForGame(gameId), gameService.getRoundStats(gameId))))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
@@ -85,7 +85,7 @@ object GameController extends Controller
 
           val updatedGame = gameService.getGame(gameId).get
 
-          Ok(Json.toJson(StatsModel.toModel(seasonId, updatedGame, gameService.getDemoStatusForGame(gameId))))
+          Ok(Json.toJson(StatsModel.toModel(seasonId, updatedGame, gameService.getDemoStatusForGame(gameId), gameService.getRoundStats(gameId))))
         } getOrElse(BadRequest("File `log` was not found."))
       } getOrElse(BadRequest("Invalid form submission."))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))

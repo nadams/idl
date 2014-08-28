@@ -20,6 +20,7 @@ trait GameRepositoryComponent {
     def addRound(gameId: Int, mapNumber: String) : Option[Round]
     def hasRoundResults(gameId: Int) : Boolean
     def addRoundResult(roundId: Int, data: (String, RoundResult)) : RoundResult
+    def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
   }
 }
 
@@ -373,6 +374,13 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .executeUpdate
 
       roundResult.copy(roundResultId = roundResultId)
+    }
+
+    def getRoundStats(gameId: Int) = DB.withConnection { implicit connection => 
+      SQL(RoundStatsRecord.selectByGameSql)
+      .on('gameId -> gameId)
+      .as(RoundStatsRecord.multiRowParser)
+      .map(RoundStatsRecord(_))
     }
 
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
