@@ -43,10 +43,5 @@ object Round {
     bool(RoundSchema.isEnabled) map flatten
 
   def apply(x: (Int, Int, String, Boolean)) : Round = 
-    Round(
-      x._1,
-      x._2,
-      x._3,
-      x._4
-    )
+    Round(x._1, x._2, x._3, x._4)
 }
