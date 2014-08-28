@@ -12,9 +12,6 @@ trait GameRepositoryComponent {
     def addGame(game: Game) : Boolean
     def updateGame(game: Game) : Boolean
     def removeGame(gameId: Int) : Boolean
-    def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) : Unit
-    def gameHasResults(gameId: Int) : Boolean
-    def getGameResults(gameId: Int) : Map[String, GameResult]
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
     def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) : Option[GameDemo]
@@ -208,100 +205,6 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         """
       ).on('gameId -> gameId)
       .executeUpdate > 0
-    }
-
-    def addGameResults(gameId: Int, data: Seq[(String, GameResult)]) = DB.withTransaction { implicit connection => 
-      data.foreach { x => 
-        val playerName = x._1
-        val gameResult = x._2
-
-        val playerId = SQL(
-          s"""
-            SELECT ${PlayerSchema.playerId}
-            FROM ${PlayerSchema.tableName}
-            WHERE ${PlayerSchema.name} = {playerName}
-          """
-        )
-        .on('playerName -> playerName)
-        .as(scalar[Int] singleOpt)
-        .get //This is dangerous, but since we're in a transaction, 
-             //we want an exception to be thrown if an error occurs.
-
-        SQL(
-          s"""
-            INSERT INTO ${GameResultSchema.tableName} (
-              ${GameResultSchema.gameId},
-              ${GameResultSchema.playerId},
-              ${GameResultSchema.captures},
-              ${GameResultSchema.pCaptures},
-              ${GameResultSchema.drops},
-              ${GameResultSchema.frags},
-              ${GameResultSchema.deaths}
-            ) VALUES (
-              {gameId},
-              {playerId},
-              {captures},
-              {pCaptures},
-              {drops},
-              {frags},
-              {deaths}
-            )
-          """
-        )
-        .on(
-          'gameId -> gameId,
-          'playerId -> playerId,
-          'captures -> gameResult.captures,
-          'pCaptures -> gameResult.pCaptures,
-          'drops -> gameResult.drops,
-          'frags -> gameResult.frags,
-          'deaths -> gameResult.deaths
-        )
-        .executeUpdate
-      } 
-    }
-
-    def gameHasResults(gameId: Int) = DB.withConnection { implicit connection => 
-      SQL(
-        s"""
-          SELECT COUNT(*)
-          FROM ${GameResultSchema.tableName}
-          WHERE ${GameResultSchema.gameId} = {gameId}
-        """
-      ).on('gameId -> gameId)
-      .as(scalar[Long] single) > 0
-    }
-
-    def getGameResults(gameId: Int) = DB.withConnection { implicit connection => 
-      SQL(
-        s"""
-          SELECT
-            gr.${GameResultSchema.gameResultId},
-            gr.${GameResultSchema.gameId},
-            gr.${GameResultSchema.playerId},
-            gr.${GameResultSchema.captures},
-            gr.${GameResultSchema.pCaptures},
-            gr.${GameResultSchema.drops},
-            gr.${GameResultSchema.frags},
-            gr.${GameResultSchema.deaths},
-            p.${PlayerSchema.name}
-          FROM ${GameResultSchema.tableName} AS gr
-            INNER JOIN ${PlayerSchema.tableName} AS p ON gr.${GameResultSchema.playerId} = ${PlayerSchema.playerId}
-          WHERE ${GameResultSchema.gameId} = {gameId}
-        """
-      ).on('gameId -> gameId)
-      .as(
-        int(GameResultSchema.gameResultId) ~
-        int(GameResultSchema.gameId) ~ 
-        int(GameResultSchema.playerId) ~
-        int(GameResultSchema.captures) ~
-        int(GameResultSchema.pCaptures) ~
-        int(GameResultSchema.drops) ~
-        int(GameResultSchema.frags) ~
-        int(GameResultSchema.deaths) ~ 
-        str(PlayerSchema.name) map flatten *
-      ).map(x => (x._9, GameResult(x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8)))
-      .toMap
     }
 
     def getDemoStatusForGame(gameId: Int) = DB.withConnection { implicit connection => 
