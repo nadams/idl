@@ -1,0 +1,7 @@
+# --- !Ups
+
+ALTER TABLE Round ADD COLUMN IsEnabled TINYINT(1) NOT NULL DEFAULT 1 AFTER MapNumber
+
+# --- !Downs
+
+ALTER TABLE Round DROP COLUMN IsEnabled

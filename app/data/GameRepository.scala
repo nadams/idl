@@ -21,7 +21,8 @@ trait GameRepositoryComponent {
     def hasRoundResults(gameId: Int) : Boolean
     def addRoundResult(roundId: Int, data: (String, RoundResult)) : RoundResult
     def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
-    def removeRound(roundId: Int) : Boolean
+    def disableRound(round: Round) : Option[Round]
+    def getRound(roundId: Int) : Option[Round]
   }
 }
 
@@ -311,7 +312,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
           'mapNumber -> mapNumber
         )
         .executeInsert(scalar[Long] singleOpt)
-        .map(x => Round(x.toInt, gameId, mapNumber))
+        .map(x => Round(x.toInt, gameId, mapNumber, true))
     }
 
     def hasRoundResults(gameId: Int) = DB.withConnection { implicit connection => 
@@ -384,16 +385,17 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .map(RoundStatsRecord(_))
     }
 
-    def removeRound(roundId: Int) = DB.withTransaction { implicit connection => 
-      SQL(RoundResult.removeRoundResult)
-      .on('roundId -> roundId)
-      .executeUpdate > 0
-
-      SQL(Round.removeRound)
-      .on('roundId -> roundId)
-      .executeUpdate > 0
+    def disableRound(round: Round) = DB.withTransaction { implicit connection => 
+      if(SQL(Round.removeRound).on('roundId -> round.roundId).executeUpdate > 0) Some(round.copy(isEnabled = false))
+      else None
     }
 
+    def getRound(roundId: Int) = DB.withConnection { implicit connection => 
+      SQL(Round.selectRound)
+      .on('roundId -> roundId)
+      .as(Round.singleRowParser singleOpt)
+      .map(Round(_))
+    }
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
     //   import java.nio.file.{ Files, Paths }
 

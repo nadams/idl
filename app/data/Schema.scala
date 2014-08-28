@@ -125,6 +125,7 @@ object RoundSchema {
   val roundId = "RoundId"
   val gameId = "GameId"
   val mapNumber = "MapNumber"
+  val isEnabled = "IsEnabled"
 }
 
 object RoundResultSchema {

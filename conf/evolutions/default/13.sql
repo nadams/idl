@@ -26,5 +26,5 @@ CREATE TABLE IF NOT EXISTS RoundResult (
 
 # --- !Downs
 
-DROP TABLE Round;
 DROP TABLE RoundResult;
+DROP TABLE Round;

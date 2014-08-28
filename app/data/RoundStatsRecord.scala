@@ -36,8 +36,9 @@ object RoundStatsRecord {
       FROM ${RoundSchema.tableName} AS r
         INNER JOIN ${RoundResultSchema.tableName} AS rr ON r.${RoundSchema.roundId} = rr.${RoundResultSchema.roundId}
         INNER JOIN ${PlayerSchema.tableName} AS p on rr.${RoundResultSchema.playerId} = p.${PlayerSchema.playerId}
-      WHERE r.${RoundSchema.gameId} = {gameId}
-      ORDER BY r.${RoundSchema.roundId} DESC, p.${PlayerSchema.name} ASC
+      WHERE r.${RoundSchema.isEnabled} = 1 
+        AND r.${RoundSchema.gameId} = {gameId}
+      ORDER BY r.${RoundSchema.roundId}, p.${PlayerSchema.name} ASC
     """
 
   lazy val singleRowParser = 

@@ -109,8 +109,11 @@ object GameController extends Controller
 
   def removeRound(seasonId: Int, gameId: Int, roundId: Int) = HasSeason(seasonId) { username => implicit request => 
     gameService.getGame(gameId) map { game => 
-      if(gameService.removeRound(roundId)) Ok(Json.toJson(roundId))
-      else InternalServerError(s"Unable to remove round: $roundId")
+      gameService.getRound(roundId) map { round => 
+        gameService.disableRound(round) map { disabledRound => 
+          Ok(Json.toJson(roundId))
+          } getOrElse(InternalServerError(s"Unable to disable round: $roundId"))
+      } getOrElse(NotFound(s"Round with Id: $roundId not found."))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }
 
