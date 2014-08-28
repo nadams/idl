@@ -155,6 +155,7 @@
 								<th>Drops</th>
 								<th>Frags</th>
 								<th>Deaths</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody data-bind="foreach: playerData">
@@ -165,6 +166,11 @@
 								<td><span data-bind="editable: { value: drops, required: 'Drops is required' }"></span></td>
 								<td><span data-bind="editable: { value: frags, required: 'Frags is required' }"></span></td>
 								<td><span data-bind="editable: { value: deaths, required: 'Deaths is required' }"></span></td>
+								<td>
+									<!-- ko if: dataIsValid -->
+									<button class="btn btn-primary">Save</button>
+									<!-- /ko -->
+								</td>
 							</tr>
 						</tbody>
 					</table>

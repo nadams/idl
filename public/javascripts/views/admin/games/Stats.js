@@ -206,6 +206,10 @@ admin.games.stats.RoundResultModel = (function(ko) {
     this.deaths = ko.observable();
 
     this.initialize(data);
+
+    this.dataIsValid = ko.computed(function() {
+      return true;
+    }, this);
   };
 
   ko.utils.extend(Model.prototype, {
