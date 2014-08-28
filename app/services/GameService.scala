@@ -16,7 +16,7 @@ trait GameServiceComponent {
     def updateGame(game: Game) : Boolean
     def removeGame(gameId: Int) : Boolean
     def parseGameResults(gameId: Int, source: Source) : Seq[(String, Seq[(String, RoundResult)])]
-    def addRoundResults(gameId: Int, data: Seq[(String, Seq[(String, GameResult)])]) : Unit
+    def addRoundResults(gameId: Int, data: Seq[(String, Seq[(String, RoundResult)])]) : Unit
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
     def getDemoData(demoDataId: Int) : Option[Array[Byte]]
@@ -51,12 +51,12 @@ trait GameServiceComponentImpl extends GameServiceComponent {
         }.toSeq
       }
 
-    def addRoundResults(gameId: Int, data: Seq[(String, Seq[(String, GameResult)])]) = 
-      if(!gameReposotory.hasRoundResults(gameId)) {
+    def addRoundResults(gameId: Int, data: Seq[(String, Seq[(String, RoundResult)])]) = 
+      if(!gameRepository.hasRoundResults(gameId)) {
         gameRepository.getGame(gameId).map { game => 
           data.foreach { item => 
             gameRepository.addRound(game.gameId, item._1).map { round => 
-              gameRepository.addRoundResult(round.roundId, item._2)
+              item._2.map(gameRepository.addRoundResult(round.roundId, _))
               gameRepository.updateGame(game.copy(dateCompleted = Some(new DateTime(DateTimeZone.UTC))))            
             }
           }

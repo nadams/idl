@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS Round (
 	RoundId INT NOT NULL AUTO_INCREMENT,
 	GameId INT NOT NULL,
-	MapNumber CHAR(5) NOT NULL,
+	MapNumber VARCHAR(64) NOT NULL,
 
 	CONSTRAINT PK_Round PRIMARY KEY (RoundId),
 	CONSTRAINT FK_Round_Game FOREIGN KEY Round(GameId) REFERENCES Game(GameId)
@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS Round (
 
 CREATE TABLE IF NOT EXISTS RoundResult (
 	RoundResultId INT NOT NULL AUTO_INCREMENT,
-	GameId INT NOT NULL,
 	RoundId INT NOT NULL,
 	PlayerId INT NOT NULL,
 	Captures INT NOT NULL,
@@ -21,7 +20,6 @@ CREATE TABLE IF NOT EXISTS RoundResult (
 	Deaths INT NOT NULL,
 
 	CONSTRAINT PK_RoundResult PRIMARY KEY (RoundResultId),
-	CONSTRAINT FK_RoundResult_Game FOREIGN KEY RoundResult(GameId) REFERENCES Game(GameId),
 	CONSTRAINT FK_RoundResult_Round FOREIGN KEY RoundResult(RoundId) REFERENCES Round(RoundId),
 	CONSTRAINT FK_RoundResult_Player FOREIGN KEY RoundResult(PlayerId) REFERENCES Player(PlayerId)
 );

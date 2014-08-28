@@ -1,16 +1,16 @@
 package data
 
-case class Round(roundId: Int, gameId: Int, mapName: String)
+case class Round(roundId: Int, gameId: Int, mapNumber: String)
 
 object Round {
   lazy val insertRound = 
     s"""
       INSERT INTO ${RoundSchema.tableName} (
         ${RoundSchema.gameId},
-        ${RoundSchema.mapName}
+        ${RoundSchema.mapNumber}
       ) VALUES (
         {gameId},
-        {mapName}
+        {mapNumber}
       )
     """
 

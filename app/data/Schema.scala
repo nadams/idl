@@ -124,5 +124,17 @@ object RoundSchema {
   val tableName = "Round"
   val roundId = "RoundId"
   val gameId = "GameId"
-  val mapName = "MapName"
+  val mapNumber = "MapNumber"
+}
+
+object RoundResultSchema {
+  val tableName = "RoundResult"
+  val roundResultId = "RoundResultId"
+  val roundId = "RoundId"
+  val playerId = "PlayerId"
+  val captures = "Captures"
+  val pCaptures = "PCaptures"
+  val drops = "Drops"
+  val frags = "Frags"
+  val deaths = "Deaths"
 }

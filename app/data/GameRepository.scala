@@ -20,9 +20,9 @@ trait GameRepositoryComponent {
     def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) : Option[GameDemo]
     def getDemoData(gameDemoId: Int) : Option[Array[Byte]]
     def getTeamGameResults(seasonId: Option[Int]) : Seq[TeamGameResultRecord]
-    def addRound(gameId: Int, mapName: String) : Option[Round]
+    def addRound(gameId: Int, mapNumber: String) : Option[Round]
     def hasRoundResults(gameId: Int) : Boolean
-    def addRoundResult(roundId: Int, data: (String, RoundResult)) : 
+    def addRoundResult(roundId: Int, data: (String, RoundResult)) : RoundResult
   }
 }
 
@@ -401,25 +401,77 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .map(TeamGameResultRecord(_))
     }
 
-    def addRound(gameId: Int, mapName: String) = DB.withConnection { implicit connection => 
+    def addRound(gameId: Int, mapNumber: String) = DB.withConnection { implicit connection => 
       SQL(Round.insertRound)
         .on(
           'gameId -> gameId,
-          'mapName -> mapName
+          'mapNumber -> mapNumber
         )
-        .executeInsert(scalar[Int] singleOpt)
-      .map(Round(_, gameId, mapName))
+        .executeInsert(scalar[Long] singleOpt)
+        .map(x => Round(x.toInt, gameId, mapNumber))
     }
 
     def hasRoundResults(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
           SELECT COUNT(*)
-          FROM ${RoundResultSchema.tableName}
-          WHERE ${RoundResultSchema.gameId} = {gameId}
+          FROM ${RoundSchema.tableName} AS r 
+            INNER JOIN ${RoundResultSchema.tableName} AS rs ON r.${RoundSchema.roundId} = rs.${RoundResultSchema.roundId}
+          WHERE ${RoundSchema.gameId} = {gameId}
         """
       ).on('gameId -> gameId)
       .as(scalar[Long] single) > 0      
+    }
+
+    def addRoundResult(roundId: Int, data: (String, RoundResult)) = DB.withConnection { implicit connection =>
+      val playerName = data._1
+      val roundResult = data._2
+
+      val playerId = SQL(
+        s"""
+          SELECT ${PlayerSchema.playerId}
+          FROM ${PlayerSchema.tableName}
+          WHERE ${PlayerSchema.name} = {playerName}
+        """
+      )
+      .on('playerName -> playerName)
+      .as(scalar[Int] singleOpt)
+      .get //This is dangerous, but since we're in a transaction, 
+           //we want an exception to be thrown if an error occurs.
+
+      val roundResultId = SQL(
+        s"""
+          INSERT INTO ${RoundResultSchema.tableName} (
+            ${RoundResultSchema.roundId},
+            ${RoundResultSchema.playerId},
+            ${RoundResultSchema.captures},
+            ${RoundResultSchema.pCaptures},
+            ${RoundResultSchema.drops},
+            ${RoundResultSchema.frags},
+            ${RoundResultSchema.deaths}
+          ) VALUES (
+            {roundId},
+            {playerId},
+            {captures},
+            {pCaptures},
+            {drops},
+            {frags},
+            {deaths}
+          )
+        """
+      )
+      .on(
+        'roundId -> roundId,
+        'playerId -> playerId,
+        'captures -> roundResult.captures,
+        'pCaptures -> roundResult.pCaptures,
+        'drops -> roundResult.drops,
+        'frags -> roundResult.frags,
+        'deaths -> roundResult.deaths
+      )
+      .executeUpdate
+
+      roundResult.copy(roundResultId = roundResultId)
     }
 
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
