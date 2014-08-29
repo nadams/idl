@@ -247,12 +247,9 @@ admin.games.stats.RoundResultModel = (function(ko) {
     this.drops = ko.observable();
     this.frags = ko.observable();
     this.deaths = ko.observable();
-
     this.initialize(data);
 
-    this.dataIsValid = ko.computed(function() {
-      return true;
-    }, this);
+    this.dirtyFlag = new ko.DirtyFlag(this, false);
   };
 
   ko.utils.extend(Model.prototype, {
