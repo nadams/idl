@@ -112,7 +112,17 @@ object GameController extends Controller
       gameService.getRound(roundId) map { round => 
         gameService.disableRound(round) map { disabledRound => 
           Ok(Json.toJson(roundId))
-          } getOrElse(InternalServerError(s"Unable to disable round: $roundId"))
+        } getOrElse(InternalServerError(s"Unable to disable round: $roundId"))
+      } getOrElse(NotFound(s"Round with Id: $roundId not found."))
+    } getOrElse(NotFound(s"Game with Id: $gameId not found."))
+  }
+
+  def updateRound(seasonId: Int, gameId: Int, roundId: Int) = HasSeason(seasonId) { username => implicit request => 
+    gameService.getGame(gameId) map { game => 
+      gameService.getRound(roundId) map { round => 
+        handleJsonPost[AssignPlayersToTeamModel] { newData => 
+          Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.playerIds))
+        }
       } getOrElse(NotFound(s"Round with Id: $roundId not found."))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }

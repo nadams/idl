@@ -24,6 +24,7 @@ trait GameRepositoryComponent {
     def disableRound(round: Round) : Option[Round]
     def getRound(roundId: Int) : Option[Round]
     def getTeamGameRoundResults(seasonId: Option[Int]) : Seq[TeamGameRoundResultRecord]
+    def updateRound(round: Round) : Option[Round]
   }
 }
 

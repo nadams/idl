@@ -56,6 +56,7 @@ GET     /admin/season/:seasonId/games/:gameId/stats                 controllers.
 POST    /admin/season/:seasonId/games/:gameId/stats/upload          controllers.GameController.uploadStats(seasonId: Int, gameId: Int)
 POST    /admin/season/:seasonId/games/:gameId/stats/:playerId/demo  controllers.GameController.uploadDemo(seasonId: Int, gameId: Int, playerId: Int)
 POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/remove controllers.GameController.removeRound(seasonId: Int, gameId: Int, roundId: Int)
+POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/update controllers.GameController.updateRound(seasonId: Int, gameId: Int, roundId: Int)
 
 GET     /brackets                               controllers.BracketsController.index
         

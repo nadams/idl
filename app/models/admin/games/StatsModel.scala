@@ -8,6 +8,7 @@ import data._
 case class StatsModel(seasonId: Int, gameId: Int, statsUploaded: Boolean, demoInfo: Seq[GameDemoModel], rounds: Seq[RoundModel])
 
 object StatsModel {
+  implicit val readsRoundStatsData = Json.writes[RoundStatsModel]
   implicit val writesRoundStatsData = Json.writes[RoundStatsModel]
   implicit val writesRoundData = Json.writes[RoundModel]
   implicit val writesDemoData = Json.writes[DemoData]
