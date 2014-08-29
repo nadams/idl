@@ -212,6 +212,8 @@ admin.games.stats.RoundModel = (function(ko) {
             return item.deaths();
           })
         };
+      }).sortBy(function(item) {
+        return item.teamName();
       }).value();
     }, this);
   };
