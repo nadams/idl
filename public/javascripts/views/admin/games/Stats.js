@@ -175,6 +175,18 @@ admin.games.stats.RoundModel = (function(ko) {
     this.roundName = ko.computed(function() {
       return this.roundId() + ' - ' + this.mapNumber();
     }, this);
+
+    this.teamStats = ko.computed(function() {
+      var teams = _(this.playerData()).groupBy(function(item) {
+        return item.teamId();
+      }, this).map(function(item) {
+        return item;
+      }).value();
+
+
+
+      return [];
+    }, this);
   };
 
   ko.utils.extend(Model.prototype, {
@@ -199,6 +211,8 @@ admin.games.stats.RoundResultModel = (function(ko) {
     this.roundResultId = ko.observable();
     this.playerId = ko.observable();
     this.playerName = ko.observable();
+    this.teamId = ko.observable();
+    this.teamName = ko.observable();
     this.captures = ko.observable();
     this.pCaptures = ko.observable();
     this.drops = ko.observable();
@@ -217,6 +231,8 @@ admin.games.stats.RoundResultModel = (function(ko) {
       this.roundResultId(data.roundResultId);
       this.playerId(data.playerId);
       this.playerName(data.playerName);
+      this.teamId(data.teamId);
+      this.teamName(data.teamName);
       this.captures(data.captures);
       this.pCaptures(data.pCaptures);
       this.drops(data.drops);
