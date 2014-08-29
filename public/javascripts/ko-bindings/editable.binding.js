@@ -48,6 +48,9 @@
     update: function(element, valueAccessor) {
       var value = ko.utils.unwrapObservable(valueAccessor().value);
       $(element).editable('setValue', value);
+      if(typeof value.dirty !== 'undefined') {
+        value.dirty(true);
+      }
     }
   };
 })(ko, jQuery);

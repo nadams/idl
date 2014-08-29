@@ -246,6 +246,8 @@ admin.games.stats.RoundResultModel = (function(ko) {
     this.frags = ko.observable();
     this.deaths = ko.observable();
 
+    this.isDirty = ko.observable(false);
+
     this.initialize(data);
 
     this.dataIsValid = ko.computed(function() {
