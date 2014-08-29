@@ -161,11 +161,11 @@
 						<tbody data-bind="foreach: playerData">
 							<tr>
 								<td data-bind="text: playerName"></td>
-								<td><span data-bind="editable: { value: captures, required: 'Captures must be a number', validate: validInt, dirty: isDirty }"></span></td>
-								<td><span data-bind="editable: { value: pCaptures, required: 'PCaptures must be a number', validate: validInt, dirty: isDirty }"></span></td>
-								<td><span data-bind="editable: { value: drops, required: 'Drops must be a number', validate: validInt, dirty: isDirty }"></span></td>
-								<td><span data-bind="editable: { value: frags, required: 'Frags must be a number', validate: validInt, dirty: isDirty }"></span></td>
-								<td><span data-bind="editable: { value: deaths, required: 'Deaths must be a number', validate: validInt, dirty: isDirty }"></span></td>
+								<td><span data-bind="editable: { value: captures, required: 'Captures must be a number', validate: validInt }"></span></td>
+								<td><span data-bind="editable: { value: pCaptures, required: 'PCaptures must be a number', validate: validInt }"></span></td>
+								<td><span data-bind="editable: { value: drops, required: 'Drops must be a number', validate: validInt }"></span></td>
+								<td><span data-bind="editable: { value: frags, required: 'Frags must be a number', validate: validInt }"></span></td>
+								<td><span data-bind="editable: { value: deaths, required: 'Deaths must be a number', validate: validInt }"></span></td>
 								<td>
 									<!-- ko if: isDirty -->
 									<button class="btn btn-primary">Save</button>
