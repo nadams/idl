@@ -265,6 +265,9 @@ admin.games.stats.RoundResultModel = (function(ko) {
       this.drops(data.drops);
       this.frags(data.frags);
       this.deaths(data.deaths);
+    },
+    validInt: function(value) {
+      return /^\d+$/.test(value);
     }
   });
 

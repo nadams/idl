@@ -7,6 +7,21 @@
     init: function(element, valueAccessor) {
       var observable = valueAccessor(),
         jElement = $(element);
+
+      var validate = function(value) {
+        if (observable.required) {
+          var valueValidate = function(item) {
+            return $.trim(item) !== '';
+          };
+
+          if(typeof observable.validate !== 'undefined') {
+            return observable.validate(value);
+          } else {
+            return valueValidate(value);
+          }
+        }
+      };
+
       jElement.editable({
         type: jElement.attr('type'),
         mode: 'popup',
@@ -20,7 +35,7 @@
         },
         validate: function(value) {
           if (observable.required) {
-            if ($.trim(value) === '') {
+            if (!validate(value)) {
               return observable.required;
             }
           }
