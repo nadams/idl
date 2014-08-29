@@ -173,6 +173,22 @@
 								</td>
 							</tr>
 						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="7" class="team-totals">Totals</td>
+							</tr>
+							<!-- ko foreach: teamStats -->
+							<tr class="info">
+								<td class="team-totals" data-bind="text: teamName"></td>
+								<td data-bind="text: captures"></td>
+								<td data-bind="text: pCaptures"></td>
+								<td data-bind="text: drops"></td>
+								<td data-bind="text: frags"></td>
+								<td data-bind="text: deaths"></td>
+								<td></td>
+							</tr>
+							<!-- /ko -->
+						</tfoot>
 					</table>
 				</li>
 			</ol>

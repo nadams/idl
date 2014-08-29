@@ -175,6 +175,45 @@ admin.games.stats.RoundModel = (function(ko) {
     this.roundName = ko.computed(function() {
       return this.roundId() + ' - ' + this.mapNumber();
     }, this);
+
+    this.teamStats = ko.computed(function() {
+      var sumProperty = function(data, property) {
+        return _.reduce(data, function(sum, item) {
+          return sum + parseInt(property(item));
+        }, 0);
+      };
+
+      return _(this.playerData()).groupBy(function(item) {
+        return item.teamId();
+      }, this).map(function(item) {
+        var teamId, teamName;
+
+        if(item.length > 0) {
+          teamId = item[0].teamId;
+          teamName = item[0].teamName;
+        }
+
+        return {
+          teamId: teamId,
+          teamName: teamName,
+          captures: sumProperty(item, function(item) {
+            return item.captures();
+          }),
+          pCaptures: sumProperty(item, function(item) {
+            return item.pCaptures();
+          }),
+          drops: sumProperty(item, function(item) {
+            return item.drops();
+          }),
+            frags: sumProperty(item, function(item) {
+            return item.frags();
+          }),
+          deaths: sumProperty(item, function(item) {
+            return item.deaths();
+          })
+        };
+      }).value();
+    }, this);
   };
 
   ko.utils.extend(Model.prototype, {
@@ -199,6 +238,8 @@ admin.games.stats.RoundResultModel = (function(ko) {
     this.roundResultId = ko.observable();
     this.playerId = ko.observable();
     this.playerName = ko.observable();
+    this.teamId = ko.observable();
+    this.teamName = ko.observable();
     this.captures = ko.observable();
     this.pCaptures = ko.observable();
     this.drops = ko.observable();
@@ -217,6 +258,8 @@ admin.games.stats.RoundResultModel = (function(ko) {
       this.roundResultId(data.roundResultId);
       this.playerId(data.playerId);
       this.playerName(data.playerName);
+      this.teamId(data.teamId);
+      this.teamName(data.teamName);
       this.captures(data.captures);
       this.pCaptures(data.pCaptures);
       this.drops(data.drops);
