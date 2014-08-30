@@ -26,7 +26,7 @@ object GamesModel {
 
 object GameModel {
   def toModel(seasonId: Int, game: Game, teams: Option[(Team, Team)], routes: controllers.ReverseGameController) = {
-    val teamNames = teams.map(teams => (teams._1.name, teams._2.name)).getOrElse(("", ""))
+    val teamNames = teams.map(teams => (teams._1.teamName, teams._2.teamName)).getOrElse(("", ""))
     val status = game.dateCompleted.map(date => "Completed").getOrElse("Pending")
 
     GameModel(

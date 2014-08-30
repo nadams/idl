@@ -96,12 +96,6 @@ object RoundStatsModel {
       data.deaths
     )
 
-  def toModel(roundId: Int, data: RoundResult) = 
-    RoundStatsModel(
-      data.roundResultId,
-      data.playerId
-    )
-
   def toEntity(roundId: Int, model: RoundStatsModel) = 
     RoundResult(
       model.roundResultId,

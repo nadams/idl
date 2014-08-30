@@ -3,14 +3,14 @@ package data
 object PlayerSchema {
   val tableName = "Player"
   val playerId = "PlayerId"
-  val name = "Name"
+  val playerName = "PlayerName"
   val isActive = "IsActive"
 }
 
 object TeamSchema {
   val tableName = "Team"
   val teamId = "TeamId"
-  val name = "Name"
+  val teamName = "TeamName"
   val isActive = "IsActive"
   val dateCreated = "DateCreated"
 }

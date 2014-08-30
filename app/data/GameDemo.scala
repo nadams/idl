@@ -38,7 +38,7 @@ case class DemoDetailsRecord(gameDemoId: Int, filename: String, dateUploaded: Da
 object DemoStatusRecord {
   lazy val multiRowParser = 
     int(PlayerSchema.playerId) ~
-    str(PlayerSchema.name) ~
+    str(PlayerSchema.playerName) ~
     get[Option[Int]](GameDemoSchema.gameDemoId) ~
     get[Option[String]](GameDemoSchema.filename) ~
     get[Option[DateTime]](GameDemoSchema.dateUploaded) map flatten *

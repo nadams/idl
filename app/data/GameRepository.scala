@@ -21,10 +21,11 @@ trait GameRepositoryComponent {
     def hasRoundResults(gameId: Int) : Boolean
     def addRoundResult(roundId: Int, data: (String, RoundResult)) : RoundResult
     def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
+    def getRoundStatsForPlayer(gameId: Int, playerId: Int) : Option[RoundStatsRecord]
     def disableRound(round: Round) : Option[Round]
     def getRound(roundId: Int) : Option[Round]
     def getTeamGameRoundResults(seasonId: Option[Int]) : Seq[TeamGameRoundResultRecord]
-    def updateRoundResult(roundResult: RoundResult) : Option[Round]
+    def updateRoundResult(roundResult: RoundResult) : Option[RoundResult]
   }
 }
 
@@ -217,7 +218,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         s"""
           SELECT
             p.${PlayerSchema.playerId},
-            p.${PlayerSchema.name},
+            p.${PlayerSchema.playerName},
             gd.${GameDemoSchema.gameDemoId},
             gd.${GameDemoSchema.filename},
             gd.${GameDemoSchema.dateUploaded}
@@ -337,7 +338,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         s"""
           SELECT ${PlayerSchema.playerId}
           FROM ${PlayerSchema.tableName}
-          WHERE ${PlayerSchema.name} = {playerName}
+          WHERE ${PlayerSchema.playerName} = {playerName}
         """
       )
       .on('playerName -> playerName)
@@ -382,12 +383,23 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
 
     def getRoundStats(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(RoundStatsRecord.selectByGameSql)
-      .on('gameId -> gameId)
+      .on(
+        'gameId -> gameId,
+        'playerId -> None
+      )
       .as(RoundStatsRecord.multiRowParser)
       .map(RoundStatsRecord(_))
     }
 
-    def getRoundStat
+    def getRoundStatsForPlayer(gameId: Int, playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(RoundStatsRecord.selectByGameSql)
+      .on(
+        'gameId -> gameId,
+        'playerId -> playerId
+      )
+      .as(RoundStatsRecord.singleRowParser singleOpt)
+      .map(RoundStatsRecord(_))
+    }
 
     def disableRound(round: Round) = DB.withTransaction { implicit connection => 
       if(SQL(Round.removeRound).on('roundId -> round.roundId).executeUpdate > 0) Some(round.copy(isEnabled = false))
@@ -412,14 +424,14 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       try {
         SQL(RoundResult.updateRoundResult)
         .on(
-          'roundResultId = roundResult.roundResultId,
-          'roundId = roundResult.roundId,
-          'playerId = roundResult.playerId,
-          'captures = roundResult.captures,
-          'pCaptures = roundResult.pCaptures,
-          'drops = roundResult.drops,
-          'frags = roundResult.frgs,
-          'deaths = roundResult.deaths
+          'roundResultId -> roundResult.roundResultId,
+          'roundId -> roundResult.roundId,
+          'playerId -> roundResult.playerId,
+          'captures -> roundResult.captures,
+          'pCaptures -> roundResult.pCaptures,
+          'drops -> roundResult.drops,
+          'frags -> roundResult.frags,
+          'deaths -> roundResult.deaths
         ).executeUpdate
       } catch {
         case e: Exception => None

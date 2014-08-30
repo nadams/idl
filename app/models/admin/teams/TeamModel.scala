@@ -11,6 +11,6 @@ object TeamsModel {
   implicit val writesTeamsModel = Json.writes[TeamsModel]
 
   def toModel(teams: Seq[Team]) = TeamsModel(teams.map { team => 
-    TeamModel(team.teamId, team.name) 
+    TeamModel(team.teamId, team.teamName) 
   })
 }

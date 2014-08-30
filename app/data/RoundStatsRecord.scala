@@ -25,9 +25,9 @@ object RoundStatsRecord {
     s"""
       SELECT 
         p.${PlayerSchema.playerId},
-        p.${PlayerSchema.name},
+        p.${PlayerSchema.playerName},
         t.${TeamSchema.teamId},
-        t.${TeamSchema.name},
+        t.${TeamSchema.teamName},
         r.${RoundSchema.roundId},
         r.${RoundSchema.gameId},
         r.${RoundSchema.mapNumber},
@@ -44,15 +44,15 @@ object RoundStatsRecord {
         INNER JOIN ${TeamSchema.tableName} AS t ON tp.${TeamPlayerSchema.teamId} = t.${TeamSchema.teamId}
       WHERE r.${RoundSchema.isEnabled} = 1 
         AND r.${RoundSchema.gameId} = {gameId}
-        AND ({playerId} IS NULL OR r.${RoundResultSchema.playerId} = {playerId})
-      ORDER BY r.${RoundSchema.roundId}, p.${PlayerSchema.name} ASC
+        AND ({playerId} IS NULL OR rr.${RoundResultSchema.playerId} = {playerId})
+      ORDER BY r.${RoundSchema.roundId}, p.${PlayerSchema.playerName} ASC
     """
 
   lazy val singleRowParser = 
     int(PlayerSchema.playerId) ~
-    str(PlayerSchema.name) ~
+    str(PlayerSchema.playerName) ~
     int(TeamSchema.teamId) ~
-    str(TeamSchema.name) ~
+    str(TeamSchema.teamName) ~
     int(RoundSchema.roundId) ~
     int(RoundSchema.gameId) ~
     str(RoundSchema.mapNumber) ~

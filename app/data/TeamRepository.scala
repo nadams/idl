@@ -38,7 +38,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
 
     val teamParser = 
       int(TeamSchema.teamId) ~ 
-      str(TeamSchema.name) ~ 
+      str(TeamSchema.teamName) ~ 
       bool(TeamSchema.isActive) ~ 
       datetime(TeamSchema.dateCreated) map flatten
 
@@ -47,7 +47,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
     def teamProjection(alias: String) = 
       s"""
         $alias.${TeamSchema.teamId},
-        $alias.${TeamSchema.name},
+        $alias.${TeamSchema.teamName},
         $alias.${TeamSchema.isActive} ,
         $alias.${TeamSchema.dateCreated}
       """
@@ -153,7 +153,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       SQL(
         s"""
           INSERT INTO ${TeamSchema.tableName} (
-            ${TeamSchema.name},
+            ${TeamSchema.teamName},
             ${TeamSchema.isActive},
             ${TeamSchema.dateCreated}
           ) VALUES (
@@ -164,7 +164,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         """
       )
       .on(
-        'teamName -> team.name,
+        'teamName -> team.teamName,
         'isActive -> team.isActive,
         'dateCreated -> team.dateCreated
       )
@@ -176,7 +176,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         s"""
           UPDATE ${TeamSchema.tableName}
           SET
-            ${TeamSchema.name} = {teamName},
+            ${TeamSchema.teamName} = {teamName},
             ${TeamSchema.isActive} = {isActive}
           WHERE
             ${TeamSchema.teamId} = {teamId}
@@ -184,7 +184,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       )
       .on(
         'teamId -> team.teamId,
-        'teamName -> team.name,
+        'teamName -> team.teamName,
         'isActive -> team.isActive,
         'dateCreated -> team.dateCreated
       )
@@ -229,11 +229,11 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         s"""
           SELECT 
             t1.${TeamSchema.teamId} AS Team1Id,
-            t1.${TeamSchema.name} AS Team1Name,
+            t1.${TeamSchema.teamName} AS Team1Name,
             t1.${TeamSchema.isActive} AS Team1IsActive,
             t1.${TeamSchema.dateCreated} AS Team1DateCreated,
             t2.${TeamSchema.teamId} AS Team2Id,
-            t2.${TeamSchema.name} AS Team2Name,
+            t2.${TeamSchema.teamName} AS Team2Name,
             t2.${TeamSchema.isActive} AS Team2IsActive,
             t2.${TeamSchema.dateCreated} AS Team2DateCreated
           FROM ${TeamGameSchema.tableName} AS tg

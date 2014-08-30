@@ -23,7 +23,7 @@ object TeamGameResultRecord {
     s"""
       SELECT
         t.${TeamSchema.teamId},
-        t.${TeamSchema.name},
+        t.${TeamSchema.teamName},
         g.${GameSchema.gameId},
         g.${GameSchema.weekId},
         g.${GameSchema.gameTypeId},
@@ -60,7 +60,7 @@ object TeamGameResultRecord {
 
   lazy val singleRowParser = 
     int(TeamSchema.teamId) ~
-    str(TeamSchema.name) ~
+    str(TeamSchema.teamName) ~
     int(GameSchema.gameId) ~
     int(WeekSchema.weekId) ~
     int(GameSchema.gameTypeId) ~

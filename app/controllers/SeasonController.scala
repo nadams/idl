@@ -47,11 +47,11 @@ object SeasonController extends Controller with ProvidesHeader with Secured with
   }
 
   def assignTeamsToSeason(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    handleJsonPost[Seq[Int]](teamIds => Json.toJson(seasonService.assignTeamsToSeason(id, teamIds)))
+    handleJsonPost[Seq[Int]](teamIds => Ok(Json.toJson(seasonService.assignTeamsToSeason(id, teamIds))))
   }
 
   def removeTeamsFromSeason(id: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    handleJsonPost[Seq[Int]](teamIds => Json.toJson(seasonService.removeTeamsFromSeason(id, teamIds)))
+    handleJsonPost[Seq[Int]](teamIds => Ok(Json.toJson(seasonService.removeTeamsFromSeason(id, teamIds))))
   }
 
   private def HasSeason(seasonId: Int)(f: => Season => Request[AnyContent] => Result) = IsAuthenticated(Roles.Admin) { username => implicit request => 

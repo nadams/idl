@@ -26,7 +26,7 @@ object EditGameModel extends TeamComponentImpl {
   def toModel(seasonId: Int, gameId: Int, selectedWeekId: Int, selectedGameTypeId: Int, selectedTeam1Id: Int, selectedTeam2Id: Int) = 
     EditGameModel(
       gameId, 
-      teamService.getTeamsForSeason(seasonId).map(team => TeamModel(team.teamId, team.name)),
+      teamService.getTeamsForSeason(seasonId).map(team => TeamModel(team.teamId, team.teamName)),
       WeekModel.enumerate,
       GameTypeModel.enumerate,
       selectedWeekId,
@@ -39,7 +39,7 @@ object EditGameModel extends TeamComponentImpl {
     game.teams.map { team => 
       EditGameModel(
         game.gameId,
-        teamService.getTeamsForSeason(seasonId).map(team => TeamModel(team.teamId, team.name)),
+        teamService.getTeamsForSeason(seasonId).map(team => TeamModel(team.teamId, team.teamName)),
         WeekModel.enumerate,
         GameTypeModel.enumerate,
         game.weekId,
@@ -50,7 +50,7 @@ object EditGameModel extends TeamComponentImpl {
     } getOrElse(
       EditGameModel(
         game.gameId,
-        teamService.getTeamsForSeason(seasonId).map(team => TeamModel(team.teamId, team.name)),
+        teamService.getTeamsForSeason(seasonId).map(team => TeamModel(team.teamId, team.teamName)),
         WeekModel.enumerate,
         GameTypeModel.enumerate,
         game.weekId,

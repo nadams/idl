@@ -99,7 +99,7 @@ object GameController extends Controller
             gameService.addDemo(gameId, playerId, demo.filename, demo.ref.file) map { result => 
               import StatsModel._
 
-              Ok(Json.toJson(GameDemoModel.toModel(player.name, result)))
+              Ok(Json.toJson(GameDemoModel.toModel(player.playerName, result)))
             } getOrElse(InternalServerError("Unable to upload demo"))
           } getOrElse(BadRequest("File `demo` was not found."))
         } getOrElse(BadRequest("Invalid form submission."))
@@ -120,13 +120,15 @@ object GameController extends Controller
   def updateRound(seasonId: Int, gameId: Int, roundId: Int) = HasSeason(seasonId) { username => implicit request => 
     gameService.getGame(gameId) map { game => 
       gameService.getRound(roundId) map { round => 
+        import StatsModel._
+        
         handleJsonPost[RoundStatsModel] { newData => 
-          import StatsModel._
-
           gameService.updateRoundResult(RoundStatsModel.toEntity(roundId, newData)) map { result => 
-            Json.toJson(RoundStatsModel.toModel(result))
+            gameService.getRoundStatsForPlayer(gameId, newData.playerId) map { stats => 
+              Ok(Json.toJson(RoundStatsModel.toModel(stats)))
+            } getOrElse(InternalServerError(s"Could not get round stats for gameId: $gameId, playerId: ${newData.playerId}"))
           } getOrElse(InternalServerError(s"Cound not update round result with Id: $roundId"))
-        }
+        } 
       } getOrElse(NotFound(s"Round with Id: $roundId not found."))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))
   }

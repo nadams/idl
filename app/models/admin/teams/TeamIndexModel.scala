@@ -19,7 +19,7 @@ object TeamIndexRowModel {
   def toModel(team: Team, routes: controllers.ReverseTeamController) = 
     TeamIndexRowModel(
       team.teamId, 
-      team.name, 
+      team.teamName, 
       team.isActive, 
       routes.edit(team.teamId).toString
     )

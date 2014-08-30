@@ -1,5 +1,9 @@
 package data
 
+import anorm._ 
+import anorm.SqlParser._
+import AnormExtensions._
+
 case class RoundResult(roundResultId: Int, roundId: Int, playerId: Int, captures: Int, pCaptures: Int, drops: Int, frags: Int, deaths: Int) {
   val fragPercentage : Double = if(frags > 0) deaths.toDouble / frags * 100.0 else 100.0
   val capturePercentage : Double = 0.0
@@ -47,15 +51,11 @@ object RoundResult {
 case class TeamGameRoundResultRecord(teamId: Int, teamName: String, gameId: Int, weekId: Int, gameTypeId: Int, roundId: Int, captures: Int)
 
 object TeamGameRoundResultRecord {
-  import anorm._ 
-  import anorm.SqlParser._
-  import AnormExtensions._
-
   lazy val getRoundResultStatsBySeasonId = 
     s"""
       SELECT 
         t.TeamId,
-        t.Name,
+        t.TeamName,
         g.GameId,
         g.WeekId,
         g.GameTypeId,
@@ -90,7 +90,7 @@ object TeamGameRoundResultRecord {
 
   lazy val singleRowParser = 
     int(TeamSchema.teamId) ~
-    str(TeamSchema.name) ~
+    str(TeamSchema.teamName) ~
     int(GameSchema.gameId) ~
     int(GameSchema.weekId) ~
     int(GameSchema.gameTypeId) ~
