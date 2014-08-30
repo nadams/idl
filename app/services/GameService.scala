@@ -20,7 +20,6 @@ trait GameServiceComponent {
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
     def getDemoData(demoDataId: Int) : Option[Array[Byte]]
-    def getTeamGameResults(seasonId: Option[Int]) : Seq[TeamGameResultRecord]
     def addRound(gameId: Int, mapNumber: String) : Option[Round]
     def getRound(roundId: Int) : Option[Round]
     def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
@@ -45,7 +44,6 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def getDemoStatusForGame(gameId: Int) = gameRepository.getDemoStatusForGame(gameId)
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) = gameRepository.addDemo(gameId, playerId, filename, file)
     def getDemoData(demoDataId: Int) = gameRepository.getDemoData(demoDataId)
-    def getTeamGameResults(seasonId: Option[Int]) = gameRepository.getTeamGameResults(seasonId)
     def addRound(gameId: Int, mapNumber: String) = gameRepository.addRound(gameId, mapNumber)
     def getRoundStats(gameId: Int) = gameRepository.getRoundStats(gameId)
     def disableRound(round: Round) = gameRepository.disableRound(round)

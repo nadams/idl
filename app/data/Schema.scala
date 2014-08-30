@@ -92,18 +92,6 @@ object TeamGameSchema {
   val team2Id = "Team2Id"
 }
 
-object GameResultSchema {
-  val tableName = "GameResult"
-  val gameResultId = "GameResultId"
-  val gameId = "GameId"
-  val playerId = "PlayerId"
-  val captures = "Captures"
-  val pCaptures = "PCaptures"
-  val drops = "Drops"
-  val frags = "Frags"
-  val deaths = "Deaths"
-}
-
 object GameDemoSchema {
   val tableName = "GameDemo"
   val gameDemoId = "GameDemoId"

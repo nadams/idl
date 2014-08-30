@@ -16,7 +16,6 @@ trait GameRepositoryComponent {
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
     def getGameDemoByPlayerAndGame(gameId: Int, playerId: Int) : Option[GameDemo]
     def getDemoData(gameDemoId: Int) : Option[Array[Byte]]
-    def getTeamGameResults(seasonId: Option[Int]) : Seq[TeamGameResultRecord]
     def addRound(gameId: Int, mapNumber: String) : Option[Round]
     def hasRoundResults(gameId: Int) : Boolean
     def addRoundResult(roundId: Int, data: (String, RoundResult)) : RoundResult
@@ -299,13 +298,6 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
         """
       ).on('gameDemoId -> gameDemoId)
       .as(bytes(GameDemoSchema.demoFile) singleOpt)
-    }
-
-    def getTeamGameResults(seasonId: Option[Int]) = DB.withConnection { implicit connection => 
-      SQL(TeamGameResultRecord.selectResultsBySeasonId)
-      .on('seasonId -> seasonId)
-      .as(TeamGameResultRecord.multiRowParser)
-      .map(TeamGameResultRecord(_))
     }
 
     def addRound(gameId: Int, mapNumber: String) = DB.withConnection { implicit connection => 
