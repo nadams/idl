@@ -1,6 +1,6 @@
 package data
 
-case class RoundResult(roundResultId: Int, gameId: Int, roundId: Int, playerId: Int, captures: Int, pCaptures: Int, drops: Int, frags: Int, deaths: Int) {
+case class RoundResult(roundResultId: Int, roundId: Int, playerId: Int, captures: Int, pCaptures: Int, drops: Int, frags: Int, deaths: Int) {
   val fragPercentage : Double = if(frags > 0) deaths.toDouble / frags * 100.0 else 100.0
   val capturePercentage : Double = 0.0
   val pickupPercentage : Double = 0.0
@@ -14,8 +14,34 @@ object RoundResult {
       WHERE ${RoundResultSchema.roundId} = {roundId}
     """
 
-  def apply(x: (Int, Int, Int, Int, Int, Int, Int, Int, Int)) : RoundResult = 
-    RoundResult(x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8, x._9)
+  lazy val updateRoundResult = 
+    s"""
+      UPDATE ${RoundResultSchema.tableName}
+      SET
+        ${RoundResultSchema.roundId} = {roundId},
+        ${RoundResultSchema.playerId} = {playerId},
+        ${RoundResultSchema.captures} = {captures},
+        ${RoundResultSchema.pCaptures} = {pCaptures},
+        ${RoundResultSchema.drops} = {drops},
+        ${RoundResultSchema.frags} = {frags},
+        ${RoundResultSchema.deaths} = {deaths}
+      WHERE ${RoundResultSchema.roundResultId} = {roundResultId}
+    """
+
+  lazy val singleRowParser = 
+    int(RoundResultSchema.roundResultId) ~
+    int(RoundResultSchema.roundId) ~
+    int(RoundResultSchema.playerId) ~
+    int(RoundResultSchema.captures) ~
+    int(RoundResultSchema.pCaptures) ~
+    int(RoundResultSchema.drops) ~
+    int(RoundResultSchema.frags) ~
+    int(RoundResultSchema.deaths) map flatten
+
+  lazy val multiRowParser = singleRowParser *
+
+  def apply(x: (Int, Int, Int, Int, Int, Int, Int, Int)) : RoundResult = 
+    RoundResult(x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8)
 }
 
 case class TeamGameRoundResultRecord(teamId: Int, teamName: String, gameId: Int, weekId: Int, gameTypeId: Int, roundId: Int, captures: Int)

@@ -44,6 +44,7 @@ object RoundStatsRecord {
         INNER JOIN ${TeamSchema.tableName} AS t ON tp.${TeamPlayerSchema.teamId} = t.${TeamSchema.teamId}
       WHERE r.${RoundSchema.isEnabled} = 1 
         AND r.${RoundSchema.gameId} = {gameId}
+        AND ({playerId} IS NULL OR r.${RoundResultSchema.playerId} = {playerId})
       ORDER BY r.${RoundSchema.roundId}, p.${PlayerSchema.name} ASC
     """
 

@@ -26,7 +26,7 @@ trait GameServiceComponent {
     def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
     def disableRound(round: Round) : Option[Round]
     def getTeamGameRoundResults(seasonId: Option[Int]) : Seq[TeamGameRoundResultRecord]
-    def updateRound(round: Round) : Option[Round]
+    def updateRoundResult(roundResult: RoundResult) : Option[Round]
   }
 }
 
@@ -50,14 +50,14 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def disableRound(round: Round) = gameRepository.disableRound(round)
     def getRound(roundId: Int) = gameRepository.getRound(roundId)
     def getTeamGameRoundResults(seasonId: Option[Int]) = gameRepository.getTeamGameRoundResults(seasonId)
-    def updateRound(round: Round) = gameRepository.updateRound(round)
+    def updateRoundResult(roundResult: RoundResult) = gameRepository.updateRoundResult(roundResult)
 
     def parseGameResults(gameId: Int, source: Source) = 
       ZandronumLogParser.parseLog(source).map { case (roundName, playerStats) => 
         roundName -> playerStats.filter(_._2.team != Teams.Spectator).keys.map { playerName => 
           val value = playerStats(playerName)
 
-          playerName -> RoundResult(0, gameId, 0, 0, value.captures, value.pCaptures, value.drops, value.frags, value.deaths)
+          playerName -> RoundResult(0, gameId,  0, value.captures, value.pCaptures, value.drops, value.frags, value.deaths)
         }.toSeq
       }
 

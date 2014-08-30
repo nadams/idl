@@ -120,8 +120,12 @@ object GameController extends Controller
   def updateRound(seasonId: Int, gameId: Int, roundId: Int) = HasSeason(seasonId) { username => implicit request => 
     gameService.getGame(gameId) map { game => 
       gameService.getRound(roundId) map { round => 
-        handleJsonPost[AssignPlayersToTeamModel] { newData => 
-          Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.playerIds))
+        handleJsonPost[RoundStatsModel] { newData => 
+          import StatsModel._
+
+          gameService.updateRoundResult(RoundStatsModel.toEntity(roundId, newData)) map { result => 
+            Json.toJson(RoundStatsModel.toModel(result))
+          } getOrElse(InternalServerError(s"Cound not update round result with Id: $roundId"))
         }
       } getOrElse(NotFound(s"Round with Id: $roundId not found."))
     } getOrElse(NotFound(s"Game with Id: $gameId not found."))

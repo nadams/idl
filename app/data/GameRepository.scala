@@ -24,7 +24,7 @@ trait GameRepositoryComponent {
     def disableRound(round: Round) : Option[Round]
     def getRound(roundId: Int) : Option[Round]
     def getTeamGameRoundResults(seasonId: Option[Int]) : Seq[TeamGameRoundResultRecord]
-    def updateRound(round: Round) : Option[Round]
+    def updateRoundResult(roundResult: RoundResult) : Option[Round]
   }
 }
 
@@ -387,6 +387,8 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .map(RoundStatsRecord(_))
     }
 
+    def getRoundStat
+
     def disableRound(round: Round) = DB.withTransaction { implicit connection => 
       if(SQL(Round.removeRound).on('roundId -> round.roundId).executeUpdate > 0) Some(round.copy(isEnabled = false))
       else None
@@ -404,6 +406,26 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       .on('seasonId -> seasonId)
       .as(TeamGameRoundResultRecord.multiRowParser)
       .map(TeamGameRoundResultRecord(_))
+    }
+
+    def updateRoundResult(roundResult: RoundResult) = DB.withConnection { implicit connection => 
+      try {
+        SQL(RoundResult.updateRoundResult)
+        .on(
+          'roundResultId = roundResult.roundResultId,
+          'roundId = roundResult.roundId,
+          'playerId = roundResult.playerId,
+          'captures = roundResult.captures,
+          'pCaptures = roundResult.pCaptures,
+          'drops = roundResult.drops,
+          'frags = roundResult.frgs,
+          'deaths = roundResult.deaths
+        ).executeUpdate
+      } catch {
+        case e: Exception => None
+      }
+
+      Some(roundResult)
     }
 
     // def updateDemo(gameId: Int, playerId: Int, filename: String, file: File) = DB.withConnection { implicit connection => 
