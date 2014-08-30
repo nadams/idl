@@ -243,6 +243,7 @@ admin.games.stats.RoundResultModel = (function(ko, $) {
     this.drops = ko.observable();
     this.frags = ko.observable();
     this.deaths = ko.observable();
+    this.isSaving = ko.observable(false);
     this.initialize(data);
 
     this.dirtyFlag = new ko.DirtyFlag(this, false);
@@ -279,6 +280,8 @@ admin.games.stats.RoundResultModel = (function(ko, $) {
             deaths: parseInt(this.deaths())
           };
 
+      this.isSaving(true);
+
       var promise = $.ajax({
         url: url,
         data: JSON.stringify(data),
@@ -289,15 +292,13 @@ admin.games.stats.RoundResultModel = (function(ko, $) {
       });
 
       promise.done(function() {
+        this.isSaving(false);
         this.dirtyFlag.reset();
       });
 
       promise.fail(function() {
+        this.isSaving(false);
         alert('Could not update round stats');
-      });
-
-      promise.always(function() {
-
       });
     }
   });

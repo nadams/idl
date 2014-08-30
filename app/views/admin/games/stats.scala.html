@@ -148,7 +148,14 @@
 						</ul>
 					</div>
 					<h5 class="pull-left" data-bind="text: roundName()"></h5>
-					<table class="table table-hover table-condensed">
+					<table class="table table-hover">
+						<col />
+						<col />
+						<col />
+						<col />
+						<col />
+						<col />
+						<col style="width: 10%" />
 						<thead>
 							<tr>
 								<th>Name</th>
@@ -170,9 +177,12 @@
 								<td><span data-bind="editable: { value: deaths, required: 'Deaths must be a number', validate: validInt }"></span></td>
 								<td>
 									<!-- ko if: dirtyFlag.isDirty -->
-									<button class="btn btn-link btn-lg" data-bind="click: function(data, event) { updateRoundResult($root.seasonId(), $root.gameId(), $parent.roundId(), data, event) }">
+									<button class="btn btn-link btn-lg save-btn" data-bind="click: function(data, event) { updateRoundResult($root.seasonId(), $root.gameId(), $parent.roundId(), data, event) }">
 										<span class="glyphicon glyphicon glyphicon-floppy-disk"></span>
 									</button>
+									<!-- ko if: isSaving -->
+									<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Saving..." />
+									<!-- /ko -->
 									<!-- /ko -->
 								</td>
 							</tr>
