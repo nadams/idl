@@ -38,6 +38,9 @@ admin.games.stats.StatsModel = (function(ko, _, $) {
 
     this.removeRound = function(round) {
       var url = this.routes.controllers.GameController.removeRound(this.seasonId(), this.gameId(), round.roundId()).url;
+
+      round.isRemovingRound(true);
+
       var promise = $.ajax({
         url: url,
         data: '{}',
@@ -49,6 +52,14 @@ admin.games.stats.StatsModel = (function(ko, _, $) {
 
       promise.done(function() {
         this.rounds.remove(round);
+      });
+
+      promise.fail(function() {
+        round.couldNotRemoveRound(true);
+      });
+
+      promise.always(function() {
+        round.isRemovingRound(false);
       });
     }.bind(this);
   };
@@ -166,6 +177,9 @@ admin.games.stats.RoundModel = (function(ko) {
     this.mapNumber = ko.observable();
     this.playerData = ko.observableArray();
 
+    this.couldNotRemoveRound = ko.observable(false);
+    this.isRemovingRound = ko.observable(false);
+
     this.initialize(data);
 
     this.roundName = ko.computed(function() {
@@ -243,7 +257,10 @@ admin.games.stats.RoundResultModel = (function(ko, $) {
     this.drops = ko.observable();
     this.frags = ko.observable();
     this.deaths = ko.observable();
+    
     this.isSaving = ko.observable(false);
+    this.failedToSave = ko.observable(false);
+
     this.initialize(data);
 
     this.dirtyFlag = new ko.DirtyFlag(this, false);
@@ -291,14 +308,13 @@ admin.games.stats.RoundResultModel = (function(ko, $) {
         context: this
       });
 
-      promise.done(function() {
-        this.isSaving(false);
-        this.dirtyFlag.reset();
+      promise.fail(function() {
+        this.failedToSave(true);
       });
 
-      promise.fail(function() {
+      promise.always(function() {
         this.isSaving(false);
-        alert('Could not update round stats');
+        this.dirtyFlag.reset();
       });
     }
   });

@@ -141,11 +141,19 @@
 			<h4 class="status-header">Round Stats</h4>
 			<ol class="list-group" data-bind="foreach: rounds">
 				<li class="list-group-item">
-					<div class="pull-right btn-group">
-						<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Remove <span class="caret"></span></button>
-						<ul class="dropdown-menu" role="menu">
-							<li><button class="btn btn-link" data-bind="click: $parent.removeRound">Are you sure?</button></li>
-						</ul>
+					<div class="pull-right">
+						<!-- ko if: couldNotRemoveRound -->
+						<span class="label label-danger">Could not remove round</span>
+						<!-- /ko -->
+						<!-- ko if: isRemovingRound -->
+						<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
+						<!-- /ko -->
+						<div class="btn-group">
+							<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Remove <span class="caret"></span></button>
+							<ul class="dropdown-menu" role="menu">
+								<li><button class="btn btn-link" data-bind="click: $parent.removeRound">Are you sure?</button></li>
+							</ul>
+						</div>
 					</div>
 					<h5 class="pull-left" data-bind="text: roundName()"></h5>
 					<table class="table table-hover">
@@ -168,7 +176,7 @@
 							</tr>
 						</thead>
 						<tbody data-bind="foreach: playerData">
-							<tr>
+							<tr data-bind="css: { danger: failedToSave }">
 								<td data-bind="text: playerName"></td>
 								<td><span data-bind="editable: { value: captures, required: 'Captures must be a number', validate: validInt }"></span></td>
 								<td><span data-bind="editable: { value: pCaptures, required: 'PCaptures must be a number', validate: validInt }"></span></td>
@@ -186,6 +194,11 @@
 									<!-- /ko -->
 								</td>
 							</tr>
+							<!-- ko if: failedToSave -->
+							<tr class="danger">
+								<td colspan="7">Failed to save stats for this round.</td>
+							</tr>
+							<!-- /ko -->
 						</tbody>
 						<tfoot>
 							<tr>
