@@ -124,7 +124,7 @@ object GameController extends Controller
         
         handleJsonPost[RoundStatsModel] { newData => 
           gameService.updateRoundResult(RoundStatsModel.toEntity(roundId, newData)) map { result => 
-            gameService.getRoundStatsForPlayer(gameId, newData.playerId) map { stats => 
+            gameService.getRoundStatsForPlayer(gameId, roundId, newData.playerId) map { stats => 
               Ok(Json.toJson(RoundStatsModel.toModel(stats)))
             } getOrElse(InternalServerError(s"Could not get round stats for gameId: $gameId, playerId: ${newData.playerId}"))
           } getOrElse(InternalServerError(s"Cound not update round result with Id: $roundId"))

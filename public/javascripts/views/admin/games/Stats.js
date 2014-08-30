@@ -50,10 +50,6 @@ admin.games.stats.StatsModel = (function(ko, _, $) {
       promise.done(function() {
         this.rounds.remove(round);
       });
-
-      promise.fail(function() {
-        alert('unable to remove round');
-      });
     }.bind(this);
   };
 
@@ -231,7 +227,7 @@ admin.games.stats.RoundModel = (function(ko) {
   return Model;
 })(ko);
 
-admin.games.stats.RoundResultModel = (function(ko) {
+admin.games.stats.RoundResultModel = (function(ko, $) {
   'use strict';
 
   var Model = function(data, routes) {
@@ -267,11 +263,47 @@ admin.games.stats.RoundResultModel = (function(ko) {
     },
     validInt: function(value) {
       return /^\d+$/.test(value);
+    },
+    updateRoundResult: function(seasonId, gameId, roundId) {
+      var url = this.routes.controllers.GameController.updateRound(seasonId, gameId, roundId).url,
+          data = {
+            roundResultId: this.roundResultId(),
+            playerId: this.playerId(),
+            playerName: this.playerName(),
+            teamId: this.teamId(),
+            teamName: this.teamName(),
+            captures: parseInt(this.captures()),
+            pCaptures: parseInt(this.pCaptures()),
+            drops: parseInt(this.drops()),
+            frags: parseInt(this.frags()),
+            deaths: parseInt(this.deaths())
+          };
+
+      var promise = $.ajax({
+        url: url,
+        data: JSON.stringify(data),
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        context: this
+      });
+
+      promise.done(function() {
+        this.dirtyFlag.reset();
+      });
+
+      promise.fail(function() {
+        alert('Could not update round stats');
+      });
+
+      promise.always(function() {
+
+      });
     }
   });
 
   return Model;
-})(ko);
+})(ko, jQuery);
 
 (function(ko, admin) {
   'use strict';

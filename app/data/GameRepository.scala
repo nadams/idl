@@ -21,7 +21,7 @@ trait GameRepositoryComponent {
     def hasRoundResults(gameId: Int) : Boolean
     def addRoundResult(roundId: Int, data: (String, RoundResult)) : RoundResult
     def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
-    def getRoundStatsForPlayer(gameId: Int, playerId: Int) : Option[RoundStatsRecord]
+    def getRoundStatsForPlayer(gameId: Int, roundId: Int, playerId: Int) : Option[RoundStatsRecord]
     def disableRound(round: Round) : Option[Round]
     def getRound(roundId: Int) : Option[Round]
     def getTeamGameRoundResults(seasonId: Option[Int]) : Seq[TeamGameRoundResultRecord]
@@ -385,16 +385,18 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
       SQL(RoundStatsRecord.selectByGameSql)
       .on(
         'gameId -> gameId,
+        'roundId -> None,
         'playerId -> None
       )
       .as(RoundStatsRecord.multiRowParser)
       .map(RoundStatsRecord(_))
     }
 
-    def getRoundStatsForPlayer(gameId: Int, playerId: Int) = DB.withConnection { implicit connection => 
+    def getRoundStatsForPlayer(gameId: Int, roundId: Int, playerId: Int) = DB.withConnection { implicit connection => 
       SQL(RoundStatsRecord.selectByGameSql)
       .on(
         'gameId -> gameId,
+        'roundId -> roundId,
         'playerId -> playerId
       )
       .as(RoundStatsRecord.singleRowParser singleOpt)

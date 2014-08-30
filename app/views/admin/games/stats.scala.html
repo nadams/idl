@@ -6,7 +6,8 @@
 	@helper.javascriptRouter("routes")(
 		routes.javascript.GameController.uploadStats,
 		routes.javascript.GameController.uploadDemo,
-		routes.javascript.GameController.removeRound
+		routes.javascript.GameController.removeRound,
+		routes.javascript.GameController.updateRound
 	)
 
 	<script src="@routes.Assets.at("editable/js/bootstrap-editable.min.js")"></script>
@@ -169,7 +170,9 @@
 								<td><span data-bind="editable: { value: deaths, required: 'Deaths must be a number', validate: validInt }"></span></td>
 								<td>
 									<!-- ko if: dirtyFlag.isDirty -->
-									<button class="btn btn-link btn-lg"><span class="glyphicon glyphicon glyphicon-floppy-disk"></span></button>
+									<button class="btn btn-link btn-lg" data-bind="click: function(data, event) { updateRoundResult($root.seasonId(), $root.gameId(), $parent.roundId(), data, event) }">
+										<span class="glyphicon glyphicon glyphicon-floppy-disk"></span>
+									</button>
 									<!-- /ko -->
 								</td>
 							</tr>
