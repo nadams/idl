@@ -54,38 +54,38 @@ object TeamGameRoundResultRecord {
   lazy val getRoundResultStatsBySeasonId = 
     s"""
       SELECT 
-        t.TeamId,
-        t.TeamName,
-        g.GameId,
-        g.WeekId,
-        g.GameTypeId,
-        r.RoundId,
-        CAST(SUM(rr.Captures) AS SIGNED INT)AS TeamCaptures
-        FROM Game AS g
-        INNER JOIN Round AS r ON g.GameTypeId = 1 AND g.GameId = r.GameId
-        INNER JOIN (
-          SELECT DISTINCT
-          tg.GameId
-          FROM Season AS s
-          INNER JOIN TeamSeason AS ts ON s.SeasonId = ts.SeasonId
-          INNER JOIN Team AS t1 ON ts.TeamId = t1.TeamId
-          INNER JOIN Team AS t2 ON ts.TeamId = t2.TeamId
-          INNER JOIN TeamGame AS tg ON t1.TeamId = tg.Team1Id
-            OR t2.TeamId = tg.Team2Id
-          INNER JOIN TeamPlayer AS tp ON t1.TeamId = tp.TeamId 
-            OR t2.TeamId = tp.TeamId
-          WHERE (NULL IS NULL AND NOW() BETWEEN s.StartDate AND s.EndDate)
-          OR (NULL IS NULL AND s.SeasonId = (
-            SELECT SeasonId
-            FROM Season
-            ORDER BY StartDate DESC
-            LIMIT 1))
-          OR s.SeasonId = NULL
-        ) AS filter ON g.GameId = filter.GameId
-        INNER JOIN RoundResult AS rr ON r.IsEnabled = 1 AND r.RoundId = rr.RoundId
-        INNER JOIN TeamPlayer AS tp ON rr.PlayerId = tp.PlayerId
-        INNER JOIN Team AS t ON tp.TeamId = t.TeamId
-      GROUP BY g.GameId, r.RoundId, t.TeamId
+        t.${TeamSchema.teamId},
+        t.${TeamSchema.teamName},
+        g.${GameSchema.gameId},
+        g.${WeekSchema.weekId},
+        g.${GameSchema.gameTypeId},
+        r.${RoundSchema.roundId},
+        CAST(SUM(rr.${RoundResultSchema.captures}) AS SIGNED INT) AS TeamCaptures
+      FROM ${GameSchema.tableName} AS g
+          INNER JOIN ${RoundSchema.tableName} AS r ON g.${GameSchema.gameTypeId} = ${GameTypes.Regular.id} AND g.${GameSchema.gameId} = r.${RoundSchema.gameId}
+          INNER JOIN (
+            SELECT DISTINCT
+              tg.${TeamGameSchema.gameId}
+            FROM ${SeasonSchema.tableName} AS s
+              INNER JOIN ${TeamSeasonSchema.tableName} AS ts ON s.${SeasonSchema.seasonId} = ts.${TeamSeasonSchema.seasonId}
+              INNER JOIN ${TeamSchema.tableName} AS t1 ON ts.${TeamSeasonSchema.teamId} = t1.${TeamSchema.teamId}
+              INNER JOIN ${TeamSchema.tableName} AS t2 ON ts.${TeamSeasonSchema.teamId} = t2.${TeamSchema.teamId}
+              INNER JOIN ${TeamGameSchema.tableName} AS tg ON t1.${TeamSchema.teamId} = tg.${TeamGameSchema.team1Id}
+                OR t2.${TeamSchema.teamId} = tg.${TeamGameSchema.team2Id}
+              INNER JOIN ${TeamPlayerSchema.tableName} AS tp ON t1.${TeamSchema.teamId} = tp.${TeamPlayerSchema.teamId} 
+                OR t2.${TeamSchema.teamId} = tp.${TeamPlayerSchema.teamId}
+              WHERE ({seasonId} IS NULL AND NOW() BETWEEN s.${SeasonSchema.startDate} AND s.${SeasonSchema.endDate})
+              OR ({seasonId} IS NULL AND s.${SeasonSchema.seasonId} = (
+                SELECT ${SeasonSchema.seasonId}
+                FROM ${SeasonSchema.tableName}
+                ORDER BY ${SeasonSchema.startDate} DESC
+                LIMIT 1))
+              OR s.${SeasonSchema.seasonId} = NULL
+          ) AS filter ON g.${GameSchema.gameId} = filter.${TeamGameSchema.gameId}
+          INNER JOIN ${RoundResultSchema.tableName} AS rr ON r.${RoundSchema.isEnabled} = 1 AND r.${RoundSchema.roundId} = rr.${RoundResultSchema.roundId}
+          INNER JOIN ${TeamPlayerSchema.tableName} AS tp ON rr.${RoundResultSchema.playerId} = tp.${TeamPlayerSchema.playerId}
+          INNER JOIN ${TeamSchema.tableName} AS t ON tp.${TeamPlayerSchema.teamId} = t.${TeamSchema.teamId}
+      GROUP BY g.${GameSchema.gameId}, r.${RoundSchema.roundId}, t.${TeamSchema.teamId}
     """
 
   lazy val singleRowParser = 
