@@ -3,30 +3,33 @@ package services
 import scala.io._
 import scala.util.matching._
 import scala.collection.immutable._
-import scala.collection.mutable.{ Map => MutableMap }
 import java.io.InputStream
 import math.Ordering._
 
 class ZandronumLogParser {
   type PlayerStats = Map[String, PlayerData]
+  type RoundStats = Seq[(String, PlayerStats)] 
   
-  private val playerNameRegex = new Regex("""\[.+\] (.+) has connected.""", "name")
-  private val playerRenameRegex = new Regex("""\[.+?\] (.+) is now known as (.+)""", "oldName", "newName")
-  private val playerJoinedTeamRegex = new Regex("""\[.+?\] (.+) joined the (Red|Blue) team.""", "player", "team")
-  private val suicideRegex = new Regex("""\[.+?\] (.+?) (killed himself|killed itself|killed herself|died|melted|should have stood back|can't swim|mutated|was squished|fell too far|suicides|went boom|tried to leave|stood in the wrong spot)\.""", "name")
+  private val roundRegex = new Regex("""(?i)(map\d\d|e\dm\d) - (.+) - (.+)""", "mapNumber", "mapName", "wad")
+  private val playerNameRegex = new Regex("""(?i)\[.+\] (.+) has connected.""", "name")
+  private val playerRenameRegex = new Regex("""(?i)\[.+?\] (.+) is now known as (.+)""", "oldName", "newName")
+  private val playerJoinedTeamRegex = new Regex("""(?i)\[.+?\] (.+) joined the (Red|Blue) team.""", "player", "team")
+  private val suicideRegex = new Regex("""(?i)\[.+?\] (.+?) (killed himself|killed itself|killed herself|died|melted|should have stood back|can't swim|mutated|was squished|fell too far|suicides|went boom|tried to leave|stood in the wrong spot)\.""", "name")
   private val fragRegex = new Regex(
-    """\[\d{2}:\d{2}:\d{2}\]\s(.+?)\s(chewed on|was .+ by|rode|couldn't hide from)\s(.+?)('s\s)?(fist|chainsaw|pea shooter|boomstick|super shotgun|chaingun|rocket|plasma gun|BFG)?\.$""", 
+    """(?i)\[\d{2}:\d{2}:\d{2}\]\s(.+?)\s(chewed on|was .+ by|rode|couldn't hide from)\s(.+?)('s\s)?(fist|chainsaw|pea shooter|boomstick|super shotgun|chaingun|rocket|plasma gun|BFG)?\.$""", 
     "killed", "", "killer", "gun")
 
-  def parseLog(source: Source) : PlayerStats = {
+  def parseLog(source: Source) : RoundStats = {
     val lines = source.getLines.toArray
-    val players = populatePlayers(lines)
+    splitLogByRound(lines).zipWithIndex.map { case(roundLines, index) =>
+      val players = populatePlayers(roundLines)
 
-    setTeams(getTeams(lines), players)
-    setFragCounts(getFragCounts(lines), players)
-    setSuicides(getSuicides(lines), players)
+      setTeams(getTeams(roundLines), players)
+      setFragCounts(getFragCounts(roundLines), players)
+      setSuicides(getSuicides(roundLines), players)
 
-    players
+      roundLines(0) -> players
+    }.to[collection.immutable.Seq]
   }
 
   private def populatePlayers(lines: Array[String]) : PlayerStats =
@@ -40,6 +43,22 @@ class ZandronumLogParser {
       lines.flatMap(playerJoinedTeamRegex.findFirstMatchIn(_))
         .map(regex => regex.group("player") -> PlayerData.empty)
         .toMap
+
+  private def splitLogByRound(lines: Array[String]) = {
+    val mapSections = lines.zipWithIndex.flatMap { case (line, index) => 
+      roundRegex.findFirstMatchIn(line).map(y => index)
+    }.zipWithIndex
+
+    mapSections.map { case (lineIndex, index) => 
+      if(index == mapSections.size - 1) lines.slice(lineIndex, lines.size - 1) 
+      else lines.slice(lineIndex, mapSections(index + 1)._1 - 1) 
+    }.toArray
+  }
+
+  private def populateRounds(lines: Array[String]) = lines
+    .flatMap(roundRegex.findFirstMatchIn(_))
+    .map(regex => MapData(regex.group("mapNumber"), regex.group("mapName"), regex.group("wad")))
+    .to[collection.immutable.Seq]
 
   private def getFragCounts(lines: Array[String]) = lines
     .flatMap(fragRegex.findFirstMatchIn(_))
@@ -71,6 +90,7 @@ class ZandronumLogParser {
   case class FragData(killer: String, killed: String)
   case class SuicideData(player: String)
   case class JoinedTeamData(player: String, team: Teams.Team)
+  case class MapData(number: String, name: String, wad: String)
 }
 
 object ZandronumLogParser {

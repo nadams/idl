@@ -3,14 +3,14 @@ package data
 object PlayerSchema {
   val tableName = "Player"
   val playerId = "PlayerId"
-  val name = "Name"
+  val playerName = "PlayerName"
   val isActive = "IsActive"
 }
 
 object TeamSchema {
   val tableName = "Team"
   val teamId = "TeamId"
-  val name = "Name"
+  val teamName = "TeamName"
   val isActive = "IsActive"
   val dateCreated = "DateCreated"
 }
@@ -92,18 +92,6 @@ object TeamGameSchema {
   val team2Id = "Team2Id"
 }
 
-object GameResultSchema {
-  val tableName = "GameResult"
-  val gameResultId = "GameResultId"
-  val gameId = "GameId"
-  val playerId = "PlayerId"
-  val captures = "Captures"
-  val pCaptures = "PCaptures"
-  val drops = "Drops"
-  val frags = "Frags"
-  val deaths = "Deaths"
-}
-
 object GameDemoSchema {
   val tableName = "GameDemo"
   val gameDemoId = "GameDemoId"
@@ -118,4 +106,24 @@ object WeekSchema {
   val tableName = "Week"
   val weekId = "WeekId"
   val name = "Name"
+}
+
+object RoundSchema {
+  val tableName = "Round"
+  val roundId = "RoundId"
+  val gameId = "GameId"
+  val mapNumber = "MapNumber"
+  val isEnabled = "IsEnabled"
+}
+
+object RoundResultSchema {
+  val tableName = "RoundResult"
+  val roundResultId = "RoundResultId"
+  val roundId = "RoundId"
+  val playerId = "PlayerId"
+  val captures = "Captures"
+  val pCaptures = "PCaptures"
+  val drops = "Drops"
+  val frags = "Frags"
+  val deaths = "Deaths"
 }

@@ -61,13 +61,13 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
   def assignPlayers = IsAuthenticated(Roles.Admin) { username => implicit request => 
     import models.admin.teams.AssignPlayersToTeamModel._
 
-    handleJsonPost[AssignPlayersToTeamModel](x => Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.playerIds)))
+    handleJsonPost[AssignPlayersToTeamModel](x => Ok(Json.toJson(teamService.assignPlayersToTeam(x.teamId, x.playerIds))))
   }
 
   def removePlayers = IsAuthenticated(Roles.Admin) { username => implicit request =>
     import models.admin.teams.RemovePlayersFromTeamModel._
 
-    handleJsonPost[RemovePlayersFromTeamModel](x => Json.toJson(teamService.removePlayersFromTeam(x.teamId, x.playerIds)))
+    handleJsonPost[RemovePlayersFromTeamModel](x => Ok(Json.toJson(teamService.removePlayersFromTeam(x.teamId, x.playerIds))))
   }
 
   private def updateTeam(saveAction: EditTeamModel => Boolean)(implicit request: Request[AnyContent]) : Result = 

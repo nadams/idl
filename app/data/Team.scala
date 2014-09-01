@@ -2,7 +2,7 @@ package data
 
 import org.joda.time.DateTime
 
-case class Team(teamId: Int, name: String, isActive: Boolean, dateCreated: DateTime)
+case class Team(teamId: Int, teamName: String, isActive: Boolean, dateCreated: DateTime)
 
 object Team {
   def apply(x: (Int, String, Boolean, DateTime)) : Team = 
