@@ -47,8 +47,8 @@ object RegularSeasonStatsModel {
           team1Stats.wins += 1
           team2Stats.losses += 1
         } else if(team2.captures > team1.captures) {
-          team2Stats.losses += 1
-          team1Stats.wins += 1
+          team2Stats.wins += 1
+          team1Stats.losses += 1
         } else {
           team2Stats.ties += 1
           team1Stats.ties += 1
