@@ -24,6 +24,7 @@ object PlayoffStatsModel {
 }
 
 object RegularSeasonStatsModel {
+  class TeamStats(var teamId: Int, var wins: Int, var losses: Int, var ties: Int)
   class TempStats(val teamId: Int, val teamName: String, var wins: Int, var losses: Int, var ties: Int)
 
   def toModel(stats: Seq[TeamGameRoundResultRecord]) : Seq[RegularSeasonStatsModel] = {
@@ -31,31 +32,40 @@ object RegularSeasonStatsModel {
 
     val groupedStats = stats.groupBy(_.gameId).mapValues(_.groupBy(_.roundId))
 
-    def computeStats(f: Seq[TeamGameRoundResultRecord] => Seq[TeamGameRoundResultRecord]) = 
-      groupedStats.flatMap { case (gameId, rounds) => 
-        rounds.flatMap { case (roundId, results) => 
-          f(results)
-        }.groupBy(_.teamId).map(_._2).filter(_.size > 1).map(_.map(_.teamId).toSeq.distinct)
+    groupedStats.foreach { game => 
+      var team1Stats = new TeamStats(0, 0, 0, 0)
+      var team2Stats = new TeamStats(0, 0, 0, 0)
+    
+      game._2.foreach { round => 
+        val team1 = round._2(0)
+        val team2 = round._2(1)
+        
+        team1Stats.teamId = team1.teamId
+        team2Stats.teamId = team2.teamId
+
+        if(team1.captures > team2.captures) {
+          team1Stats.wins += 1
+          team2Stats.losses += 1
+        } else if(team2.captures > team1.captures) {
+          team2Stats.losses += 1
+          team1Stats.wins += 1
+        } else {
+          team2Stats.ties += 1
+          team1Stats.ties += 1
+        }
       }
-
-    computeStats { results => 
-      val min = results.minBy(_.captures)
-
-      results.filterNot(_.captures == min.captures)
-    }.foreach(x => x.foreach(y => tempStats.get(y).map(_.wins += 1)))
-
-    computeStats { results => 
-      val max = results.maxBy(_.captures)
-
-      results.filterNot(_.captures == max.captures)
-    }.foreach(x => x.foreach(y => tempStats.get(y).map(_.losses += 1)))
-
-    computeStats { results => 
-      val max = results.maxBy(_.captures).captures
-      val min = results.minBy(_.captures).captures
-
-      results.filter(x => x.captures == max && x.captures == min)
-    }.foreach(x => x.foreach(y => tempStats.get(y).map(_.ties += 1)))
+      
+      if(team1Stats.wins > team2Stats.wins) {
+        tempStats(team1Stats.teamId).wins += 1
+        tempStats(team2Stats.teamId).losses += 1
+      } else if(team2Stats.wins > team1Stats.wins) {
+    	  tempStats(team1Stats.teamId).losses += 1
+        tempStats(team2Stats.teamId).wins += 1
+      } else {
+    	  tempStats(team1Stats.teamId).ties += 1
+        tempStats(team2Stats.teamId).ties += 1
+      }
+    }
 
     tempStats.values.map(x => RegularSeasonStatsModel(
       x.teamId,
