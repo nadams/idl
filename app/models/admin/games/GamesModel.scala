@@ -2,6 +2,7 @@ package models.admin.games
 
 import org.joda.time.DateTime
 import data._
+import play.api.libs.json.Json
 
 case class GamesModel(games: Seq[GameModel])
 case class GameModel(
@@ -10,7 +11,7 @@ case class GameModel(
   team2: String,
   scheduledWeek: String, 
   scheduledTime: DateTime,
-  status: GameStatus.Value,
+  status: String,
   gameStatus: String,
   removeLink: String,
   editLink: String,
@@ -18,6 +19,9 @@ case class GameModel(
 )
 
 object GamesModel {
+  implicit val writesGameModel = Json.writes[GameModel]
+  implicit val writesGamesModel = Json.writes[GamesModel]
+  
   def empty = GamesModel(Seq.empty[GameModel])
 
   def toModel(seasonId: Int, games: Seq[(Game, Option[(Team, Team)])], routes: controllers.ReverseGameController) = 
@@ -35,7 +39,7 @@ object GameModel {
       teamNames._2, 
       Weeks(game.weekId).toString, 
       game.scheduledPlayTime, 
-      game.status,
+      game.status.toString,
       status, 
       routes.remove(seasonId, game.gameId).url, 
       routes.edit(seasonId, game.gameId).url,

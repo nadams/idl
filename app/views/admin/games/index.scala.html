@@ -1,12 +1,24 @@
 @(model: models.admin.games.GamesModel)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
 
 @import _root_.data._
+@import play.api.libs.json.Json
+
+@extraScripts = {
+	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+	<script>
+		admin.games.index = {
+			data: @Html(Json.toJson(model).toString) || {}
+		};
+	</script>
+	<script src="@routes.Assets.at("javascripts/views/admin/games/Index.js")"></script>
+}
 
 @canAlter(game: models.admin.games.GameModel) = {
 	@if(game.status != GameStatus.Pending) {disabled="disabled"}
 }
 
-@views.html.admin.games.gamesTemplate("Games") {
+@views.html.admin.games.gamesTemplate("Games", extraScripts = extraScripts) {
 	@if(model.games.isEmpty) {
 		<div class="jumbotron">
 			<h1>There are no games for this season yet.</h1>
@@ -26,21 +38,19 @@
 								<th>Remove</th>
 							</tr>
 						</thead>
-						<tbody>
-							@for(game <- model.games) {
-								<tr>
-									<td>@game.team1</td>
-									<td>@game.team2</td>
-									<td>@game.scheduledWeek</td>
-									<td><a href="@game.resultsLink">@game.gameStatus</a></td>
-									<td><a href="@game.editLink" class="btn btn-default" @canAlter(game)>Edit</a></td>
-									<td>
-										<form method="post" action="@game.removeLink">
-											<button class="btn btn-danger" @canAlter(game))>Remove</button>
-										</form>
-									</td>
-								</tr>
-							}
+						<tbody data-bind="foreach: games">
+							<tr>
+								<td data-bind="text: team1"></td>
+								<td data-bind="text: team2"></td>
+								<td data-bind="text: scheduledWeek"></td>
+								<td><a data-bind="text: gameStatus, attr: { href: resultsLink }"></a></td>
+								<td><a class="btn btn-default" data-bind="attr: { href: editLink }, css: { 'disabled': !canAlterGame() }">Edit</a></td>
+								<td>
+									<form method="post" data-bind="attr: { action: removeLink }">
+										<button class="btn btn-danger" data-bind="enable: canAlterGame">Remove</button>
+									</form>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 			</div>
