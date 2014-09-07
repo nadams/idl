@@ -6,7 +6,19 @@ admin.games.index.GamesModel = (function(ko, _) {
   var Model = function(data) {
     this.games = ko.observableArray();
 
+    this.team1SortOrder = ko.observable(true);
+    this.team2SortOrder = ko.observable(true);
+    this.weekSortOrder = ko.observable(true);
+    this.statusSortOrder = ko.observable(true);
+
+    this.team1CurrentSort = ko.observable(false);
+    this.team2CurrentSort = ko.observable(false);
+    this.weekCurrentSort = ko.observable(false);
+    this.statusCurrentSort = ko.observable(false);
+
     this.initialize(data);
+
+    this.sortByWeek();
   };
 
   ko.utils.extend(Model.prototype, {
@@ -14,6 +26,74 @@ admin.games.index.GamesModel = (function(ko, _) {
       this.games(_.map(data.games, function(item) {
         return new admin.games.index.GameModel(item);
       }));
+    },
+    sortByTeam1: function() {
+      var that = this;
+
+      that.games.sort(function(left, right) {
+        if(that.team1SortOrder()) {
+          return left.team1() > right.team1() ? 1 : -1;
+        } else {
+          return left.team1() < right.team1() ? 1 : -1;
+        }
+      });
+
+      that.team1CurrentSort(true);
+      that.team2CurrentSort(false);
+      that.weekCurrentSort(false);
+      that.statusCurrentSort(false);
+      that.team1SortOrder(!that.team1SortOrder());
+    },
+    sortByTeam2: function() {
+      var that = this;
+
+      that.games.sort(function(left, right) {
+        if(that.team2SortOrder()) {
+          return left.team2() > right.team2() ? 1 : -1;
+        } else {
+          return left.team2() < right.team2() ? 1 : -1;
+        }
+      });
+
+      that.team1CurrentSort(false);
+      that.team2CurrentSort(true);
+      that.weekCurrentSort(false);
+      that.statusCurrentSort(false);
+      that.team2SortOrder(!that.team2SortOrder());
+    },
+    sortByWeek: function() {
+      var that = this;
+
+      that.games.sort(function(left, right) {
+        if(that.weekSortOrder()) {
+          return left.scheduledWeek() > right.scheduledWeek() ? 1 : -1;
+        } else {
+          return left.scheduledWeek() < right.scheduledWeek() ? 1 : -1;
+        }
+      });
+
+      that.team1CurrentSort(false);
+      that.team2CurrentSort(false);
+      that.weekCurrentSort(true);
+      that.statusCurrentSort(false);
+      that.weekSortOrder(!that.weekSortOrder());
+    },
+    sortByStatus: function() {
+      var that = this;
+
+      that.games.sort(function(left, right) {
+        if(that.statusSortOrder()) {
+          return left.gameStatus() > right.gameStatus() ? 1 : -1;
+        } else {
+          return left.gameStatus() < right.gameStatus() ? 1 : -1;
+        }
+      });
+
+      that.team1CurrentSort(false);
+      that.team2CurrentSort(false);
+      that.weekCurrentSort(false);
+      that.statusCurrentSort(true);
+      that.statusSortOrder(!that.statusSortOrder());
     }
   });
 
