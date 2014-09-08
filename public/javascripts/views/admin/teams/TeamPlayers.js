@@ -23,23 +23,32 @@ admin.teams.index.IndexModel = (function(ko, _) {
 		this.isLoadingPlayers = ko.observable(false);
 		this.isAssigningPlayersToTeam = ko.observable(false);
 		this.isRemovingPlayersFromTeam = ko.observable(false);
+		this.playersInTeamFilter = ko.observable('').extend({ rateLimit: 500, method: 'notifyWhenChangesStop' });
+		this.playersAvailableFilter = ko.observable('').extend({ rateLimit: 500, method: 'notifyWhenChangesStop' });
 
 		this.initialize(data);
 
 		this.unassignedPlayers = ko.computed(function() {
-			return _.filter(this.availablePlayers(), function(item) {
+			var filter = this.playersAvailableFilter().toUpperCase();
+
+			return _(this.availablePlayers()).filter(function(item) {
 				return item.teamId() === undefined;
-			}, this);
+			}, this).filter(function(item) {
+				return filter === '' || item.playerName.toUpperCase().indexOf(filter) > -1;
+			}).value();
 		}, this);
 
 		this.playersInCurrentTeam = ko.computed(function() {
 			var that = this;
+			var filter = this.playersInTeamFilter().toUpperCase();
 
-			return _.filter(this.availablePlayers(), function(item) {
+			return _(this.availablePlayers()).filter(function(item) {
 				return item.teamId() === this.selectedTeam().teamId;
 			}, this).sort(function(left, right) {
 				return that.sortStrings(right.playerName, left.playerName);
-			});
+			}).filter(function(item) {
+				return filter === '' || item.playerName.toUpperCase().indexOf(filter) > -1;
+			}).value();
 		}, this);
 
 		this.canAssignPlayers = ko.computed(function() {

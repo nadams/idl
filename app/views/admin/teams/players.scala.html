@@ -69,7 +69,12 @@
 									<div>
 										<label for="teamPlayers">Players In <span data-bind="text: selectedTeam().teamName"></span></label>
 									</div>
-									<input type="text" class="game-search form-control" placeholder="Filter..." />
+									<div class="game-search input-group">
+										<input type="text" class="form-control" data-bind="textInput: playersInTeamFilter" placeholder="Filter..." />
+										<div class="input-group-addon">
+											<span class="glyphicon glyphicon-remove clear-filter"></span>
+										</div>
+									</div>
 									<select 
 										id="teamPlayers"
 										class="form-control game-combobox"
@@ -105,7 +110,12 @@
 									<div>
 										<label for="unassignedPlayers">Unassigned Players</label>
 									</div>
-									<input type="text" class="game-search form-control" placeholder="Filter..." />
+									<div class="game-search input-group">
+										<input type="text" class="form-control" data-bind="textInput: playersAvailableFilter" placeholder="Filter..." />
+										<div class="input-group-addon">
+											<span class="glyphicon glyphicon-remove clear-filter"></span>
+										</div>
+									</div>
 									<select 
 										id="unassignedPlayers"
 										class="form-control game-combobox"
@@ -120,6 +130,7 @@
 					</div>
 				</div>
 			</div>
+			<pre data-bind="text: ko.toJSON({a: $root.playersInTeamFilter, b: $root.playersAvailableFilter}, null, 2)"></pre>
 		</div>
 	</div>
 }
