@@ -72,7 +72,7 @@
 									<div class="game-search input-group">
 										<input type="text" class="form-control" data-bind="textInput: playersInTeamFilter" placeholder="Filter..." />
 										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-remove clear-filter"></span>
+											<span class="glyphicon glyphicon-remove clear-filter" data-bind="click: clearPlayersInTeamFilter"></span>
 										</div>
 									</div>
 									<select 
@@ -113,7 +113,7 @@
 									<div class="game-search input-group">
 										<input type="text" class="form-control" data-bind="textInput: playersAvailableFilter" placeholder="Filter..." />
 										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-remove clear-filter"></span>
+											<span class="glyphicon glyphicon-remove clear-filter" data-bind="click: clearPlayersAvailableFilter"></span>
 										</div>
 									</div>
 									<select 

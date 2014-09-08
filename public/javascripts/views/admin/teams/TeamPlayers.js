@@ -23,8 +23,8 @@ admin.teams.index.IndexModel = (function(ko, _) {
 		this.isLoadingPlayers = ko.observable(false);
 		this.isAssigningPlayersToTeam = ko.observable(false);
 		this.isRemovingPlayersFromTeam = ko.observable(false);
-		this.playersInTeamFilter = ko.observable('').extend({ rateLimit: 500, method: 'notifyWhenChangesStop' });
-		this.playersAvailableFilter = ko.observable('').extend({ rateLimit: 500, method: 'notifyWhenChangesStop' });
+		this.playersInTeamFilter = ko.observable('');
+		this.playersAvailableFilter = ko.observable('');
 
 		this.initialize(data);
 
@@ -169,6 +169,12 @@ admin.teams.index.IndexModel = (function(ko, _) {
 			lName = lName.toUpperCase();
 			rName = rName.toUpperCase();
 			return lName === rName ? 0 : (lName < rName ? -1 : 1);
+		},
+		clearPlayersInTeamFilter: function() {
+			this.playersInTeamFilter('');
+		},
+		clearPlayersAvailableFilter: function() {
+			this.playersAvailableFilter('');
 		}
 	});
 
