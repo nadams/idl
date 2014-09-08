@@ -35,6 +35,8 @@ admin.teams.index.IndexModel = (function(ko, _) {
 				return item.teamId() === undefined;
 			}, this).filter(function(item) {
 				return filter === '' || item.playerName.toUpperCase().indexOf(filter) > -1;
+			}).sortBy(function(item) {
+				return item.playerName;
 			}).value();
 		}, this);
 
@@ -48,6 +50,8 @@ admin.teams.index.IndexModel = (function(ko, _) {
 				return that.sortStrings(right.playerName, left.playerName);
 			}).filter(function(item) {
 				return filter === '' || item.playerName.toUpperCase().indexOf(filter) > -1;
+			}).sortBy(function(item) {
+				return item.playerName;
 			}).value();
 		}, this);
 
