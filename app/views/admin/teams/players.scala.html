@@ -69,9 +69,10 @@
 									<div>
 										<label for="teamPlayers">Players In <span data-bind="text: selectedTeam().teamName"></span></label>
 									</div>
+									<input type="text" class="game-search form-control" placeholder="Filter..." />
 									<select 
 										id="teamPlayers"
-										class="game-combobox"
+										class="form-control game-combobox"
 										multiple="multiple" 
 										size="5"
 										data-bind="options: playersInCurrentTeam,
@@ -104,9 +105,10 @@
 									<div>
 										<label for="unassignedPlayers">Unassigned Players</label>
 									</div>
+									<input type="text" class="game-search form-control" placeholder="Filter..." />
 									<select 
 										id="unassignedPlayers"
-										class="game-combobox"
+										class="form-control game-combobox"
 										multiple="multiple" 
 										size="5"
 										data-bind="options: unassignedPlayers,
