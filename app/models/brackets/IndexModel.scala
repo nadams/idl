@@ -13,14 +13,28 @@ object IndexModel {
   implicit val writesIndexModel = Json.writes[IndexModel]
 
   def toModel(stats: Seq[TeamGameRoundResultRecord]) = IndexModel(
-    stats.filter(_.gameTypeId == GameTypes.Playoff.id).map(PlayoffStatsModel.toModel(_)),
+    PlayoffStatsModel.toModel(stats.filter(_.gameTypeId == GameTypes.Playoff.id)),
     RegularSeasonStatsModel.toModel(stats.filter(_.gameTypeId == GameTypes.Regular.id))
   )
 }
 
 object PlayoffStatsModel {
-  def toModel(data: TeamGameRoundResultRecord) = 
-    PlayoffStatsModel(data.teamId, data.teamName, data.gameId, data.weekId, data.captures)
+  def toModel(stats: Seq[TeamGameRoundResultRecord]) = {
+    val games = collection.mutable.Map[Int, (Int, String)]()
+    val groupedStats = stats.groupBy(_.gameId).mapValues(_.groupBy(_.roundId))
+    
+    groupedStats.foreach { game => 
+      
+      
+      game._2.foreach { round => 
+        
+      }
+      
+      
+    }
+    
+    ???    
+  }
 }
 
 object RegularSeasonStatsModel {
