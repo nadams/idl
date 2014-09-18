@@ -89,23 +89,9 @@ admin.seasons.index.IndexModel = (function(ko, _) {
     }, this);
 
     this.sortedSeasons = ko.computed(function() {
-      return this.seasons.sort(function(left, right) {
-        if(left.startDate() < right.startDate()) {
-          if(left.endDate() < right.endDate()) {
-            return 1;
-          } else if (left.endDate() > right.endDate()) {
-            return -1;
-          }
-        } else if(left.startDate() > right.startDate()) {
-          if(left.endDate() > right.endDate()) {
-            return 1;
-          } else if (left.endDate() < right.endDate()) {
-            return -1;
-          }
-        }
-
-        return 0;
-      });
+      return _(this.seasons()).sortBy(function(item) {
+        return item.startDate();
+      }).reverse().value();
     }, this);
   };
 
