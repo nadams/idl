@@ -3,8 +3,8 @@ package models.brackets
 import play.api.libs.json.Json
 import data._
 
-case class IndexModel(playoffStats: Seq[PlayoffStatsModel], regularStats: Seq[RegularSeasonStatsModel])
-case class PlayoffStatsModel(teamId: Int, teamName: String, gameId: Int, weekId: Int, captures: Int)
+case class IndexModel(playoffStats: PlayoffStatsModel, regularStats: Seq[RegularSeasonStatsModel])
+case class PlayoffStatsModel(teams: Seq[Seq[String]], results: Seq[Seq[Int]])
 case class RegularSeasonStatsModel(teamId: Int, teamName: String, wins: Int, losses: Int, ties: Int)
 
 object IndexModel {
@@ -20,20 +20,9 @@ object IndexModel {
 
 object PlayoffStatsModel {
   def toModel(stats: Seq[TeamGameRoundResultRecord]) = {
-    val games = collection.mutable.Map[Int, (Int, String)]()
-    val groupedStats = stats.groupBy(_.gameId).mapValues(_.groupBy(_.roundId))
-    
-    groupedStats.foreach { game => 
-      
-      
-      game._2.foreach { round => 
-        
-      }
-      
-      
-    }
-    
-    ???    
+    val teams = stats.groupBy(_.gameId).map(_._2.map(_.teamName)).toSeq
+
+    PlayoffStatsModel(teams, Seq.empty[Seq[Int]])
   }
 }
 
