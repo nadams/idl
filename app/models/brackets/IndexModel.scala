@@ -35,14 +35,14 @@ object RegularSeasonStatsModel {
 
     val groupedStats = stats.groupBy(_.gameId).mapValues(_.groupBy(_.roundId))
 
-    groupedStats.foreach { game => 
+    groupedStats.foreach { game =>
       var team1Stats = new TeamStats(0, 0, 0, 0)
       var team2Stats = new TeamStats(0, 0, 0, 0)
-    
-      game._2.foreach { round => 
+
+      game._2.foreach { round =>
         val team1 = round._2(0)
         val team2 = round._2(1)
-        
+
         team1Stats.teamId = team1.teamId
         team2Stats.teamId = team2.teamId
 
@@ -57,7 +57,7 @@ object RegularSeasonStatsModel {
           team1Stats.ties += 1
         }
       }
-      
+
       if(team1Stats.wins > team2Stats.wins) {
         tempStats(team1Stats.teamId).wins += 1
         tempStats(team2Stats.teamId).losses += 1
