@@ -22,14 +22,21 @@ brackets.index.IndexModel = (function(ko, _) {
     this.hasRegularSeasonStats = ko.computed(function() {
       return this.regularSeasonStats().length > 0;
     }, this);
+    
+    this.bracketStats = ko.computed(function() {
+      return {
+        results: [],
+        teams: []
+      };
+    }, this);
   };
 
   ko.utils.extend(Model.prototype, {
     initialize: function(data) {
       this.playoffStats(_.map(data.playoffStats, function(item) {
-        return new brackets.index.TeamStatsModel(item);
+        return new brackets.index.PlayoffGameStatsModel(item);
       }, this));
-
+      
       this.regularSeasonStats(_.map(data.regularStats, function(item) {
         return new brackets.index.RegularSeasonStatsModel(item);
       }, this));
@@ -65,29 +72,46 @@ brackets.index.RegularSeasonStatsModel = (function(ko) {
   return Model;
 })(ko);
 
-brackets.index.TeamStatsModel = (function(ko) {
+brackets.index.PlayoffGameStatsModel = (function(ko) {
   'use strict';
 
   var Model = function(data) {
-    this.teamId = ko.observable();
-    this.teamName = ko.observable();
     this.gameId = ko.observable();
-    this.weekId = ko.observable();
-    this.captures = ko.observable();
-
+    this.teamStats = ko.observableArray([]);
     this.initialize(data);
   };
+  
+  ko.utils.extend(Model.prototype, {
+    initialize: function(data) {
+      this.gameId(data.gameId);
+      this.teamStats(_.map(data.teamStats, function(item) {
+        return new brackets.index.PlayoffTeamStatsModel(item);
+      }, this));
+    }
+  });
+  
+  return Model;
+})(ko);
 
+brackets.index.PlayoffTeamStatsModel = (function(ko) {
+  'use strict';
+  
+  var Model = function(data) {
+    this.teamId = ko.observable();
+    this.teamName = ko.observable();
+    this.wins = ko.observable();
+    
+    this.initialize(data);
+  };
+  
   ko.utils.extend(Model.prototype, {
     initialize: function(data) {
       this.teamId(data.teamId);
       this.teamName(data.teamName);
-      this.gameId(data.gameId);
-      this.weekId(data.weekId);
-      this.captures(data.captures);
+      this.wins(data.wins);
     }
   });
-
+  
   return Model;
 })(ko);
 

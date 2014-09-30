@@ -7,10 +7,7 @@
 		init: function(element, valueAccessor) {
 			var values = valueAccessor();
 
-			var data = {
-				teams: values.teams(),
-				results: values.results()
-			};
+			var data = values.data; 
 
 			$(element).bracket({
 				init: data
