@@ -62,7 +62,7 @@ object TeamGameRoundResultRecord {
         r.${RoundSchema.roundId},
         CAST(SUM(rr.${RoundResultSchema.captures}) AS SIGNED INT) AS TeamCaptures
       FROM ${GameSchema.tableName} AS g
-          INNER JOIN ${RoundSchema.tableName} AS r ON g.${GameSchema.gameTypeId} = ${GameTypes.Regular.id} AND g.${GameSchema.gameId} = r.${RoundSchema.gameId}
+          INNER JOIN ${RoundSchema.tableName} AS r ON g.${GameSchema.gameId} = r.${RoundSchema.gameId}
           INNER JOIN (
             SELECT DISTINCT
               tg.${TeamGameSchema.gameId}

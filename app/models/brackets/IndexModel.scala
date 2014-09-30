@@ -1,14 +1,22 @@
 package models.brackets
 
+import collection.mutable.{ Map => MutableMap }
 import play.api.libs.json.Json
 import data._
 
 case class IndexModel(playoffStats: PlayoffStatsModel, regularStats: Seq[RegularSeasonStatsModel])
-case class PlayoffStatsModel(teams: Seq[Seq[String]], results: Seq[Seq[Int]])
+case class PlayoffTeamStatsModel(teamId: Int, teamName: String, wins: Int)
+case class PlayoffGameStatsModel(gameId: Int, weekId: Int, teamStats: Seq[PlayoffTeamStatsModel])
+case class PlayoffStatsModel(results: Seq[PlayoffGameStatsModel])
 case class RegularSeasonStatsModel(teamId: Int, teamName: String, wins: Int, losses: Int, ties: Int)
+
+class TeamStats(var teamId: Int, var wins: Int, var losses: Int, var ties: Int)
+class TempStats(val teamId: Int, val teamName: String, var wins: Int, var losses: Int, var ties: Int)
 
 object IndexModel {
   implicit val writesRegularSeasonStatsModel = Json.writes[RegularSeasonStatsModel]
+  implicit val writesPlayoffTeamStatsModel = Json.writes[PlayoffTeamStatsModel]
+  implicit val writesPlayoffGameStatsModel = Json.writes[PlayoffGameStatsModel]
   implicit val writesPlayoffStatsModel = Json.writes[PlayoffStatsModel]
   implicit val writesIndexModel = Json.writes[IndexModel]
 
@@ -20,16 +28,43 @@ object IndexModel {
 
 object PlayoffStatsModel {
   def toModel(stats: Seq[TeamGameRoundResultRecord]) = {
-    val teams = stats.groupBy(_.gameId).map(_._2.map(_.teamName)).toSeq
+    val groupedStats: Map[Int, Map[Int, Seq[TeamGameRoundResultRecord]]] = stats.groupBy(_.gameId).mapValues(_.groupBy(_.roundId))
+    val gameStats = MutableMap[Int, MutableMap[Int, Int]]()
+    play.api.Logger.info(GameTypes.Playoff.id.toString)    
+    groupedStats.foreach { case(gameId, rounds) => 
+      val teamStats = gameStats.getOrElseUpdate(gameId, MutableMap[Int, Int]())
 
-    PlayoffStatsModel(teams, Seq.empty[Seq[Int]])
+      rounds.foreach { case(roundId, stats) =>
+        val team1 = stats(0)
+        val team2 = stats(1)
+        
+        if(team1.captures > team2.captures) {
+          val wins = teamStats.getOrElseUpdate(team1.teamId, 0)
+          teamStats(team1.teamId) = wins + 1
+        } else if(team2.captures > team1.captures) {
+          val wins = teamStats.getOrElseUpdate(team2.teamId, 0)
+          teamStats(team2.teamId) = wins + 1
+        }
+      }
+    }
+    
+    PlayoffStatsModel(
+      gameStats.map { case(gameId, rounds) =>
+        stats.find(_.gameId == gameId).map { game => 
+          PlayoffGameStatsModel(
+            game.gameId, 
+            game.weekId,
+            rounds.map { case(teamId, wins) => 
+              stats.find(_.teamId == teamId).map(team => PlayoffTeamStatsModel(team.teamId, team.teamName, wins)).getOrElse(PlayoffTeamStatsModel(0, "", 0))
+            }.toSeq
+          ) 
+        }.getOrElse(PlayoffGameStatsModel(0, 0, Seq.empty[PlayoffTeamStatsModel]))
+      }.toSeq
+    )
   }
 }
 
 object RegularSeasonStatsModel {
-  class TeamStats(var teamId: Int, var wins: Int, var losses: Int, var ties: Int)
-  class TempStats(val teamId: Int, val teamName: String, var wins: Int, var losses: Int, var ties: Int)
-
   def toModel(stats: Seq[TeamGameRoundResultRecord]) : Seq[RegularSeasonStatsModel] = {
     val tempStats = stats.map(x => x.teamId -> new TempStats(x.teamId, x.teamName, 0, 0, 0)).toMap[Int, TempStats]
 

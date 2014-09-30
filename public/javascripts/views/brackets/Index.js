@@ -4,8 +4,6 @@ brackets.index.IndexModel = (function(ko, _) {
   'use strict';
 
   var Model = function(data) {
-    this.collectionUtils = new brackets.index.CollectionUtils();
-
     this.groupByWeek = function() {
       return this.collectionUtils.multiGroup(this.playoffStats(), function(item) {
         return item.weekId();
