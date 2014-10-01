@@ -10,11 +10,13 @@ admin.games.index.GamesModel = (function(ko, _) {
     this.team2SortOrder = ko.observable(true);
     this.weekSortOrder = ko.observable(true);
     this.statusSortOrder = ko.observable(true);
+    this.gameTypeSortOrder = ko.observable(true);
 
     this.team1CurrentSort = ko.observable(false);
     this.team2CurrentSort = ko.observable(false);
     this.weekCurrentSort = ko.observable(false);
     this.statusCurrentSort = ko.observable(false);
+    this.gameTypeCurrentSort = ko.observable(false);
 
     this.initialize(data);
 
@@ -42,6 +44,7 @@ admin.games.index.GamesModel = (function(ko, _) {
       that.team2CurrentSort(false);
       that.weekCurrentSort(false);
       that.statusCurrentSort(false);
+      that.gameTypeCurrentSort(false);
       that.team1SortOrder(!that.team1SortOrder());
     },
     sortByTeam2: function() {
@@ -59,6 +62,7 @@ admin.games.index.GamesModel = (function(ko, _) {
       that.team2CurrentSort(true);
       that.weekCurrentSort(false);
       that.statusCurrentSort(false);
+      that.gameTypeCurrentSort(false);
       that.team2SortOrder(!that.team2SortOrder());
     },
     sortByWeek: function() {
@@ -76,6 +80,7 @@ admin.games.index.GamesModel = (function(ko, _) {
       that.team2CurrentSort(false);
       that.weekCurrentSort(true);
       that.statusCurrentSort(false);
+      that.gameTypeCurrentSort(false);
       that.weekSortOrder(!that.weekSortOrder());
     },
     sortByStatus: function() {
@@ -93,7 +98,26 @@ admin.games.index.GamesModel = (function(ko, _) {
       that.team2CurrentSort(false);
       that.weekCurrentSort(false);
       that.statusCurrentSort(true);
+      that.gameTypeCurrentSort(false);
       that.statusSortOrder(!that.statusSortOrder());
+    },
+    sortByGameType: function() {
+      var that = this;
+
+      that.games.sort(function(left, right) {
+        if(that.gameTypeSortOrder()) {
+          return left.gameType() > right.gameType() ? 1 : -1;
+        } else {
+          return left.gameType() < right.gameType() ? 1 : -1;
+        }
+      });
+
+      that.team1CurrentSort(false);
+      that.team2CurrentSort(false);
+      that.weekCurrentSort(false);
+      that.statusCurrentSort(false);
+      that.gameTypeCurrentSort(true);
+      that.gameTypeSortOrder(!that.gameTypeSortOrder());
     }
   });
 
@@ -107,6 +131,7 @@ admin.games.index.GameModel = (function(ko) {
     this.team1 = ko.observable();
     this.team2 = ko.observable();
     this.scheduledWeek = ko.observable();
+    this.gameType = ko.observable();
     this.gameStatus = ko.observable();
     this.resultsLink = ko.observable();
     this.editLink = ko.observable();
@@ -123,6 +148,7 @@ admin.games.index.GameModel = (function(ko) {
     initialize: function(data) {
       this.team1(data.team1);
       this.team2(data.team2);
+      this.gameType(data.gameType);
       this.scheduledWeek(data.scheduledWeek);
       this.gameStatus(data.gameStatus);
       this.resultsLink(data.resultsLink);

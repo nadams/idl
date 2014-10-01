@@ -60,6 +60,21 @@
 									<!-- /ko -->
 								</a>
 							</th>
+              <th>
+                <a href="#" data-bind="click: sortByGameType">
+                Type
+                
+									<!-- ko if: gameTypeCurrentSort -->
+									<!-- ko if: gameTypeSortOrder -->
+									<span class="glyphicon glyphicon-chevron-up"></span>
+									<!-- /ko -->
+
+									<!-- ko ifnot: gameTypeSortOrder -->
+									<span class="glyphicon glyphicon-chevron-down"></span>
+									<!-- /ko -->
+									<!-- /ko -->
+                </a>
+              </th>
 							<th>
 								<a href="#" data-bind="click: sortByWeek">
 									Scheduled Week
@@ -98,6 +113,7 @@
 						<tr>
 							<td data-bind="text: team1"></td>
 							<td data-bind="text: team2"></td>
+              <td data-bind="text: gameType"></td>
 							<td data-bind="text: scheduledWeek"></td>
 							<td><a data-bind="text: gameStatus, attr: { href: resultsLink }"></a></td>
 							<td><a class="btn btn-default" data-bind="attr: { href: editLink }, css: { 'disabled': !canAlterGame() }">Edit</a></td>
