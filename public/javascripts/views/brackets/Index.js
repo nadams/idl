@@ -17,11 +17,12 @@ brackets.index.IndexModel = (function(ko, _) {
     
     this.bracketStats = ko.computed(function() {
       var stats = this.playoffStats();
-      var minWeek = _.min(stats, function(item) { return item.weekId(); });
       var teams = [];
       var results = [];
       
-      if(typeof minWeek !== 'undefined') { 
+      if(stats.length > 0) { 
+        var minWeek = _.min(stats, function(item) { return item.weekId(); });
+      
         teams = _(stats)
           .filter(function(item) { return item.weekId() === minWeek.weekId(); })
           .map(function(item) { return _.map(item.teamStats(), function(teamStats) { return teamStats.teamName(); }); })
