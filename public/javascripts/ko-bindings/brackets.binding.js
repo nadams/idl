@@ -7,7 +7,7 @@
 		init: function(element, valueAccessor) {
 			var values = valueAccessor();
 
-			var data = values.data; 
+			var data = values.data(); 
 
 			$(element).bracket({
 				init: data

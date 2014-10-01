@@ -24,16 +24,35 @@ brackets.index.IndexModel = (function(ko, _) {
     }, this);
     
     this.bracketStats = ko.computed(function() {
+      var stats = this.playoffStats();
+      var minWeek = _.min(stats, function(item) { return item.weekId(); }).weekId();
+      var teams = _(stats)
+        .filter(function(item) { return item.weekId() === minWeek; })
+        .map(function(item) { return _.map(item.teamStats(), function(teamStats) { return teamStats.teamName(); }); })
+        .value();
+      
+      var results = _(stats)
+        .groupBy(function(item) { return item.weekId(); })
+        .map(function(item) { 
+          return item.map(function(item) { 
+            return item.teamStats().map(function(item) { 
+              return item.wins(); 
+            }); 
+          });
+        })
+        .toArray()
+        .value(); 
+
       return {
-        results: [],
-        teams: []
+        results: results,
+        teams: teams
       };
     }, this);
   };
 
   ko.utils.extend(Model.prototype, {
     initialize: function(data) {
-      this.playoffStats(_.map(data.playoffStats, function(item) {
+      this.playoffStats(_.map(data.playoffStats.results, function(item) {
         return new brackets.index.PlayoffGameStatsModel(item);
       }, this));
       
@@ -77,6 +96,7 @@ brackets.index.PlayoffGameStatsModel = (function(ko) {
 
   var Model = function(data) {
     this.gameId = ko.observable();
+    this.weekId = ko.observable();
     this.teamStats = ko.observableArray([]);
     this.initialize(data);
   };
@@ -84,6 +104,7 @@ brackets.index.PlayoffGameStatsModel = (function(ko) {
   ko.utils.extend(Model.prototype, {
     initialize: function(data) {
       this.gameId(data.gameId);
+      this.weekId(data.weekId);
       this.teamStats(_.map(data.teamStats, function(item) {
         return new brackets.index.PlayoffTeamStatsModel(item);
       }, this));

@@ -30,7 +30,6 @@ object PlayoffStatsModel {
   def toModel(stats: Seq[TeamGameRoundResultRecord]) = {
     val groupedStats: Map[Int, Map[Int, Seq[TeamGameRoundResultRecord]]] = stats.groupBy(_.gameId).mapValues(_.groupBy(_.roundId))
     val gameStats = MutableMap[Int, MutableMap[Int, Int]]()
-    play.api.Logger.info(GameTypes.Playoff.id.toString)    
     groupedStats.foreach { case(gameId, rounds) => 
       val teamStats = gameStats.getOrElseUpdate(gameId, MutableMap[Int, Int]())
 
