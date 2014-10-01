@@ -14,39 +14,45 @@ brackets.index.IndexModel = (function(ko, _) {
     this.regularSeasonStats = ko.observableArray([]);
 
     this.initialize(data);
-
-    this.hasPlayoffStats = ko.computed(function() {
-      return this.playoffStats().length > 0;
-    }, this);
-
-    this.hasRegularSeasonStats = ko.computed(function() {
-      return this.regularSeasonStats().length > 0;
-    }, this);
     
     this.bracketStats = ko.computed(function() {
       var stats = this.playoffStats();
-      var minWeek = _.min(stats, function(item) { return item.weekId(); }).weekId();
-      var teams = _(stats)
-        .filter(function(item) { return item.weekId() === minWeek; })
-        .map(function(item) { return _.map(item.teamStats(), function(teamStats) { return teamStats.teamName(); }); })
-        .value();
+      var minWeek = _.min(stats, function(item) { return item.weekId(); });
+      var teams = [];
+      var results = [];
       
-      var results = _(stats)
-        .groupBy(function(item) { return item.weekId(); })
-        .map(function(item) { 
-          return item.map(function(item) { 
-            return item.teamStats().map(function(item) { 
-              return item.wins(); 
-            }); 
-          });
-        })
-        .toArray()
-        .value(); 
+      if(typeof minWeek !== 'undefined') { 
+        teams = _(stats)
+          .filter(function(item) { return item.weekId() === minWeek.weekId(); })
+          .map(function(item) { return _.map(item.teamStats(), function(teamStats) { return teamStats.teamName(); }); })
+          .value();
+        
+        results = _(stats)
+          .groupBy(function(item) { return item.weekId(); })
+          .map(function(item) { 
+            return item.map(function(item) { 
+              return item.teamStats().map(function(item) { 
+                return item.wins(); 
+              }); 
+            });
+          })
+          .toArray()
+          .value(); 
+      }
 
       return {
         results: results,
         teams: teams
       };
+    }, this);
+    
+    this.hasPlayoffStats = ko.computed(function() {
+      var stats = this.bracketStats();
+      return stats.results.length > 0 && stats.teams.length > 0;
+    }, this);
+
+    this.hasRegularSeasonStats = ko.computed(function() {
+      return this.regularSeasonStats().length > 0;
     }, this);
   };
 
