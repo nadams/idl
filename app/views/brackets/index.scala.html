@@ -50,7 +50,7 @@
 				</div>
 				<h4>Playoff Season</h4>
 				<div data-bind="if: hasPlayoffStats">
-					<div data-bind="brackets: { teams: teams, results: results }"></div>
+					<div data-bind="brackets: { data: bracketStats }"></div>
 				</div>
 				<div data-bind="ifnot: hasPlayoffStats">
 					<p>The season hasn't reached the playoffs yet.</p>
