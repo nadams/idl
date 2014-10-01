@@ -1,11 +1,16 @@
 /* global ko, _ */
-'use strict';
 
-var admin = admin || {};
-admin.teams = admin.teams || {};
-admin.teams.index = admin.teams.index || {};
+(function() {
+  'use strict';
+  
+  var admin = admin || {};
+  admin.teams = admin.teams || {};
+  admin.teams.index = admin.teams.index || {};
+})();
 
 admin.teams.index.IndexModel = (function(ko, _) {
+  'use strict';
+  
 	var Model = function(data, repository) {
 		this.repository = repository;
 
