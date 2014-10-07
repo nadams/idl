@@ -11,7 +11,7 @@ import models.FieldExtensions._
 import models.FormExtensions._
 import security.Roles
 
-object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl {
+object TeamController extends Controller with ProvidesHeader with Secured with SeasonComponentImpl with TeamComponentImpl with PlayerComponentImpl {
   def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(views.html.admin.teams.index(TeamIndexModel.toModel(teamService.getAllTeams, routes.TeamController)))
   }
@@ -54,8 +54,8 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
     Ok(Json.toJson(TeamsModel.toModel(teamService.getTeamsForSeason(seasonId))))
   }
 
-  def getPlayers = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(Json.toJson(PlayersModel.toModel(teamService.getAllPlayers)))
+  def getPlayers() = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Ok(Json.toJson(PlayersModel.toModel(playerService.getPlayers())))
   }
 
   def assignPlayers = IsAuthenticated(Roles.Admin) { username => implicit request => 

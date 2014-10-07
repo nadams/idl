@@ -13,6 +13,7 @@ trait PlayerRepositoryComponent {
     def getPlayerNamesThatExist(names: Set[String]) : Set[String]
     def createPlayerFromName(name: String) : Player
     def batchCreatePlayerFromName(names: Set[String]) : Set[Player]
+    def getPlayers() : Seq[TeamPlayerRecord] 
   }
 }
 
@@ -156,6 +157,12 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
 
     def batchCreatePlayerFromName(names: Set[String]) = DB.withTransaction { implicit connection => 
       names.map(insertPlayerFromName(_))
+    }
+
+    def getPlayers() = DB.withConnection { implicit connection =>
+      SQL(TeamPlayerRecord.selectAll)
+      .as(TeamPlayerRecord.multiRowParser)
+      .map(TeamPlayerRecord(_))
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
