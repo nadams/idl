@@ -121,6 +121,20 @@ admin.teams.index.IndexModel = (function(ko, _) {
         });
       }
     }, this);
+    
+    this.canMakeCaptain = ko.computed(function() {
+      return this.selectedTeamPlayers().length === 1;
+    }, this);
+    
+    this.playerIsCaptain = function(option, player) {
+      var playerIsCaptain = _.filter(player.teamIds(), function(teamInfo) { 
+        return teamInfo.teamId() === this.selectedTeam().teamId && teamInfo.isCaptain(); 
+      }, this).length > 0;
+       
+      if(playerIsCaptain) {
+        option.innerHTML = '* ' + option.innerHTML;
+      }
+    }.bind(this);
   };
 
   ko.utils.extend(Model.prototype, {
@@ -188,6 +202,33 @@ admin.teams.index.IndexModel = (function(ko, _) {
     },
     clearPlayersAvailableFilter: function() {
       this.playersAvailableFilter('');
+    },
+    makeCaptain: function() {
+      var selectedPlayers = this.selectedTeamPlayers();
+      if(this.canMakeCaptain()) {
+        var player = selectedPlayers[0];
+        
+        var promise = this.repository.makeCaptain(this.selectedTeam().teamId, player.playerId, this);
+        promise.done(function(data) {
+          _.forEach(this.playersInCurrentTeam(), function(item) {
+            var isSelectedPlayer = item.playerId === player.playerId;
+            
+            _.forEach(item.teamIds(), function(item) {
+              if(isSelectedPlayer && item.teamId() === this.selectedTeam().teamId) {
+                item.isCaptain(true);
+              } else {
+                item.isCaptain(false);
+              }
+            }, this);
+          }, this);
+          
+          this.availablePlayers.notifySubscribers(this.availablePlayers());
+        });
+        
+        promise.always(function() {
+
+        });
+      }
     }
   });
 

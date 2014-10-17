@@ -69,6 +69,10 @@ object TeamController extends Controller with ProvidesHeader with Secured with S
 
     handleJsonPost[RemovePlayersFromTeamModel](x => Ok(Json.toJson(teamService.removePlayersFromTeam(x.teamId, x.playerIds))))
   }
+  
+  def makeCaptain(teamId: Int, playerId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Ok(Json.toJson(teamService.makeCaptain(teamId, playerId))) 
+  }  
 
   private def updateTeam(saveAction: EditTeamModel => Boolean)(implicit request: Request[AnyContent]) : Result = 
     EditTeamForm().bindFromRequest.fold(

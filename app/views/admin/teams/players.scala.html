@@ -17,7 +17,8 @@
 		routes.javascript.TeamController.getTeamList,
 		routes.javascript.TeamController.getPlayers,
 		routes.javascript.TeamController.assignPlayers,
-		routes.javascript.TeamController.removePlayers
+		routes.javascript.TeamController.removePlayers,
+    routes.javascript.TeamController.makeCaptain
 	)
 	
 	<script src="@routes.Assets.at("javascripts/ajax.js")"></script>
@@ -82,10 +83,11 @@
 										size="5"
 										data-bind="options: playersInCurrentTeam,
 											optionsText: 'playerName',
-											selectedOptions: selectedTeamPlayers"></select>
-									@*<div class="captain-button">
-										<button class="btn btn-primary">Make Captain</button>
-									</div>*@
+											selectedOptions: selectedTeamPlayers,
+                      optionsAfterRender: playerIsCaptain"></select>
+									<div class="captain-button">
+										<button class="btn btn-primary" data-bind="click: makeCaptain, enable: canMakeCaptain">Make Captain</button>
+									</div>
 								</div>
 								<div class="col-md-4">
 									<div class="visible-xs visible-sm">
@@ -131,6 +133,5 @@
 				</div>
 			</div>
 		</div>
-    <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 	</div>
 }
