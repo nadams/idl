@@ -119,7 +119,7 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
       .executeUpdate > 0
     }
 
-    def getForumNews(maxItems: Int = 15) = DB.withConnection { implicit connection =>
+    def getForumNews(maxItems: Int = 15) = DB.withConnection("forums") { implicit connection =>
       SQL(ForumNews.selectAllSql)
       .on('maxItems -> maxItems)
       .as(ForumNews.multiRowParser)
