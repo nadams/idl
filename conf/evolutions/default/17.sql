@@ -18,3 +18,10 @@ CREATE TABLE IF NOT EXISTS idlsmf_boards (
   id_board INT PRIMARY KEY NOT NULL,
   name VARCHAR(255) NOT NULL
 );
+
+# --- !Downs
+
+DROP TABLE idlsmf_boards;
+DROP TABLE idlsmf_topics;
+DROP TABLE idlsmf_boards;
+
