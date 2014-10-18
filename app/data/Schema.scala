@@ -127,3 +127,16 @@ object RoundResultSchema {
   val frags = "Frags"
   val deaths = "Deaths"
 }
+
+object ForumNewsSchema {
+  val tableName = "idlsmf_messages"
+  val msgId = "id_msg"
+  val subject = "subject"
+  val posterName = "poster_name"
+  val body = "body"
+  val posterTime = "poster_time"
+  val topicsTableName = "idlsmf_topics"
+  val boardsTableName = "idlsmf_boards"
+  val boardBoardId = "id_board"
+  val boardsName = "name"
+}

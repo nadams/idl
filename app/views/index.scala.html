@@ -1,7 +1,12 @@
 @(model: NewsModel)(implicit header: MenuModel)
 
+@extraCss = {
+  <link rel="stylesheet" type="text/css" href="@routes.Assets.at("xbbcode/xbbcode.css")" />
+}
+
 @extraScripts = {
 	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+  <script src="@routes.Assets.at("xbbcode/xbbcode.js")"></script>
 	<script>
 		var dateToUtc = function(date) {
 			return moment.utc(date).calendar();
@@ -9,7 +14,7 @@
 	</script>
 }
 
-@main("International Doom League", extraScripts = extraScripts) {
+@main("International Doom League", extraScripts = extraScripts, extraCss = extraCss) {
 	@if(model.newsItems.isEmpty) {
 		<div class="jumbotron">
 			<h1>There are no news items yet.</h1>
