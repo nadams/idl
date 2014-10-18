@@ -1,0 +1,3 @@
+# --- !Ups
+
+DROP TABLE GameResult;

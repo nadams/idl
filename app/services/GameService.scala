@@ -15,12 +15,18 @@ trait GameServiceComponent {
     def addGame(game: Game) : Boolean
     def updateGame(game: Game) : Boolean
     def removeGame(gameId: Int) : Boolean
-    def parseGameResults(gameId: Int, source: Source) : Seq[(String, GameResult)]
-    def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) : Unit
+    def parseGameResults(gameId: Int, source: Source) : Seq[(String, Seq[(String, RoundResult)])]
+    def addRoundResults(gameId: Int, data: Seq[(String, Seq[(String, RoundResult)])]) : Unit
     def getDemoStatusForGame(gameId: Int) : Seq[DemoStatusRecord]
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) : Option[GameDemo]
     def getDemoData(demoDataId: Int) : Option[Array[Byte]]
-    def getTeamGameResults(seasonId: Option[Int]) : Seq[TeamGameResultRecord]
+    def addRound(gameId: Int, mapNumber: String) : Option[Round]
+    def getRound(roundId: Int) : Option[Round]
+    def getRoundStats(gameId: Int) : Seq[RoundStatsRecord]
+    def getRoundStatsForPlayer(gameId: Int, roundId: Int, playerId: Int) : Option[RoundStatsRecord]
+    def disableRound(round: Round) : Option[Round]
+    def getTeamGameRoundResults(seasonId: Option[Int]) : Seq[TeamGameRoundResultRecord]
+    def updateRoundResult(roundResult: RoundResult) : Option[RoundResult]
   }
 }
 
@@ -38,23 +44,33 @@ trait GameServiceComponentImpl extends GameServiceComponent {
     def getDemoStatusForGame(gameId: Int) = gameRepository.getDemoStatusForGame(gameId)
     def addDemo(gameId: Int, playerId: Int, filename: String, file: File) = gameRepository.addDemo(gameId, playerId, filename, file)
     def getDemoData(demoDataId: Int) = gameRepository.getDemoData(demoDataId)
-    def getTeamGameResults(seasonId: Option[Int]) = gameRepository.getTeamGameResults(seasonId)
+    def addRound(gameId: Int, mapNumber: String) = gameRepository.addRound(gameId, mapNumber)
+    def getRoundStats(gameId: Int) = gameRepository.getRoundStats(gameId)
+    def disableRound(round: Round) = gameRepository.disableRound(round)
+    def getRound(roundId: Int) = gameRepository.getRound(roundId)
+    def getTeamGameRoundResults(seasonId: Option[Int]) = gameRepository.getTeamGameRoundResults(seasonId)
+    def updateRoundResult(roundResult: RoundResult) = gameRepository.updateRoundResult(roundResult)
+    def getRoundStatsForPlayer(gameId: Int, roundId: Int, playerId: Int) = gameRepository.getRoundStatsForPlayer(gameId, roundId, playerId)
 
-    def parseGameResults(gameId: Int, source: Source) = {
-      val playerStats = ZandronumLogParser.parseLog(source)
-      
-      playerStats.filter(_._2.team != Teams.Spectator).keys.map { key => 
-        val value = playerStats(key)
+    def parseGameResults(gameId: Int, source: Source) = 
+      ZandronumLogParser.parseLog(source).map { case (roundName, playerStats) => 
+        roundName -> playerStats.filter(_._2.team != Teams.Spectator).keys.map { playerName => 
+          val value = playerStats(playerName)
 
-        (key, GameResult(0, gameId, 0, value.captures, value.pCaptures, value.drops, value.frags, value.deaths))
-      } toSeq
-    }
+          playerName -> RoundResult(0, gameId,  0, value.captures, value.pCaptures, value.drops, value.frags, value.deaths)
+        }.toSeq
+      }
 
-    def addGameResult(gameId: Int, data: Seq[(String, GameResult)]) = 
-      if(!gameRepository.gameHasResults(gameId))
-        gameRepository.getGame(gameId) map { game => 
-          gameRepository.addGameResults(gameId, data)
-          gameRepository.updateGame(game.copy(dateCompleted = Some(new DateTime(DateTimeZone.UTC))))
+    def addRoundResults(gameId: Int, data: Seq[(String, Seq[(String, RoundResult)])]) = 
+      if(!gameRepository.hasRoundResults(gameId)) {
+        gameRepository.getGame(gameId).map { game => 
+          data.foreach { item => 
+            gameRepository.addRound(game.gameId, item._1).map { round => 
+              item._2.map(gameRepository.addRoundResult(round.roundId, _))
+              gameRepository.updateGame(game.copy(dateCompleted = Some(new DateTime(DateTimeZone.UTC))))            
+            }
+          }
         }
+      } 
   }
 }

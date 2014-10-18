@@ -17,7 +17,8 @@
 		routes.javascript.TeamController.getTeamList,
 		routes.javascript.TeamController.getPlayers,
 		routes.javascript.TeamController.assignPlayers,
-		routes.javascript.TeamController.removePlayers
+		routes.javascript.TeamController.removePlayers,
+    routes.javascript.TeamController.makeCaptain
 	)
 	
 	<script src="@routes.Assets.at("javascripts/ajax.js")"></script>
@@ -69,16 +70,28 @@
 									<div>
 										<label for="teamPlayers">Players In <span data-bind="text: selectedTeam().teamName"></span></label>
 									</div>
+                  <div>
+                    <span>Team Captain: <span data-bind="text: teamCaptain"></span></span>
+                  </div>
+									<div class="game-search input-group">
+										<input type="text" class="form-control" data-bind="textInput: playersInTeamFilter" placeholder="Filter..." />
+										<div class="input-group-addon">
+											<span class="glyphicon glyphicon-remove clear-filter" data-bind="click: clearPlayersInTeamFilter"></span>
+										</div>
+									</div>
 									<select 
 										id="teamPlayers"
-										class="player-select-list"
+										class="form-control game-combobox"
 										multiple="multiple" 
 										size="5"
 										data-bind="options: playersInCurrentTeam,
 											optionsText: 'playerName',
 											selectedOptions: selectedTeamPlayers"></select>
 									<div class="captain-button">
-										<button class="btn btn-primary">Make Captain</button>
+										<button class="btn btn-primary" data-bind="click: makeCaptain, enable: canMakeCaptain">Make Captain</button>
+                    <!-- ko if: isMakingCaptain() -->
+                    <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." />
+                    <!-- /ko -->
 									</div>
 								</div>
 								<div class="col-md-4">
@@ -104,9 +117,15 @@
 									<div>
 										<label for="unassignedPlayers">Unassigned Players</label>
 									</div>
+									<div class="game-search input-group">
+										<input type="text" class="form-control" data-bind="textInput: playersAvailableFilter" placeholder="Filter..." />
+										<div class="input-group-addon">
+											<span class="glyphicon glyphicon-remove clear-filter" data-bind="click: clearPlayersAvailableFilter"></span>
+										</div>
+									</div>
 									<select 
 										id="unassignedPlayers"
-										class="player-select-list"
+										class="form-control game-combobox"
 										multiple="multiple" 
 										size="5"
 										data-bind="options: unassignedPlayers,

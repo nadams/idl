@@ -13,6 +13,7 @@ trait PlayerRepositoryComponent {
     def getPlayerNamesThatExist(names: Set[String]) : Set[String]
     def createPlayerFromName(name: String) : Player
     def batchCreatePlayerFromName(names: Set[String]) : Set[Player]
+    def getPlayers() : Seq[TeamPlayerRecord] 
   }
 }
 
@@ -25,13 +26,19 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
     import play.api.db.DB
     import play.api.Play.current
 
-    val singleRowParser = int(PlayerSchema.playerId) ~ str(PlayerSchema.name) ~ bool(PlayerSchema.isActive) ~ get[Option[Int]](TeamPlayerSchema.teamId) map flatten
+    val singleRowParser = 
+      int(PlayerSchema.playerId) ~ 
+      str(PlayerSchema.playerName) ~ 
+      bool(PlayerSchema.isActive) ~ 
+      get[Option[Int]](TeamPlayerSchema.teamId) map flatten
+
     val multiRowParser = singleRowParser *
+
     val selectAllPlayersSql = 
       s"""
         SELECT 
           p.${PlayerSchema.playerId},
-          p.${PlayerSchema.name},
+          p.${PlayerSchema.playerName},
           p.${PlayerSchema.isActive},
           tp.${TeamPlayerSchema.teamId}
         FROM ${PlayerSchema.tableName} AS p
@@ -47,7 +54,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
         s"""
           SELECT 
             p.${PlayerSchema.playerId},
-            p.${PlayerSchema.name},
+            p.${PlayerSchema.playerName},
             p.${PlayerSchema.isActive},
             NULL AS ${TeamPlayerSchema.teamId}
           FROM ${PlayerSchema.tableName} AS p
@@ -65,7 +72,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
         s"""
           SELECT 
             p.${PlayerSchema.playerId},
-            p.${PlayerSchema.name},
+            p.${PlayerSchema.playerName},
             p.${PlayerSchema.isActive},
             NULL AS ${TeamPlayerSchema.teamId}
           FROM ${PlayerSchema.tableName} AS p
@@ -81,16 +88,16 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       val playerId = SQL(
         s"""
           INSERT INTO ${PlayerSchema.tableName} (
-            ${PlayerSchema.name},
+            ${PlayerSchema.playerName},
             ${PlayerSchema.isActive}
           ) VALUES (
-            {name},
+            {playerName},
             {isActive}
           )
         """
       )
       .on(
-        'name -> player.name,
+        'playerName -> player.playerName,
         'isActive -> player.isActive
       )
       .executeInsert(scalar[Long] single)
@@ -124,9 +131,9 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       SQL(
         s"""
           $selectAllPlayersSql
-          WHERE p.${PlayerSchema.name} = {name}
+          WHERE p.${PlayerSchema.playerName} = {playerName}
         """
-      ).on('name -> name)
+      ).on('playerName -> name)
       .as(singleRowParser singleOpt)
       .map(Player(_))
     }
@@ -135,12 +142,12 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       SQL(
         s"""
           SELECT
-            p.${PlayerSchema.name}
+            p.${PlayerSchema.playerName}
           FROM ${PlayerSchema.tableName} AS p
-          WHERE p.${PlayerSchema.name} IN ({names})
+          WHERE p.${PlayerSchema.playerName} IN ({names})
         """
       ).on('names -> names.toSeq)
-      .as(str(PlayerSchema.name) *)
+      .as(str(PlayerSchema.playerName) *)
       .toSet
     }
 
@@ -152,20 +159,26 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       names.map(insertPlayerFromName(_))
     }
 
+    def getPlayers() = DB.withConnection { implicit connection =>
+      SQL(TeamPlayerRecord.selectAll)
+      .as(TeamPlayerRecord.multiRowParser)
+      .map(TeamPlayerRecord(_))
+    }
+
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
       Player(
         SQL(
           s"""
             INSERT INTO ${PlayerSchema.tableName} (
-              ${PlayerSchema.name},
+              ${PlayerSchema.playerName},
               ${PlayerSchema.isActive}
             ) VALUES (
-              {name},
+              {playerName},
               {isActive}
             )
           """
         ).on(
-          'name -> name,
+          'playerName -> name,
           'isActive -> true
         ).executeInsert(scalar[Long] single)
         .toInt,

@@ -35,6 +35,7 @@ POST    /admin/teams/create                     controllers.TeamController.saveN
 GET     /admin/teams/edit/:id                   controllers.TeamController.edit(id: Int)
 POST    /admin/teams/edit/:id                   controllers.TeamController.saveExisting(id: Int)
 POST    /admin/teams/remove/:id                 controllers.TeamController.remove(id: Int)
+POST    /admin/teams/:teamId/player/:playerId/makeCaptain controllers.TeamController.makeCaptain(teamId: Int, playerId: Int)
     
 GET     /admin/seasons                          controllers.SeasonController.index
 GET     /admin/seasons/create                   controllers.SeasonController.create
@@ -55,6 +56,8 @@ POST    /admin/season/:seasonId/games/:gameId/remove                controllers.
 GET     /admin/season/:seasonId/games/:gameId/stats                 controllers.GameController.stats(seasonId: Int, gameId: Int)
 POST    /admin/season/:seasonId/games/:gameId/stats/upload          controllers.GameController.uploadStats(seasonId: Int, gameId: Int)
 POST    /admin/season/:seasonId/games/:gameId/stats/:playerId/demo  controllers.GameController.uploadDemo(seasonId: Int, gameId: Int, playerId: Int)
+POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/remove controllers.GameController.removeRound(seasonId: Int, gameId: Int, roundId: Int)
+POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/update controllers.GameController.updateRound(seasonId: Int, gameId: Int, roundId: Int)
 
 GET     /brackets                               controllers.BracketsController.index
         

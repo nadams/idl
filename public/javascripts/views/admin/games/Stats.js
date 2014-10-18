@@ -1,6 +1,6 @@
-/* global ko, _, moment, admin */
+/* global ko, _, moment, jQuery, admin */
 
-admin.games.stats.StatsModel = (function(ko, _) {
+admin.games.stats.StatsModel = (function(ko, _, $) {
   'use strict';
 
   var Model = function(data, routes) {
@@ -8,7 +8,8 @@ admin.games.stats.StatsModel = (function(ko, _) {
     this.seasonId = ko.observable(0);
     this.gameId = ko.observable(0);
     this.statsUploaded = ko.observable(false);
-    this.stats = ko.observableArray();
+    this.demoInfo = ko.observableArray();
+    this.rounds = ko.observableArray();
 
     this.uploadStatsSuccess = ko.observable();
     this.uploadStatsFailure = ko.observable();
@@ -34,6 +35,33 @@ admin.games.stats.StatsModel = (function(ko, _) {
     this.statsUploadAlways = function() {
       this.isUploading(false);
     }.bind(this);
+
+    this.removeRound = function(round) {
+      var url = this.routes.controllers.GameController.removeRound(this.seasonId(), this.gameId(), round.roundId()).url;
+
+      round.isRemovingRound(true);
+
+      var promise = $.ajax({
+        url: url,
+        data: '{}',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        context: this
+      });
+
+      promise.done(function() {
+        this.rounds.remove(round);
+      });
+
+      promise.fail(function() {
+        round.couldNotRemoveRound(true);
+      });
+
+      promise.always(function() {
+        round.isRemovingRound(false);
+      });
+    }.bind(this);
   };
 
   ko.utils.extend(Model.prototype, {
@@ -41,14 +69,19 @@ admin.games.stats.StatsModel = (function(ko, _) {
       this.seasonId(data.seasonId);
       this.gameId(data.gameId);
       this.statsUploaded(data.statsUploaded);
-      this.stats(_.map(data.stats, function(data) {
+
+      this.demoInfo(_.map(data.demoInfo, function(data) {
         return new admin.games.stats.StatsDemoModel(this.seasonId(), this.gameId(), data, routes);
+      }, this));
+
+      this.rounds(_.map(data.rounds, function(data) {
+        return new admin.games.stats.RoundModel(data, routes);
       }, this));
     }
   });
 
   return Model;
-})(ko, _);
+})(ko, _, jQuery);
 
 admin.games.stats.StatsDemoModel = (function(ko) {
   'use strict';
@@ -133,6 +166,161 @@ admin.games.stats.DemoModel = (function(ko, moment) {
 
   return Model;
 })(ko, moment);
+
+admin.games.stats.RoundModel = (function(ko) {
+  'use strict';
+
+  var Model = function(data, routes) {
+    this.routes = routes;
+
+    this.roundId = ko.observable();
+    this.mapNumber = ko.observable();
+    this.playerData = ko.observableArray();
+
+    this.couldNotRemoveRound = ko.observable(false);
+    this.isRemovingRound = ko.observable(false);
+
+    this.initialize(data);
+
+    this.roundName = ko.computed(function() {
+      return this.roundId() + ' - ' + this.mapNumber();
+    }, this);
+
+    this.teamStats = ko.computed(function() {
+      var sumProperty = function(data, property) {
+        return _.reduce(data, function(sum, item) {
+          return sum + parseInt(property(item));
+        }, 0);
+      };
+
+      return _(this.playerData()).groupBy(function(item) {
+        return item.teamId();
+      }, this).map(function(item) {
+        var teamId, teamName;
+
+        if(item.length > 0) {
+          teamId = item[0].teamId;
+          teamName = item[0].teamName;
+        }
+
+        return {
+          teamId: teamId,
+          teamName: teamName,
+          captures: sumProperty(item, function(item) {
+            return item.captures();
+          }),
+          pCaptures: sumProperty(item, function(item) {
+            return item.pCaptures();
+          }),
+          drops: sumProperty(item, function(item) {
+            return item.drops();
+          }),
+            frags: sumProperty(item, function(item) {
+            return item.frags();
+          }),
+          deaths: sumProperty(item, function(item) {
+            return item.deaths();
+          })
+        };
+      }).sortBy(function(item) {
+        return item.teamName();
+      }).value();
+    }, this);
+  };
+
+  ko.utils.extend(Model.prototype, {
+    initialize: function(data) {
+      this.roundId(data.roundId);
+      this.mapNumber(data.mapNumber);
+      this.playerData(_.map(data.playerData, function(item) {
+        return new admin.games.stats.RoundResultModel(item, this.routes);
+      }, this));
+    }
+  });
+
+  return Model;
+})(ko);
+
+admin.games.stats.RoundResultModel = (function(ko, $) {
+  'use strict';
+
+  var Model = function(data, routes) {
+    this.routes = routes;
+
+    this.roundResultId = ko.observable();
+    this.playerId = ko.observable();
+    this.playerName = ko.observable();
+    this.teamId = ko.observable();
+    this.teamName = ko.observable();
+    this.captures = ko.observable();
+    this.pCaptures = ko.observable();
+    this.drops = ko.observable();
+    this.frags = ko.observable();
+    this.deaths = ko.observable();
+    
+    this.isSaving = ko.observable(false);
+    this.failedToSave = ko.observable(false);
+
+    this.initialize(data);
+
+    this.dirtyFlag = new ko.DirtyFlag(this, false);
+  };
+
+  ko.utils.extend(Model.prototype, {
+    initialize: function(data) {
+      this.roundResultId(data.roundResultId);
+      this.playerId(data.playerId);
+      this.playerName(data.playerName);
+      this.teamId(data.teamId);
+      this.teamName(data.teamName);
+      this.captures(data.captures);
+      this.pCaptures(data.pCaptures);
+      this.drops(data.drops);
+      this.frags(data.frags);
+      this.deaths(data.deaths);
+    },
+    validInt: function(value) {
+      return /^\d+$/.test(value);
+    },
+    updateRoundResult: function(seasonId, gameId, roundId) {
+      var url = this.routes.controllers.GameController.updateRound(seasonId, gameId, roundId).url,
+          data = {
+            roundResultId: this.roundResultId(),
+            playerId: this.playerId(),
+            playerName: this.playerName(),
+            teamId: this.teamId(),
+            teamName: this.teamName(),
+            captures: parseInt(this.captures()),
+            pCaptures: parseInt(this.pCaptures()),
+            drops: parseInt(this.drops()),
+            frags: parseInt(this.frags()),
+            deaths: parseInt(this.deaths())
+          };
+
+      this.isSaving(true);
+
+      var promise = $.ajax({
+        url: url,
+        data: JSON.stringify(data),
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        context: this
+      });
+
+      promise.fail(function() {
+        this.failedToSave(true);
+      });
+
+      promise.always(function() {
+        this.isSaving(false);
+        this.dirtyFlag.reset();
+      });
+    }
+  });
+
+  return Model;
+})(ko, jQuery);
 
 (function(ko, admin) {
   'use strict';

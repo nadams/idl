@@ -1,0 +1,19 @@
+$game-min-width: 16em;
+$game-min-height: 16em;
+$game-filter-margin: 1em;
+$game-filter-clear-size: 0.75em;
+
+.game-combobox {
+  min-height: $game-min-height;
+  min-width: $game-min-width;
+}
+
+.game-search {
+  min-width: $game-min-width;
+  margin-bottom: $game-filter-margin;
+}
+
+.clear-filter {
+  cursor: pointer;
+  font-size: $game-filter-clear-size;
+}
