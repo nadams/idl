@@ -15,9 +15,9 @@ object ForumNews {
         m.${ForumNewsSchema.posterName},
         m.${ForumNewsSchema.body}
       FROM ${ForumNewsSchema.tableName} AS m
-        INNER JOIN idlsmf_topics AS t ON m.id_msg = t.id_first_msg
-      WHERE m.id_board = (SELECT b.id_board FROM idlsmf_boards AS b WHERE b.name = 'IDL News' LIMIT 1)
-      ORDER BY m.poster_time DESC
+        INNER JOIN ${ForumNewsSchema.topicsTableName} AS t ON m.${ForumNewsSchema.msgId} = t.${ForumNewsSchema.topicsFirstMsgId}
+      WHERE m.${ForumNewsSchema.boardId} = (SELECT b.${ForumNewsSchema.boardBoardId} FROM ${ForumNewsSchema.boardsTableName} AS b WHERE b.${ForumNewsSchema.boardsName} = 'IDL News' LIMIT 1)
+      ORDER BY m.${ForumNewsSchema.posterTime} DESC
       LIMIT {maxItems}
     """
 

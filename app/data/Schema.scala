@@ -131,6 +131,7 @@ object RoundResultSchema {
 object ForumNewsSchema {
   val tableName = "idlsmf_messages"
   val msgId = "id_msg"
+  val boardId = "id_board"
   val subject = "subject"
   val posterName = "poster_name"
   val body = "body"
@@ -139,4 +140,5 @@ object ForumNewsSchema {
   val boardsTableName = "idlsmf_boards"
   val boardBoardId = "id_board"
   val boardsName = "name"
+  val topicsFirstMsgId = "id_first_msg"
 }
