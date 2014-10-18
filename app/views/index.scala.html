@@ -5,13 +5,7 @@
 }
 
 @extraScripts = {
-	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
   <script src="@routes.Assets.at("xbbcode/xbbcode.js")"></script>
-	<script>
-		var dateToUtc = function(date) {
-			return moment.utc(date).calendar();
-		};
-	</script>
 }
 
 @main("International Doom League", extraScripts = extraScripts, extraCss = extraCss) {
