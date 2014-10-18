@@ -1,6 +1,6 @@
 package data
 
-case class ForumNews(msgId: Int, subject: String, posterName: String, body: String)
+case class ForumNews(msgId: Long, subject: String, posterName: String, body: String)
 
 object ForumNews {
   import anorm._ 
@@ -22,13 +22,13 @@ object ForumNews {
     """
 
   lazy val singleRowParser = 
-    int(ForumNewsSchema.msgId) ~
+    long(ForumNewsSchema.msgId) ~
     str(ForumNewsSchema.subject) ~
     str(ForumNewsSchema.posterName) ~
     str(ForumNewsSchema.body) map flatten
 
   lazy val multiRowParser = singleRowParser *
 
-  def apply(x: (Int, String, String, String)) : ForumNews =
+  def apply(x: (Long, String, String, String)) : ForumNews =
     ForumNews(x._1, x._2, x._3, x._4)
 }

@@ -1,7 +1,7 @@
 # --- !Ups
 
 CREATE TABLE IF NOT EXISTS idlsmf_messages (
-  id_msg INT PRIMARY KEY NOT NULL,
+  id_msg INT UNSIGNED PRIMARY KEY NOT NULL,
   id_board INT NOT NULL,
   subject VARCHAR(255) NOT NULL,
   poster_name VARCHAR(255) NOT NULL,
@@ -47,9 +47,10 @@ WHERE NOT EXISTS (
   SELECT *
   FROM idlsmf_messages AS m WHERE m.id_msg = 1
 ) LIMIT 1;
+
 # --- !Downs
 
 DROP TABLE idlsmf_boards;
 DROP TABLE idlsmf_topics;
-DROP TABLE idlsmf_boards;
+DROP TABLE idlsmf_messages;
 
