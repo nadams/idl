@@ -30,6 +30,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
     this.isRemovingPlayersFromTeam = ko.observable(false);
     this.playersInTeamFilter = ko.observable('');
     this.playersAvailableFilter = ko.observable('');
+    this.isMakingCaptain = ko.observable(false);
 
     this.initialize(data);
 
@@ -216,6 +217,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
     makeCaptain: function() {
       var selectedPlayers = this.selectedTeamPlayers();
       if(this.canMakeCaptain()) {
+        this.isMakingCaptain(true);
         var player = selectedPlayers[0];
         
         var promise = this.repository.makeCaptain(this.selectedTeam().teamId, player.playerId, this);
@@ -234,7 +236,7 @@ admin.teams.index.IndexModel = (function(ko, _) {
         });
         
         promise.always(function() {
-
+          this.isMakingCaptain(false);
         });
       }
     }

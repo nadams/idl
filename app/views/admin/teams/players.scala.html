@@ -89,6 +89,9 @@
 											selectedOptions: selectedTeamPlayers"></select>
 									<div class="captain-button">
 										<button class="btn btn-primary" data-bind="click: makeCaptain, enable: canMakeCaptain">Make Captain</button>
+                    <!-- ko if: isMakingCaptain() -->
+                    <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." />
+                    <!-- /ko -->
 									</div>
 								</div>
 								<div class="col-md-4">
