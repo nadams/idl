@@ -15,6 +15,7 @@ trait TeamRepositoryComponent {
     def getAllTeams() : Seq[Team]
     def removeTeam(teamId: Int) : Boolean
     def getTeamsForGame(gameId: Int) : Option[(Team, Team)]
+    def makeCaptain(teamId: Int, playerId: Int) : Option[Int]
   }
 }
 
@@ -222,6 +223,32 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         'teamId -> teamId
       )
       .executeUpdate > 0
+    }
+
+    def makeCaptain(teamId: Int, playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          UPDATE ${TeamPlayerSchema.tableName}
+          SET ${TeamPlayerSchema.isCaptain} = 0
+          WHERE ${TeamPlayerSchema.isCaptain} = 1
+            AND ${TeamPlayerSchema.teamId} = {teamId}
+        """
+      )
+      .on('teamId -> teamId, 'playerId -> playerId)
+      .executeUpdate
+            
+      SQL(
+        s"""
+          UPDATE ${TeamPlayerSchema.tableName}
+          SET ${TeamPlayerSchema.isCaptain} = 1 
+          WHERE ${TeamPlayerSchema.teamId} = {teamId}
+            AND ${TeamPlayerSchema.playerId} = {playerId} 
+        """
+      )
+      .on('teamId -> teamId, 'playerId -> playerId)
+      .executeUpdate
+      
+      Some(playerId)
     }
 
     def getTeamsForGame(gameId: Int) = DB.withConnection { implicit connection => 
