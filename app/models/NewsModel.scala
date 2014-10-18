@@ -1,9 +1,9 @@
 package models
 
-import data.News
+import data.ForumNews
 
-case class NewsModel(newsItems: Seq[News])
+case class NewsModel(newsItems: Seq[ForumNews])
 
 object NewsModel {
-  def apply(): NewsModel = NewsModel(Seq.empty[News])
+  def apply(): NewsModel = NewsModel(Seq.empty[ForumNews])
 }
