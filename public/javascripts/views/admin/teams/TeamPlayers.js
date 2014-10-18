@@ -72,6 +72,16 @@ admin.teams.index.IndexModel = (function(ko, _) {
       return this.selectedTeamPlayers().length > 0 && !this.isRemovingPlayersFromTeam();
     }, this);
 
+    this.teamCaptain = ko.computed(function() {
+      var captain = _.find(this.playersInCurrentTeam(), function(item) {
+        return _.any(item.teamIds(), function(item) {
+          return item.teamId() === this.selectedTeam().teamId && item.isCaptain();
+        }, this);
+      }, this);
+      
+      return typeof captain !== 'undefined' ? captain.playerName : 'No Captain';
+    }, this);
+
     this.selectedSeason.subscribe(function(newSeason) {
       this.availableTeams.removeAll();
       this.selectedTeam(undefined);
@@ -221,8 +231,6 @@ admin.teams.index.IndexModel = (function(ko, _) {
               }
             }, this);
           }, this);
-          
-          this.availablePlayers.notifySubscribers(this.availablePlayers());
         });
         
         promise.always(function() {
