@@ -1,6 +1,6 @@
 name := "idl"
 
-version := "idl-1.0.2"
+version := "idl-1.0.3"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
