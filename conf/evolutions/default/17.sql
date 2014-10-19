@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS idlsmf_messages (
 );
 
 CREATE TABLE IF NOT EXISTS idlsmf_topics (
-  id_topic INT PRIMARY KEY NOT NULL,
+  id_topic MEDIUMINT(8) UNSIGNED PRIMARY KEY NOT NULL,
   id_first_msg INT NOT NULL
 );
 

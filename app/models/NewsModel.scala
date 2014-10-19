@@ -4,7 +4,7 @@ import play.api.libs.json.Json
 import data.ForumNews
 
 case class NewsModel(newsItems: Seq[ForumNewsModel])
-case class ForumNewsModel(msdId: Long, subject: String, body: String, posterName: String)
+case class ForumNewsModel(msdId: Long, topicId: Int, subject: String, body: String, posterName: String)
 
 object NewsModel {
   implicit val writesForumNewsModel = Json.writes[ForumNewsModel]
@@ -16,5 +16,5 @@ object NewsModel {
 
 object ForumNewsModel {
   def toModel(data: ForumNews) = 
-    ForumNewsModel(data.msgId, data.subject, data.body, data.posterName)
+    ForumNewsModel(data.msgId, data.topicId, data.subject, data.body, data.posterName)
 }

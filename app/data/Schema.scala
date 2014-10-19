@@ -140,5 +140,6 @@ object ForumNewsSchema {
   val boardsTableName = "idlsmf_boards"
   val boardBoardId = "id_board"
   val boardsName = "name"
+  val topicsTopicId = "id_topic"
   val topicsFirstMsgId = "id_first_msg"
 }

@@ -1,6 +1,6 @@
 package data
 
-case class ForumNews(msgId: Long, subject: String, posterName: String, body: String, posterTime: Long)
+case class ForumNews(msgId: Long, topicId: Int, subject: String, posterName: String, body: String, posterTime: Long)
 
 object ForumNews {
   import anorm._ 
@@ -11,6 +11,7 @@ object ForumNews {
     s"""
       SELECT 
         m.${ForumNewsSchema.msgId},
+        t.${ForumNewsSchema.topicsTopicId},
         m.${ForumNewsSchema.subject},
         m.${ForumNewsSchema.posterName},
         m.${ForumNewsSchema.body},
@@ -24,6 +25,7 @@ object ForumNews {
 
   lazy val singleRowParser = 
     long(ForumNewsSchema.msgId) ~
+    int(ForumNewsSchema.topicsTopicId) ~
     str(ForumNewsSchema.subject) ~
     str(ForumNewsSchema.posterName) ~
     str(ForumNewsSchema.body) ~
@@ -31,6 +33,6 @@ object ForumNews {
 
   lazy val multiRowParser = singleRowParser *
 
-  def apply(x: (Long, String, String, String, Long)) : ForumNews =
-    ForumNews(x._1, x._2, x._3, x._4, x._5)
+  def apply(x: (Long, Int, String, String, String, Long)) : ForumNews =
+    ForumNews(x._1, x._2, x._3, x._4, x._5, x._6)
 }

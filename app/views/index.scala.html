@@ -19,6 +19,7 @@
             this.subject = ko.observable();
             this.body = ko.observable();
             this.posterName = ko.observable();
+            this.topicId = ko.observable();
 
             this.initialize(data);
 
@@ -30,6 +31,10 @@
                 addInLineBreaks: false
               }).html.replace(/&lt;br *\/&gt;/g, '<br />');
             }, this);
+
+            this.forumLink = ko.computed(function() {
+              return 'http://forums.intldoomleague.com/index.php/topic,' + this.topicId() + '.0.html';
+            }, this);
           };
 
           ko.utils.extend(Model.prototype, {
@@ -38,6 +43,7 @@
               this.subject(data.subject);
               this.body(data.body);
               this.posterName(data.posterName);
+              this.topicId(data.topicId);
             }
           });
 
@@ -81,14 +87,17 @@
 	}
 
   <!-- ko foreach: newsItems -->
-		<div class="panel panel-default">
-			<div class="panel-heading">
-        <div data-bind="html: subject"></div>
-        <div>Posted By: <span data-bind="text: posterName"></span></div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <div data-bind="html: subject"></div>
+      <div>Posted By: <span data-bind="text: posterName"></span></div>
+    </div>
+    <div class="panel-body">
+      <p data-bind="html: formattedBody"></p>
+      <div class="pull-right">
+        <a data-bind="attr: { href: forumLink }">Read more</a>
       </div>
-			<div class="panel-body">
-        <p data-bind="html: formattedBody"></p>
-      </div>
-		</div>
+    </div>
+  </div>
   <!-- /ko -->
 }
