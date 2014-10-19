@@ -36,6 +36,7 @@
 							</div>
 							<select 
 								id="teamsInSeason"
+                class="game-combobox"
 								multiple="multiple"
 								data-bind="options: teamsInSeason,
 									optionsText: 'teamName',
@@ -52,12 +53,16 @@
 							</div>
 
 							<div class="visible-md visible-lg">
-								<button class="btn btn-default" data-bind="enable: canAssignTeams(), click: assignTeamsToSeason">
-									<span class="glyphicon glyphicon-arrow-left"></span>
-								</button>
-								<button class="btn btn-default" data-bind="enable: canRemoveTeams(), click: removeTeamsFromSeason">
-									<span class="glyphicon glyphicon-arrow-right"></span>
-								</button>
+                <div class="mutate-buttons">
+                  <div class="button-group">
+                    <button class="btn btn-default" data-bind="enable: canAssignTeams(), click: assignTeamsToSeason">
+                      <span class="glyphicon glyphicon-arrow-left"></span>
+                    </button>
+                    <button class="btn btn-default" data-bind="enable: canRemoveTeams(), click: removeTeamsFromSeason">
+                      <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>
+                  </div>
+                </div>
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -66,6 +71,7 @@
 							</div>
 							<select 
 								id="availableTeams"
+                class="game-combobox"
 								multiple="multiple" 
 								data-bind="options: teamsNotInSeason,
 									optionsText: 'teamName',
