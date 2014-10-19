@@ -1,6 +1,6 @@
 package data
 
-case class ForumNews(msgId: Long, subject: String, posterName: String, body: String)
+case class ForumNews(msgId: Long, subject: String, posterName: String, body: String, posterTime: Long)
 
 object ForumNews {
   import anorm._ 
@@ -13,7 +13,8 @@ object ForumNews {
         m.${ForumNewsSchema.msgId},
         m.${ForumNewsSchema.subject},
         m.${ForumNewsSchema.posterName},
-        m.${ForumNewsSchema.body}
+        m.${ForumNewsSchema.body},
+        m.${ForumNewsSchema.posterTime}
       FROM ${ForumNewsSchema.tableName} AS m
         INNER JOIN ${ForumNewsSchema.topicsTableName} AS t ON m.${ForumNewsSchema.msgId} = t.${ForumNewsSchema.topicsFirstMsgId}
       WHERE m.${ForumNewsSchema.boardId} = (SELECT b.${ForumNewsSchema.boardBoardId} FROM ${ForumNewsSchema.boardsTableName} AS b WHERE b.${ForumNewsSchema.boardsName} = 'IDL News' LIMIT 1)
@@ -25,10 +26,11 @@ object ForumNews {
     long(ForumNewsSchema.msgId) ~
     str(ForumNewsSchema.subject) ~
     str(ForumNewsSchema.posterName) ~
-    str(ForumNewsSchema.body) map flatten
+    str(ForumNewsSchema.body) ~
+    long(ForumNewsSchema.posterTime) map flatten
 
   lazy val multiRowParser = singleRowParser *
 
-  def apply(x: (Long, String, String, String)) : ForumNews =
-    ForumNews(x._1, x._2, x._3, x._4)
+  def apply(x: (Long, String, String, String, Long)) : ForumNews =
+    ForumNews(x._1, x._2, x._3, x._4, x._5)
 }

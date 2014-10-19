@@ -18,6 +18,7 @@
             this.msgId = ko.observable();
             this.subject = ko.observable();
             this.body = ko.observable();
+            this.posterName = ko.observable();
 
             this.initialize(data);
 
@@ -36,6 +37,7 @@
               this.msgId(data.msgId);
               this.subject(data.subject);
               this.body(data.body);
+              this.posterName(data.posterName);
             }
           });
 
@@ -80,7 +82,10 @@
 
   <!-- ko foreach: newsItems -->
 		<div class="panel panel-default">
-			<div class="panel-heading" data-bind="html: subject"></div>
+			<div class="panel-heading">
+        <div data-bind="html: subject"></div>
+        <div>Posted By: <span data-bind="text: posterName"></span></div>
+      </div>
 			<div class="panel-body">
         <p data-bind="html: formattedBody"></p>
       </div>

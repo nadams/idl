@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS idlsmf_messages (
   subject VARCHAR(255) NOT NULL,
   poster_name VARCHAR(255) NOT NULL,
   body TEXT NOT NULL,
-  poster_time INT NOT NULL
+  poster_time INT UNSIGNED NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS idlsmf_topics (
