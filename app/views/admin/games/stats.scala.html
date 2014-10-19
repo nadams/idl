@@ -38,7 +38,9 @@
 	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
 		<div class="panel-heading"><h3>Stats</h3></div>
 		<div class="panel-body">
-			<span class="pull-right"><a href="@routes.GameController.index(seasonId)">Back to Games</a></span>
+      <div class="clearfix">
+  			<span class="pull-right"><a href="@routes.GameController.index(seasonId)">Back to Games</a></span>
+      </div>
 
 			<!-- ko if: uploadStatsSuccess() -->
 			<div class="alert alert-success alert-dismissible" role="alert">
