@@ -17,3 +17,18 @@ $game-filter-clear-size: 0.75em;
   cursor: pointer;
   font-size: $game-filter-clear-size;
 }
+
+.captain-button {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.mutate-buttons {
+  min-height: $game-min-height;  
+
+  .button-group {
+    position: absolute;
+    top: $game-min-width / 2;
+    left: $game-min-width / 2;
+  }
+}
