@@ -1,9 +1,20 @@
 package models
 
-import data.News
+import play.api.libs.json.Json
+import data.ForumNews
 
-case class NewsModel(newsItems: Seq[News])
+case class NewsModel(newsItems: Seq[ForumNewsModel])
+case class ForumNewsModel(msdId: Long, subject: String, body: String)
 
 object NewsModel {
-  def apply(): NewsModel = NewsModel(Seq.empty[News])
+  implicit val writesForumNewsModel = Json.writes[ForumNewsModel]
+  implicit val writesNewsModel = Json.writes[NewsModel]
+
+  def toModel(data: Seq[ForumNews]) =
+    NewsModel(data.map(ForumNewsModel.toModel(_)))
+}
+
+object ForumNewsModel {
+  def toModel(data: ForumNews) = 
+    ForumNewsModel(data.msgId, data.subject, data.body)
 }
