@@ -7,7 +7,7 @@ import components._
 
 object HomeController extends Controller with ProvidesHeader with NewsComponentImpl {
   def index = Action { implicit request =>
-    val model = NewsModel(newsService.getForumNews())
+    val model = NewsModel.toModel(newsService.getForumNews())
 
     Ok(views.html.index(model))
   }

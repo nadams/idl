@@ -1,11 +1,68 @@
 @(model: NewsModel)(implicit header: MenuModel)
 
+@import play.api.libs.json.Json
+
 @extraCss = {
   <link rel="stylesheet" type="text/css" href="@routes.Assets.at("xbbcode/xbbcode.css")" />
 }
 
 @extraScripts = {
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
   <script src="@routes.Assets.at("xbbcode/xbbcode.js")"></script>
+  <script>
+    var index = {
+      data: @Html(Json.toJson(model).toString) || {},
+      viewModel: (function(ko, bbcode) {
+        var newsItem = (function() {
+          var Model = function(data) {
+            this.msgId = ko.observable();
+            this.subject = ko.observable();
+            this.body = ko.observable();
+
+            this.initialize(data);
+
+            this.formattedBody = ko.computed(function() {
+              var text = this.body();
+              return bbcode.process({
+                text: text,
+                removeMisalignedTags: false,
+                addInLineBreaks: false
+              }).html.replace(/&lt;br *\/&gt;/g, '<br />');
+            }, this);
+          };
+
+          ko.utils.extend(Model.prototype, {
+            initialize: function(data) {
+              this.msgId(data.msgId);
+              this.subject(data.subject);
+              this.body(data.body);
+            }
+          });
+
+          return Model;
+        })();
+
+        var Model = function(data) {
+          this.newsItems = ko.observableArray([]);
+          
+          this.initialize(data);
+        };
+
+        ko.utils.extend(Model.prototype, {
+          initialize: function(data) {
+            var i;
+            for(i = 0; i < data.newsItems.length; i++) {
+              this.newsItems.push(new newsItem(data.newsItems[i]));
+            }
+          }
+        });
+
+        return Model;
+      })(ko, XBBCODE)
+    };
+
+    ko.applyBindings(new index.viewModel(index.data));
+  </script>
 }
 
 @main("International Doom League", extraScripts = extraScripts, extraCss = extraCss) {
@@ -21,10 +78,12 @@
 		</div>
 	}
 
-	@for(news <- model.newsItems) {
+  <!-- ko foreach: newsItems -->
 		<div class="panel panel-default">
-			<div class="panel-heading">@news.subject</div>
-			<div class="panel-body">@Html(news.body)</div>
+			<div class="panel-heading" data-bind="html: subject"></div>
+			<div class="panel-body">
+        <p data-bind="html: formattedBody"></p>
+      </div>
 		</div>
-	}
+  <!-- /ko -->
 }
