@@ -70,9 +70,6 @@
 									<div>
 										<label for="teamPlayers">Players In <span data-bind="text: selectedTeam().teamName"></span></label>
 									</div>
-                  <div>
-                    <span>Team Captain: <span data-bind="text: teamCaptain"></span></span>
-                  </div>
 									<div class="game-search input-group">
 										<input type="text" class="form-control" data-bind="textInput: playersInTeamFilter" placeholder="Filter..." />
 										<div class="input-group-addon">
@@ -87,6 +84,9 @@
 										data-bind="options: playersInCurrentTeam,
 											optionsText: 'playerName',
 											selectedOptions: selectedTeamPlayers"></select>
+                  <div>
+                    <span>Team Captain: <span data-bind="text: teamCaptain"></span></span>
+                  </div>
 									<div class="captain-button">
 										<button class="btn btn-primary" data-bind="click: makeCaptain, enable: canMakeCaptain">Make Captain</button>
                     <!-- ko if: isMakingCaptain() -->
@@ -103,7 +103,6 @@
 											<span class="glyphicon glyphicon-arrow-down"></span>
 										</button>
 									</div>
-
 									<div class="visible-md visible-lg">
                     <div class="mutate-buttons">
                       <div class="button-group">
