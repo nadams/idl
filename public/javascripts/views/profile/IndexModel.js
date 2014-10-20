@@ -131,7 +131,7 @@
 
     ko.utils.extend(Model.prototype, {
       initialize: function(data) {
-        this.playerNames(_.map(data.playerNames || [], function(item) {
+        this.playerNames(_.map(data.playerNames, function(item) {
           return new profile.index.PlayerNameModel(item);
         }, this));
       },
