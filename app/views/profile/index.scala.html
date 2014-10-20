@@ -15,12 +15,12 @@
 			@if(!model.profileIsPlayer) {
 				<form action="@routes.ProfileController.becomePlayer" method="post" role="form">
 					<div class="form-group alert alert-info">
-						<h5>You are not currently an IDL player, would you like to become an IDL player?</h5>
+						<h5>You are not currently an IDL player, would you like to become one?</h5>
 						<button type="submit" class="btn btn-primary">Yes Please</button>
 					</div>
 				</form>
 			} else {
-				<p>Welcom Player</p>
+				<p>Welcome Player</p>
 			}
 		</div>
 	</div>

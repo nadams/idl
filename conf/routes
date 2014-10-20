@@ -14,8 +14,8 @@ POST    /profile/logout                         controllers.ProfileController.lo
 POST    /profile/becomePlayer                   controllers.ProfileController.becomePlayer
 GET     /profile/myGames                        controllers.ProfileController.myGames
     
-#GET     /registration                           controllers.RegistrationController.index
-#POST    /registration                           controllers.RegistrationController.register
+GET     /registration                           controllers.RegistrationController.index
+POST    /registration                           controllers.RegistrationController.register
     
 GET     /admin/news                             controllers.NewsController.index(page: Int = 1, size: Int = 15)
 GET     /admin/news/create                      controllers.NewsController.create
