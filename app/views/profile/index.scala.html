@@ -17,7 +17,7 @@
   <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
 }
 
-@views.html.profile.profileTemplate("Profile", extraScripts = extraScripts) {
+@main("Profile", extraScripts = extraScripts) {
 	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
 		<div class="panel-heading">
 			<h4>Manage Profile</h4>
