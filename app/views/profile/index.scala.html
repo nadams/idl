@@ -2,6 +2,10 @@
 
 @import play.api.libs.json.Json
 
+@extraCss = {
+  <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/profile.css")" />
+}
+
 @extraScripts = {
   <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	@helper.javascriptRouter("routes")(
@@ -17,7 +21,7 @@
   <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
 }
 
-@main("Profile", extraScripts = extraScripts) {
+@main("Profile", extraScripts = extraScripts, extraCss = extraCss) {
 	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
 		<div class="panel-heading">
 			<h4>Manage Profile</h4>
@@ -25,7 +29,14 @@
 		<div class="panel-body">
       <div class="row">
         <div class="col-md-3">
-          <ul class="nav nav-pills nav-stacked" role="tablist">
+          <ul class="hidden-sm nav nav-pills nav-stacked" role="tablist">
+            <li class="active"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+            <!-- ko if: profileIsPlayer -->
+            <li><a href="#player" role="tab" data-toggle="tab">Player</a></li>
+            <li><a href="#team" role="tab" data-toggle="tab">Teams</a></li>
+            <!-- /ko -->
+          </ul>
+          <ul class="visible-sm nav nav-pills profile-nav-sm" role="tablist">
             <li class="active"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
             <!-- ko if: profileIsPlayer -->
             <li><a href="#player" role="tab" data-toggle="tab">Player</a></li>
