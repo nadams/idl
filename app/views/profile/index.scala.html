@@ -74,8 +74,7 @@
               </form>
               <!-- /ko -->
 
-              <!-- ko with: passwordModel -->
-              <form class="panel panel-default" role="form">
+              <form class="panel panel-default" role="form" data-bind="with: passwordModel">
                 <div class="panel-heading">Password</div>
                 <fieldset class="panel-body">
                   <!-- ko if: hasGlobalErrors -->
@@ -123,7 +122,6 @@
                   </div>
                 </fieldset>
               </form>
-              <!-- /ko -->
             </div>
             <!-- ko if: profileIsPlayer -->
             <div class="tab-pane" id="player"></div>
