@@ -1,6 +1,11 @@
 @(model: models.profile.IndexModel)(implicit header: MenuModel, flash: Flash)
 
-@views.html.profile.profileTemplate("Profile") {
+@extraScripts = {
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
+}
+
+@views.html.profile.profileTemplate("Profile", extraScripts = extraScripts) {
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h4>Manage Profile</h4>
