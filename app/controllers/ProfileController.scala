@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import play.api.libs.json.Json
 import components.{ ProfileComponentImpl, PlayerComponentImpl, TeamComponentImpl }
 import models.profile._
 import _root_.data._
@@ -68,11 +69,9 @@ object ProfileController
   def becomePlayer = IsAuthenticated { username => implicit request => 
     profileService.getByUsername(username).fold(profileNotFound(username))(profile => 
       if(playerService.makeProfileAPlayer(profile)) {
-        Redirect(routes.ProfileController.index).flashing("profileIsNowPlayer" -> "Congratulations, you are now an IDL player!")
+        Ok(Json.toJson(BecomePlayerResultModel(true, "Congratulations, you are now an IDL player!")))
       } else {
-        InternalServerError(
-          views.html.profile.index(IndexModel(profile.profileId, playerService.profileIsPlayer(profile.profileId)))
-        ).flashing("makingProfileAPlayerError" -> "Cannot add you as an IDL player.")
+        InternalServerError(Json.toJson(BecomePlayerResultModel(false, "Cannot add you as an IDL player.")))
       }
     )
   }

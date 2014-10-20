@@ -8,6 +8,9 @@
       this.profileId = ko.observable();
       this.profileIsPlayer = ko.observable(false);
 
+      this.profileIsNowPlayer = ko.observable(false);
+      this.profileIsNowPlayerMessage = ko.observable('');
+
       this.initialize(data);
     };
 
@@ -15,6 +18,10 @@
       initialize: function(data) {
         this.profileId(data.profileId);
         this.profileIsPlayer(data.profileIsPlayer);
+      },
+      makeProfilePlayer: function() {
+        // Do ajax stuff
+        alert('Making profile a player');
       }
     });
 

@@ -1,9 +1,11 @@
-@(model: models.profile.IndexModel)(implicit header: MenuModel, flash: Flash)
+@(model: models.profile.IndexModel)(implicit header: MenuModel)
 
 @import play.api.libs.json.Json
 
 @extraScripts = {
   <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
   <script>
     var profile = profile || {};
     profile.index = profile.index || {};
@@ -18,17 +20,17 @@
 			<h4>Manage Profile</h4>
 		</div>
 		<div class="panel-body">
-			@if(flash.get("profileIsNowPlayer").nonEmpty) {
-				<div class="alert alert-success">
-					<p>@flash.get("profileIsNowPlayer")</p>
-				</div>
-			}
+      <!-- ko if: profileIsNowPlayer -->
+      <div class="alert alert-success">
+        <p data-bind="profileIsNowPlayerMessage"></p>
+      </div>
+      <!-- /ko -->
 
       <!-- ko ifnot: profileIsPlayer -->
-      <form action="@routes.ProfileController.becomePlayer" method="post" role="form">
+      <form role="form">
         <div class="form-group alert alert-info">
           <h5>You are not currently an IDL player, would you like to become one?</h5>
-          <button type="submit" class="btn btn-primary">Yes Please</button>
+          <button class="btn btn-primary" data-bind="click: makeProfilePlayer">Yes Please</button>
         </div>
       </form>
       <!-- /ko -->
