@@ -35,7 +35,7 @@ object ProfileController
 
   def index = IsAuthenticated { username => implicit request =>
     profileService.getByUsername(username).fold(profileNotFound(username))(profile =>
-      Ok(views.html.profile.index(IndexModel(playerService.profileIsPlayer(profile.profileId))))
+      Ok(views.html.profile.index(IndexModel(profile.profileId, playerService.profileIsPlayer(profile.profileId))))
     )
   }
 
@@ -71,7 +71,7 @@ object ProfileController
         Redirect(routes.ProfileController.index).flashing("profileIsNowPlayer" -> "Congratulations, you are now an IDL player!")
       } else {
         InternalServerError(
-          views.html.profile.index(IndexModel(playerService.profileIsPlayer(profile.profileId)))
+          views.html.profile.index(IndexModel(profile.profileId, playerService.profileIsPlayer(profile.profileId)))
         ).flashing("makingProfileAPlayerError" -> "Cannot add you as an IDL player.")
       }
     )

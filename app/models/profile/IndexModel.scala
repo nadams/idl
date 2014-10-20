@@ -1,3 +1,3 @@
 package models.profile
 
-case class IndexModel(profileIsPlayer: Boolean)
+case class IndexModel(profileId: Int, profileIsPlayer: Boolean)
