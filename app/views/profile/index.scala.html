@@ -27,8 +27,10 @@
         <div class="col-md-3">
           <ul class="nav nav-pills nav-stacked" role="tablist">
             <li class="active"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+            <!-- ko if: profileIsPlayer -->
             <li><a href="#player" role="tab" data-toggle="tab">Player</a></li>
             <li><a href="#team" role="tab" data-toggle="tab">Teams</a></li>
+            <!-- /ko -->
           </ul>
         </div>
         <div class="col-md-9">
@@ -48,12 +50,39 @@
                 </div>
               </form>
               <!-- /ko -->
-              <!-- ko if: profileIsPlayer -->
-              <p>Welcome Player</p>
-              <!-- /ko -->
+              <form method="post" action="@routes.ProfileController.updatePassword" class="panel panel-default" role="form">
+                <div class="panel-heading">Password</div>
+                <fieldset class="panel-body">
+                  <div class="row form-group">
+                    <div class="col-xs-4">
+                      <label for="currentPassword" class="control-label">Current Password</label>
+                      <input type="password" class="form-control" id="currentPassword" name="currentPassword" />
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-xs-4">
+                      <label for="newPassword" class="control-label">New Password</label>
+                      <input type="password" class="form-control" id="newPassword" name="newPassword" />
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-xs-4">
+                      <label for="confirmPassword" class="control-label">Confirm Password</label>
+                      <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" />
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-xs-4">
+                      <button type="submit" class="btn btn-primary">Update Password</button>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
             </div>
+            <!-- ko if: profileIsPlayer -->
             <div class="tab-pane" id="player"></div>
             <div class="tab-pane" id="team"></div>
+            <!-- /ko -->
           </div>
         </div>
       </div>
