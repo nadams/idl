@@ -8,6 +8,7 @@
       this.profileId = ko.observable();
       this.profileIsPlayer = ko.observable(false);
       this.passwordModel = new profile.index.PasswordModel();
+      this.playerModel = new profile.index.PlayerModel(data);
 
       this.profileIsNowPlayer = ko.observable(false);
       this.profileIsNowPlayerMessage = ko.observable('');
@@ -116,14 +117,49 @@
 
   profile.index.PlayerModel = (function() {
     var Model = function(data) {
-      this.playerNames = ko.observableArray([]);
+      this.playerNames = ko.observableArray();
+      this.playerNameToCreate = ko.observable('');
+    
+      this.initialize(data);
+
+      this.removePlayerName = function(player) {
+        this.playerNames.removeAll(_.filter(this.playerNames(), function(item) {
+          return item.playerId() === player.playerId();
+        }, this));
+      }.bind(this);
+    };
+
+    ko.utils.extend(Model.prototype, {
+      initialize: function(data) {
+        this.playerNames(_.map(data.playerNames || [], function(item) {
+          return new profile.index.PlayerNameModel(item);
+        }, this));
+      },
+      addPlayerName: function() {
+        var playerName = this.playerNameToCreate();
+        this.playerNames.push(new profile.index.PlayerNameModel({
+          playerId: 1,
+          playerName: playerName
+        }));
+        this.playerNameToCreate('');
+      }
+    });
+
+    return Model;
+  })();
+
+  profile.index.PlayerNameModel = (function() {
+    var Model = function(data) {
+      this.playerId = ko.observable();
+      this.playerName = ko.observable();
     
       this.initialize(data);
     };
 
     ko.utils.extend(Model.prototype, {
       initialize: function(data) {
-      
+        this.playerId(data.playerId);
+        this.playerName(data.playerName);
       }
     });
 

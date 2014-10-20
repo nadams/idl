@@ -127,29 +127,26 @@
               </form>
             </div>
             <!-- ko if: profileIsPlayer -->
-            <div class="tab-pane" id="player">
+            <div class="tab-pane" id="player" data-bind="with: playerModel">
               <h3>Player Settings</h3>
               <div class="row">
                 <div class="col-xs-6">
                   <h4>Doom Names</h4>
                   <div class="input-group add-doom-name">
-                    <input type="text" class="form-control" />
+                    <input type="text" class="form-control" data-bind="value: playerNameToCreate" />
                     <span class="input-group-btn">
-                      <button class="btn btn-default" type="button">Add</button>
+                      <button class="btn btn-default" type="button" data-bind="click: addPlayerName">Add</button>
                     </span>
                   </div>
-                  <ul class="list-group">
+                  <ul class="list-group" data-bind="foreach: playerNames">
                     <li class="list-group-item clearfix">
-                      <span>arst</span>
-                      <button class="btn btn-xs btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button>
-                    </li>
-                    <li class="list-group-item clearfix">
-                      <span>arst</span>
-                      <button class="btn btn-xs btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button>
+                      <span data-bind="text: playerName"></span>
+                      <button class="btn btn-xs btn-danger pull-right" data-bind="click: $parent.removePlayerName"><span class="glyphicon glyphicon-trash"></span></button>
                     </li>
                   </ul>
                 </div>
               </div>
+              <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
             </div>
             <div class="tab-pane" id="team"></div>
             <!-- /ko -->
