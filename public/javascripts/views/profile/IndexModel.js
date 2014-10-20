@@ -7,6 +7,7 @@
     var Model = function(data) {
       this.profileId = ko.observable();
       this.profileIsPlayer = ko.observable(false);
+      this.passwordModel = new profile.index.PasswordModel();
 
       this.profileIsNowPlayer = ko.observable(false);
       this.profileIsNowPlayerMessage = ko.observable('');
@@ -34,6 +35,26 @@
           console.log(data);
           this.profileIsNowPlayerMessage(data);
         });
+      }
+    });
+
+    return Model;
+  })();
+
+  profile.index.PasswordModel = (function() {
+    var Model = function(data) {
+      this.currentPassword = ko.observable();
+      this.newPassword = ko.observable();
+      this.confirmPassword = ko.observable();
+    };
+
+    ko.utils.extend(Model.prototype, {
+      updatePassword: function() {
+        var promise = this.repository.updatePassword(
+          this.currentPassword(),
+          this.newPassword(),
+          this.confirmPassword()
+        );
       }
     });
 

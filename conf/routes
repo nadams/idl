@@ -8,8 +8,7 @@ GET     /                                       controllers.HomeController.index
 GET     /login                                  controllers.ProfileController.login
 POST    /login                                  controllers.ProfileController.performLogin
 GET     /profile                                controllers.ProfileController.index
-GET     /profile/password                       controllers.ProfileController.password
-POST    /profile/password                       controllers.ProfileController.updatePassword
+POST    /profile/updatePassword                 controllers.ProfileController.updatePassword
 POST    /profile/logout                         controllers.ProfileController.logout
 POST    /profile/becomePlayer                   controllers.ProfileController.becomePlayer
 GET     /profile/myGames                        controllers.ProfileController.myGames

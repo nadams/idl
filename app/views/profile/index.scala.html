@@ -50,34 +50,37 @@
                 </div>
               </form>
               <!-- /ko -->
-              <form method="post" action="@routes.ProfileController.updatePassword" class="panel panel-default" role="form">
+
+              <!-- ko with: passwordModel -->
+              <form class="panel panel-default" role="form">
                 <div class="panel-heading">Password</div>
                 <fieldset class="panel-body">
                   <div class="row form-group">
                     <div class="col-xs-4">
                       <label for="currentPassword" class="control-label">Current Password</label>
-                      <input type="password" class="form-control" id="currentPassword" name="currentPassword" />
+                      <input type="password" class="form-control" id="currentPassword" data-bind="value: currentPassword" />
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-xs-4">
                       <label for="newPassword" class="control-label">New Password</label>
-                      <input type="password" class="form-control" id="newPassword" name="newPassword" />
+                      <input type="password" class="form-control" id="newPassword" data-bind="value: newPassword" />
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-xs-4">
                       <label for="confirmPassword" class="control-label">Confirm Password</label>
-                      <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" />
+                      <input type="password" class="form-control" id="confirmPassword" data-bind="value: confirmPassword" />
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-xs-4">
-                      <button type="submit" class="btn btn-primary">Update Password</button>
+                      <button class="btn btn-primary" data-bind="click: updatePassword">Update Password</button>
                     </div>
                   </div>
                 </fieldset>
               </form>
+              <!-- /ko -->
             </div>
             <!-- ko if: profileIsPlayer -->
             <div class="tab-pane" id="player"></div>
