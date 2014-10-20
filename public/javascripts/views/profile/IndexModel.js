@@ -1,6 +1,6 @@
-/* global ko, profile */
+/* global ko, profile, routes */
 
-(function(ko, profile) {
+(function(ko, profile, repository, routes) {
   'use strict';
 
   profile.index.IndexModel = (function() {
@@ -20,8 +20,20 @@
         this.profileIsPlayer(data.profileIsPlayer);
       },
       makeProfilePlayer: function() {
-        // Do ajax stuff
-        alert('Making profile a player');
+        var promise = repository.becomePlayer(routes.controllers.ProfileController.becomePlayer().url, this);
+        promise.success(function(data) {
+          this.profileIsNowPlayer(true);
+          this.profileIsPlayer(true);
+        });
+
+        promise.fail(function(data) {
+          this.profileIsNowPlayer(false);
+        });
+
+        promise.always(function(data) {
+          console.log(data);
+          this.profileIsNowPlayerMessage(data);
+        });
       }
     });
 
@@ -30,4 +42,4 @@
 
   var model = new profile.index.IndexModel(profile.index.data);
   ko.applyBindings(model);
-})(ko, profile);
+})(ko, profile, new profile.index.ProfileRepository(), routes);

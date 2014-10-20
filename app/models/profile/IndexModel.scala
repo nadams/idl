@@ -8,8 +8,3 @@ object IndexModel {
   implicit val writesIndexModel = Json.writes[IndexModel] 
 }
 
-case class BecomePlayerResultModel(success: Boolean, message: String)
-
-object BecomePlayerResultModel {
-  implicit val writesBecomePlayerResultModel = Json.writes[BecomePlayerResultModel]
-}

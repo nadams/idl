@@ -8,12 +8,12 @@
     routes.javascript.ProfileController.becomePlayer
 	)
   <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
-  <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
   <script>
     var profile = profile || {};
     profile.index = profile.index || {};
     profile.index.data = @Html(Json.toJson(model).toString) || {};
   </script>
+  <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
   <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
 }
 
@@ -25,7 +25,7 @@
 		<div class="panel-body">
       <!-- ko if: profileIsNowPlayer -->
       <div class="alert alert-success">
-        <p data-bind="profileIsNowPlayerMessage"></p>
+        <p data-bind="text: profileIsNowPlayerMessage"></p>
       </div>
       <!-- /ko -->
 

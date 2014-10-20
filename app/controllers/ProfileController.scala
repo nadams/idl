@@ -69,9 +69,9 @@ object ProfileController
   def becomePlayer = IsAuthenticated { username => implicit request => 
     profileService.getByUsername(username).fold(profileNotFound(username))(profile => 
       if(playerService.makeProfileAPlayer(profile)) {
-        Ok(Json.toJson(BecomePlayerResultModel(true, "Congratulations, you are now an IDL player!")))
+        Ok(Json.toJson("Congratulations, you are now an IDL player!"))
       } else {
-        InternalServerError(Json.toJson(BecomePlayerResultModel(false, "Cannot add you as an IDL player.")))
+        InternalServerError(Json.toJson("Cannot add you as an IDL player."))
       }
     )
   }
