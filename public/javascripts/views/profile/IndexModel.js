@@ -94,10 +94,7 @@
           this.newPasswordError(data.currentPasswordError);
           this.confirmPasswordError(data.confirmPasswordError);
           this.globalErrors.removeAll();
-          var i;
-          for(i = 0; i < data.globalErrors.length; i++) {
-            this.globalErrors.push(data.globalErrors[i]);
-          }
+          this.globalErrors(data.globalErrors);
         });
       },
       clearPasswordForm: function() {
@@ -107,6 +104,7 @@
         this.currentPasswordError('');
         this.newPasswordError('');
         this.confirmPasswordError('');
+        this.globalErrors.removeAll();
       },
       nullOrEmpty: function(string) {
         return typeof string === 'undefined' || string.length === 0;
