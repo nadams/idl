@@ -1,12 +1,19 @@
 @(model: models.profile.IndexModel)(implicit header: MenuModel, flash: Flash)
 
+@import play.api.libs.json.Json
+
 @extraScripts = {
   <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script>
+    var profile = profile || {};
+    profile.index = profile.index || {};
+    profile.index.data = @Html(Json.toJson(model).toString) || {};
+  </script>
   <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
 }
 
 @views.html.profile.profileTemplate("Profile", extraScripts = extraScripts) {
-	<div class="panel panel-default">
+	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
 		<div class="panel-heading">
 			<h4>Manage Profile</h4>
 		</div>
@@ -17,16 +24,17 @@
 				</div>
 			}
 
-			@if(!model.profileIsPlayer) {
-				<form action="@routes.ProfileController.becomePlayer" method="post" role="form">
-					<div class="form-group alert alert-info">
-						<h5>You are not currently an IDL player, would you like to become one?</h5>
-						<button type="submit" class="btn btn-primary">Yes Please</button>
-					</div>
-				</form>
-			} else {
-				<p>Welcome Player</p>
-			}
+      <!-- ko ifnot: profileIsPlayer -->
+      <form action="@routes.ProfileController.becomePlayer" method="post" role="form">
+        <div class="form-group alert alert-info">
+          <h5>You are not currently an IDL player, would you like to become one?</h5>
+          <button type="submit" class="btn btn-primary">Yes Please</button>
+        </div>
+      </form>
+      <!-- /ko -->
+      <!-- ko if: profileIsPlayer -->
+      <p>Welcome Player</p>
+      <!-- /ko -->
 		</div>
 	</div>
 }
