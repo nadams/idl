@@ -46,6 +46,7 @@
       this.currentPassword = ko.observable('');
       this.newPassword = ko.observable('');
       this.confirmPassword = ko.observable('');
+      this.successfullyUpdatedPassword = ko.observable(false);
       
       this.currentPasswordError = ko.observable('');
       this.newPasswordError = ko.observable('');
@@ -58,15 +59,15 @@
       }, this);
       
       this.hasCurrentPasswordError = ko.computed(function() {
-        return this.currentPasswordError().length > 0;
+        return !this.nullOrEmpty(this.currentPasswordError());
       }, this);
       
       this.hasNewPasswordError = ko.computed(function() {
-        return this.newPasswordError().length > 0;
+        return !this.nullOrEmpty(this.newPasswordError());
       }, this);
 
       this.hasConfirmPasswordError = ko.computed(function() {
-        return this.confirmPasswordError().length > 0;
+        return !this.nullOrEmpty(this.confirmPasswordError());
       }, this);
     };
 
@@ -79,9 +80,33 @@
           this
         );
 
-        promise.always(function() {
-          
+        promise.done(function() {
+          this.currentPassword('');
+          this.newPassword('');
+          this.confirmPassword('');
+          this.currentPasswordError('');
+          this.newPasswordError('');
+          this.confirmPasswordError('');
+          this.globalErrors.removeAll();
+          this.successfullyUpdatedPassword(true);
         });
+
+        promise.fail(function(response) {
+          var data = response.responseJSON;
+
+          this.successfullyUpdatedPassword(false);
+          this.currentPasswordError(data.currentPasswordError);
+          this.newPasswordError(data.currentPasswordError);
+          this.confirmPasswordError(data.confirmPasswordError);
+          this.globalErrors.removeAll();
+          var i;
+          for(i = 0; i < data.globalErrors.length; i++) {
+            this.globalErrors.push(data.globalErrors[i]);
+          }
+        });
+      },
+      nullOrEmpty: function(string) {
+        return typeof string === 'undefined' || string.length === 0;
       }
     });
 

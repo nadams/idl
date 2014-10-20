@@ -2,7 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import play.api.libs.json.Json
+import play.api.libs.json._
 import components.{ ProfileComponentImpl, PlayerComponentImpl, TeamComponentImpl }
 import models.profile._
 import _root_.data._
@@ -41,22 +41,21 @@ object ProfileController
   }
 
   def updatePassword = IsAuthenticated { username => implicit request => 
-    //ChangePasswordForm().bindFromRequest.fold(
-    //  errors => {
-    //    val currentPassword = errors("currentPassword").formattedMessage._2
-    //    val newPassword = errors("newPassword").formattedMessage._2
-    //    val confirmPassword = errors("confirmPassword").formattedMessage._2
+    ChangePasswordForm().bind(request.body.asJson.get).fold(
+      errors => {
+        val currentPassword = errors("currentPassword").formattedMessage._2.getOrElse("")
+        val newPassword = errors("newPassword").formattedMessage._2.getOrElse("")
+        val confirmPassword = errors("confirmPassword").formattedMessage._2.getOrElse("")
 
-    //    BadRequest(views.html.profile.password(ProfileModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
-    //  },
-    //  result => 
-    //    if(profileService.updateProfilePassword(username, result.newPassword)) {
-    //      Redirect(routes.ProfileController.login).withSession(request.session - SessionKeys.username)
-    //    } else {
-    //      InternalServerError("Could not update password")
-    //    }
-    //)
-    Ok("arst")
+        BadRequest(Json.toJson(ProfileModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
+      },
+      result => 
+        if(profileService.updateProfilePassword(username, result.newPassword)) {
+          Ok(Json.toJson("Success"))
+        } else {
+          InternalServerError("Could not update password")
+        }
+    )
   }
 
   def logout = Action { implicit request =>

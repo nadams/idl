@@ -68,7 +68,12 @@
                 <fieldset class="panel-body">
                   <!-- ko if: hasGlobalErrors -->
                   <div class="alert alert-danger" data-bind="foreach: globalErrors">
-                    <p class="error" data-bind="text: error"></p>
+                    <p class="error" data-bind="text: $data"></p>
+                  </div>
+                  <!-- /ko -->
+                  <!-- ko if: successfullyUpdatedPassword -->
+                  <div class="alert alert-success" role="alert">
+                    <span>Password updated successfully</span>
                   </div>
                   <!-- /ko -->
                   <div class="row form-group">

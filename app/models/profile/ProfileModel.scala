@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.libs.json.Json
 import components.ProfileComponentImpl
 
 case class ProfileModel(currentPassword: String, newPassword: String, confirmPassword: String)
@@ -13,14 +14,15 @@ object ProfileModel {
 }
 
 case class ProfileModelErrors(
-  currentPasswordError: Option[String],
-  newPasswordError: Option[String],
-  confirmPasswordError: Option[String],
+  currentPasswordError: String,
+  newPasswordError: String,
+  confirmPasswordError: String,
   globalErrors: Seq[String]
 )
 
 object ProfileModelErrors {
-  def apply() : ProfileModelErrors = ProfileModelErrors(None, None, None, Seq.empty[String])
+  implicit val writesProfileModelErrors = Json.writes[ProfileModelErrors]
+  lazy val empty = ProfileModelErrors("", "", "", Seq.empty[String])
 }
 
 object ChangePasswordForm extends ProfileComponentImpl {
