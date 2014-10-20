@@ -35,9 +35,9 @@ object ProfileController
   }
 
   def index = IsAuthenticated { username => implicit request =>
-    profileService.getByUsername(username).fold(profileNotFound(username))(profile =>
-      Ok(views.html.profile.index(IndexModel(profile.profileId, playerService.profileIsPlayer(profile.profileId))))
-    )
+    profileService.getByUsername(username).fold(profileNotFound(username)){ profile =>
+      Ok(views.html.profile.index(IndexModel.toModel(profile.profileId, playerService.profileIsPlayer(profile.profileId), playerService.getPlayersForProfile(profile.profileId))))
+    }
   }
 
   def updatePassword = IsAuthenticated { username => implicit request => 
