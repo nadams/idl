@@ -23,23 +23,40 @@
 			<h4>Manage Profile</h4>
 		</div>
 		<div class="panel-body">
-      <!-- ko if: profileIsNowPlayer -->
-      <div class="alert alert-success">
-        <p data-bind="text: profileIsNowPlayerMessage"></p>
-      </div>
-      <!-- /ko -->
-
-      <!-- ko ifnot: profileIsPlayer -->
-      <form role="form">
-        <div class="form-group alert alert-info">
-          <h5>You are not currently an IDL player, would you like to become one?</h5>
-          <button class="btn btn-primary" data-bind="click: makeProfilePlayer">Yes Please</button>
+      <div class="row">
+        <div class="col-md-3">
+          <ul class="nav nav-pills nav-stacked" role="tablist">
+            <li class="active"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+            <li><a href="#player" role="tab" data-toggle="tab">Player</a></li>
+            <li><a href="#team" role="tab" data-toggle="tab">Teams</a></li>
+          </ul>
         </div>
-      </form>
-      <!-- /ko -->
-      <!-- ko if: profileIsPlayer -->
-      <p>Welcome Player</p>
-      <!-- /ko -->
+        <div class="col-md-9">
+          <div class="tab-content">
+            <div class="tab-pane active" id="profile">
+              <!-- ko if: profileIsNowPlayer -->
+              <div class="alert alert-success">
+                <p data-bind="text: profileIsNowPlayerMessage"></p>
+              </div>
+              <!-- /ko -->
+
+              <!-- ko ifnot: profileIsPlayer -->
+              <form role="form">
+                <div class="form-group alert alert-info">
+                  <h5>You are not currently an IDL player, would you like to become one?</h5>
+                  <button class="btn btn-primary" data-bind="click: makeProfilePlayer">Yes Please</button>
+                </div>
+              </form>
+              <!-- /ko -->
+              <!-- ko if: profileIsPlayer -->
+              <p>Welcome Player</p>
+              <!-- /ko -->
+            </div>
+            <div class="tab-pane" id="player"></div>
+            <div class="tab-pane" id="team"></div>
+          </div>
+        </div>
+      </div>
 		</div>
 	</div>
 }
