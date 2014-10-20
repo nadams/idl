@@ -19,17 +19,19 @@
     profile.index = profile.index || {};
     profile.index.data = @Html(Json.toJson(model).toString) || {};
 
-    $('ul.nav.nav-pills > li > a').on('shown.bs.tab', function(e) {
-      var id = $(e.target).attr('href').substr(1);
-      window.location.hash = id;
-    });
+    (function() {
+      $('ul.nav.nav-pills > li > a').on('shown.bs.tab', function(e) {
+        var id = $(e.target).attr('href').substr(1);
+        window.location.hash = id;
+      });
 
-    var hash = window.location.hash;
-    if(hash) {
-      $('ul.nav.nav-pills > li a[href="' + hash + '"]').tab('show');
-    } else {
-      $('ul.nav.nav-pills > li > a:first').tab('show');
-    }
+      var hash = window.location.hash;
+      if(hash) {
+        $('ul.nav.nav-pills > li a[href="' + hash + '"]').tab('show');
+      } else {
+        $('ul.nav.nav-pills > li > a:first').tab('show');
+      }
+    })();
   </script>
   <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
   <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
@@ -75,9 +77,9 @@
               </form>
               <!-- /ko -->
 
-              <form class="panel panel-default" role="form" data-bind="with: passwordModel">
-                <div class="panel-heading">Password</div>
-                <fieldset class="panel-body">
+              <form role="form" data-bind="with: passwordModel">
+                <h3>Password Settings </h3>
+                <fieldset>
                   <!-- ko if: hasGlobalErrors -->
                   <div class="alert alert-danger" data-bind="foreach: globalErrors">
                     <p class="error" data-bind="text: $data"></p>
@@ -126,7 +128,7 @@
             </div>
             <!-- ko if: profileIsPlayer -->
             <div class="tab-pane" id="player">
-              
+              <h3>Player Settings</h3>
             </div>
             <div class="tab-pane" id="team"></div>
             <!-- /ko -->
