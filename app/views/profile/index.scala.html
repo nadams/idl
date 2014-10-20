@@ -1,9 +1,12 @@
-@(model: models.profile.IndexModel)(implicit header: MenuModel)
+@(model: models.profile.IndexModel)(implicit header: MenuModel, req: RequestHeader)
 
 @import play.api.libs.json.Json
 
 @extraScripts = {
   <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+	@helper.javascriptRouter("routes")(
+    routes.javascript.ProfileController.becomePlayer
+	)
   <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
   <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
   <script>
