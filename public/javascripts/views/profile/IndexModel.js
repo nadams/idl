@@ -46,6 +46,28 @@
       this.currentPassword = ko.observable('');
       this.newPassword = ko.observable('');
       this.confirmPassword = ko.observable('');
+      
+      this.currentPasswordError = ko.observable('');
+      this.newPasswordError = ko.observable('');
+      this.confirmPasswordError = ko.observable('');
+      
+      this.globalErrors = ko.observableArray([]);
+
+      this.hasGlobalErrors = ko.computed(function() {
+        return this.globalErrors().length > 0;
+      }, this);
+      
+      this.hasCurrentPasswordError = ko.computed(function() {
+        return this.currentPasswordError().length > 0;
+      }, this);
+      
+      this.hasNewPasswordError = ko.computed(function() {
+        return this.newPasswordError().length > 0;
+      }, this);
+
+      this.hasConfirmPasswordError = ko.computed(function() {
+        return this.confirmPasswordError().length > 0;
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {

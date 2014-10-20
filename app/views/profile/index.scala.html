@@ -66,22 +66,36 @@
               <form class="panel panel-default" role="form">
                 <div class="panel-heading">Password</div>
                 <fieldset class="panel-body">
+                  <!-- ko if: hasGlobalErrors -->
+                  <div class="alert alert-danger" data-bind="foreach: globalErrors">
+                    <p class="error" data-bind="text: error"></p>
+                  </div>
+                  <!-- /ko -->
                   <div class="row form-group">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4" data-bind="css: { 'has-error': hasCurrentPasswordError }">
                       <label for="currentPassword" class="control-label">Current Password</label>
                       <input type="password" class="form-control" id="currentPassword" data-bind="value: currentPassword" />
+                      <!-- ko if: hasCurrentPasswordError -->
+                      <span class="help-block" data-bind="text: currentPasswordError"></span>
+                      <!-- /ko -->
                     </div>
                   </div>
                   <div class="row form-group">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4" data-bind="css: { 'has-error': hasNewPasswordError }">
                       <label for="newPassword" class="control-label">New Password</label>
                       <input type="password" class="form-control" id="newPassword" data-bind="value: newPassword" />
+                      <!-- ko if: hasNewPasswordError -->
+                      <span class="help-block" data-bind="text: newPasswordError"></span>
+                      <!-- /ko -->
                     </div>
                   </div>
                   <div class="row form-group">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4" data-bind="css: { 'has-error': hasConfirmPasswordError }">
                       <label for="confirmPassword" class="control-label">Confirm Password</label>
                       <input type="password" class="form-control" id="confirmPassword" data-bind="value: confirmPassword" />
+                      <!-- ko if: hasConfirmPasswordError -->
+                      <span class="help-block" data-bind="text: confirmPasswordError"></span>
+                      <!-- /ko -->
                     </div>
                   </div>
                   <div class="row form-group">
