@@ -15,6 +15,7 @@ trait PlayerServiceComponent {
     def batchCreatePlayerFromName(names: Set[String]) : Set[Player]
     def getPlayers() : Seq[TeamPlayerRecord]
     def getPlayersForProfile(profileId: Int) : Seq[Player]
+    def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
   }
 }
 
@@ -29,6 +30,7 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
     def createPlayerFromName(name: String) = playerRepository.createPlayerFromName(name)
     def getPlayers() = playerRepository.getPlayers() 
     def getPlayersForProfile(profileId: Int) = playerRepository.getPlayersForProfile(profileId)
+    def removePlayerFromProfile(profileId: Int, playerId: Int) = playerRepository.removePlayerFromProfile(profileId, playerId)
     def profileIsPlayer(profileId: Int) = 
       playerRepository.getPlayerByProfileId(profileId).isDefined
 

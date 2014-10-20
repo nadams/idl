@@ -15,6 +15,7 @@ trait PlayerRepositoryComponent {
     def batchCreatePlayerFromName(names: Set[String]) : Set[Player]
     def getPlayers() : Seq[TeamPlayerRecord] 
     def getPlayersForProfile(profileId: Int) : Seq[Player]
+    def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
   }
 }
 
@@ -171,6 +172,12 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .on('profileId -> profileId)
       .as(Player.multiRowParser)
       .map(Player(_))
+    }
+
+    def removePlayerFromProfile(profileId: Int, playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(PlayerProfile.removePlayerFromProfileSql)
+      .on('profileId -> profileId, 'playerId -> playerId)
+      .executeUpdate > 0
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
