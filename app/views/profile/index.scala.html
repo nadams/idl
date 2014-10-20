@@ -29,7 +29,8 @@
       if(hash) {
         $('ul.nav.nav-pills > li a[href="' + hash + '"]').tab('show');
       } else {
-        $('ul.nav.nav-pills > li > a:first').tab('show');
+        $('ul.visible-sm.nav.nav-pills > li > a:first').tab('show');
+        $('ul.hidden-sm.nav.nav-pills > li > a:first').tab('show');
       }
     })();
   </script>
