@@ -1,6 +1,6 @@
-/* global ko, profile */
+/* global ko, profile, _ */
 
-(function(ko, profile, repository) {
+(function(ko, _, profile, repository) {
   'use strict';
 
   profile.index.IndexModel = (function() {
@@ -114,6 +114,22 @@
     return Model;
   })();
 
+  profile.index.PlayerModel = (function() {
+    var Model = function(data) {
+      this.playerNames = ko.observableArray([]);
+    
+      this.initialize(data);
+    };
+
+    ko.utils.extend(Model.prototype, {
+      initialize: function(data) {
+      
+      }
+    });
+
+    return Model;
+  })();
+
   var model = new profile.index.IndexModel(profile.index.data);
   ko.applyBindings(model);
-})(ko, profile, new profile.index.ProfileRepository());
+})(ko, _, profile, new profile.index.ProfileRepository());

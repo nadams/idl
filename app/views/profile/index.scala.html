@@ -8,6 +8,7 @@
 
 @extraScripts = {
   <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
 	@helper.javascriptRouter("routes")(
     routes.javascript.ProfileController.becomePlayer,
     routes.javascript.ProfileController.updatePassword
@@ -124,7 +125,9 @@
               </form>
             </div>
             <!-- ko if: profileIsPlayer -->
-            <div class="tab-pane" id="player"></div>
+            <div class="tab-pane" id="player">
+              
+            </div>
             <div class="tab-pane" id="team"></div>
             <!-- /ko -->
           </div>
