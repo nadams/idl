@@ -9,7 +9,8 @@
 @extraScripts = {
   <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
 	@helper.javascriptRouter("routes")(
-    routes.javascript.ProfileController.becomePlayer
+    routes.javascript.ProfileController.becomePlayer,
+    routes.javascript.ProfileController.updatePassword
 	)
   <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
   <script>
@@ -27,6 +28,11 @@
 			<h4>Manage Profile</h4>
 		</div>
 		<div class="panel-body">
+      <!-- ko if: profileIsNowPlayer -->
+      <div class="alert alert-success">
+        <p data-bind="text: profileIsNowPlayerMessage"></p>
+      </div>
+      <!-- /ko -->
       <div class="row">
         <div class="col-md-3">
           <ul class="hidden-sm nav nav-pills nav-stacked" role="tablist">
@@ -47,12 +53,6 @@
         <div class="col-md-9">
           <div class="tab-content">
             <div class="tab-pane active" id="profile">
-              <!-- ko if: profileIsNowPlayer -->
-              <div class="alert alert-success">
-                <p data-bind="text: profileIsNowPlayerMessage"></p>
-              </div>
-              <!-- /ko -->
-
               <!-- ko ifnot: profileIsPlayer -->
               <form role="form">
                 <div class="form-group alert alert-info">

@@ -1,15 +1,17 @@
-/* global idl, profile */
+/* global idl, profile, routes */
 
-(function(ajax, profile) {
+(function(ajax, profile, routes) {
   'use strict';
 
   profile.index.ProfileRepository = (function() {
     var Repository = function() {
-      this.becomePlayer = function(url, context) {
+      this.becomePlayer = function(context) {
+        var url = routes.controllers.ProfileController.becomePlayer().url; 
         return ajax.post(url, {}, context);
       };
 
-      this.updatePassword = function(url, currentPassword, newPassword, confirmPassword, context) {
+      this.updatePassword = function(currentPassword, newPassword, confirmPassword, context) {
+        var url = routes.controllers.ProfileController.updatePassword().url;
         var data = {
           currentPassword: currentPassword,
           newPassword: newPassword,
@@ -23,4 +25,4 @@
     return Repository;
   })();
 
-})(idl.ajax, profile);
+})(idl.ajax, profile, routes);

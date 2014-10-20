@@ -1,6 +1,6 @@
-/* global ko, profile, routes */
+/* global ko, profile */
 
-(function(ko, profile, repository, routes) {
+(function(ko, profile, repository) {
   'use strict';
 
   profile.index.IndexModel = (function() {
@@ -21,7 +21,7 @@
         this.profileIsPlayer(data.profileIsPlayer);
       },
       makeProfilePlayer: function() {
-        var promise = repository.becomePlayer(routes.controllers.ProfileController.becomePlayer().url, this);
+        var promise = repository.becomePlayer(this);
         promise.success(function(data) {
           this.profileIsNowPlayer(true);
           this.profileIsPlayer(true);
@@ -43,18 +43,23 @@
 
   profile.index.PasswordModel = (function() {
     var Model = function(data) {
-      this.currentPassword = ko.observable();
-      this.newPassword = ko.observable();
-      this.confirmPassword = ko.observable();
+      this.currentPassword = ko.observable('');
+      this.newPassword = ko.observable('');
+      this.confirmPassword = ko.observable('');
     };
 
     ko.utils.extend(Model.prototype, {
       updatePassword: function() {
-        var promise = this.repository.updatePassword(
+        var promise = repository.updatePassword(
           this.currentPassword(),
           this.newPassword(),
-          this.confirmPassword()
+          this.confirmPassword(),
+          this
         );
+
+        promise.always(function() {
+          
+        });
       }
     });
 
@@ -63,4 +68,4 @@
 
   var model = new profile.index.IndexModel(profile.index.data);
   ko.applyBindings(model);
-})(ko, profile, new profile.index.ProfileRepository(), routes);
+})(ko, profile, new profile.index.ProfileRepository());
