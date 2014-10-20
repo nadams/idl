@@ -81,14 +81,9 @@
         );
 
         promise.done(function() {
-          this.currentPassword('');
-          this.newPassword('');
-          this.confirmPassword('');
-          this.currentPasswordError('');
-          this.newPasswordError('');
-          this.confirmPasswordError('');
-          this.globalErrors.removeAll();
+          this.clearPasswordForm();
           this.successfullyUpdatedPassword(true);
+          this.globalErrors.removeAll();
         });
 
         promise.fail(function(response) {
@@ -104,6 +99,14 @@
             this.globalErrors.push(data.globalErrors[i]);
           }
         });
+      },
+      clearPasswordForm: function() {
+        this.currentPassword('');
+        this.newPassword('');
+        this.confirmPassword('');
+        this.currentPasswordError('');
+        this.newPasswordError('');
+        this.confirmPasswordError('');
       },
       nullOrEmpty: function(string) {
         return typeof string === 'undefined' || string.length === 0;
