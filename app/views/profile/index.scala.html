@@ -17,6 +17,18 @@
     var profile = profile || {};
     profile.index = profile.index || {};
     profile.index.data = @Html(Json.toJson(model).toString) || {};
+
+    $('ul.nav.nav-pills > li > a').on('shown.bs.tab', function(e) {
+      var id = $(e.target).attr('href').substr(1);
+      window.location.hash = id;
+    });
+
+    var hash = window.location.hash;
+    if(hash) {
+      $('ul.nav.nav-pills > li a[href="' + hash + '"]').tab('show');
+    } else {
+      $('ul.nav.nav-pills > li > a:first').tab('show');
+    }
   </script>
   <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
   <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
@@ -36,14 +48,14 @@
       <div class="row">
         <div class="col-md-3">
           <ul class="hidden-sm nav nav-pills nav-stacked" role="tablist">
-            <li class="active"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+            <li><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
             <!-- ko if: profileIsPlayer -->
             <li><a href="#player" role="tab" data-toggle="tab">Player</a></li>
             <li><a href="#team" role="tab" data-toggle="tab">Teams</a></li>
             <!-- /ko -->
           </ul>
           <ul class="visible-sm nav nav-pills profile-nav-sm" role="tablist">
-            <li class="active"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+            <li><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
             <!-- ko if: profileIsPlayer -->
             <li><a href="#player" role="tab" data-toggle="tab">Player</a></li>
             <li><a href="#team" role="tab" data-toggle="tab">Teams</a></li>
