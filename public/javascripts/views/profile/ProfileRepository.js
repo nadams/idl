@@ -30,6 +30,11 @@
         var url = routes.controllers.ProfileController.removePlayer(playerId).url;
         return ajax.post(url, {}, context);
       };
+
+      this.updateDisplayName = function(displayName, context) {
+        var url = routes.controllers.ProfileController.updateDisplayName(displayName).url;
+        return ajax.post(url, {}, context);
+      };
     };
 
     return Repository;

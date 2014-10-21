@@ -13,7 +13,8 @@
     routes.javascript.ProfileController.becomePlayer,
     routes.javascript.ProfileController.updatePassword,
     routes.javascript.ProfileController.addPlayer,
-    routes.javascript.ProfileController.removePlayer
+    routes.javascript.ProfileController.removePlayer,
+    routes.javascript.ProfileController.updateDisplayName
 	)
   <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
   <script>
@@ -90,7 +91,7 @@
                       <div class="input-group">
                         <input type="text" id="displayName" name="displayName" class="form-control" data-bind="textInput: displayName" />
                         <span class="input-group-btn">
-                          <button class="btn btn-default">Update</button>
+                          <button class="btn btn-default" data-bind="click: updateDisplayName">Update</button>
                         </span>
                       </div>
                     </div>

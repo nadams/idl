@@ -104,6 +104,22 @@
           this.globalErrors(data.globalErrors);
         });
       },
+      updateDisplayName: function() {
+        var displayName = this.displayName();
+        var promise = repository.updateDisplayName(displayName, this);
+
+        promise.done(function() {
+          console.log('success');
+        });
+
+        promise.always(function() {
+        
+        });
+
+        promise.fail(function() {
+          console.log('failure');
+        });
+      },
       clearPasswordForm: function() {
         this.currentPassword('');
         this.newPassword('');

@@ -96,7 +96,7 @@ object ProfileController
   }
 
   def updateDisplayName(displayName: String) = IsAuthenticated { username => implicit request =>
-    Ok("arst")
+    Ok(Json.toJson("arst"))
   }
 
   private def profileNotFound(username: String) = NotFound("The profile `$username` was not found.")
