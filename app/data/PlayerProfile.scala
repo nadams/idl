@@ -35,8 +35,8 @@ object PlayerProfile {
   lazy val selectByProfileIdAndPlayerId = 
     s"""
       SELECT 
-        ${PlayerProfileSchema.playerId},
         ${PlayerProfileSchema.profileId},
+        ${PlayerProfileSchema.playerId},
         ${PlayerProfileSchema.isApproved}
       FROM ${PlayerProfileSchema.tableName} 
       WHERE ${PlayerProfileSchema.playerId} = {playerId}
@@ -44,8 +44,8 @@ object PlayerProfile {
     """
 
   lazy val singleRowParser = 
-    int(PlayerProfileSchema.playerId) ~
     int(PlayerProfileSchema.profileId) ~
+    int(PlayerProfileSchema.playerId) ~
     bool(PlayerProfileSchema.isApproved) map flatten
 
   def apply(x: (Int, Int, Boolean)) : PlayerProfile = 

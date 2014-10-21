@@ -222,7 +222,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
 
     def getPlayerProfileRecord(profileId: Int, playerId: Int) = DB.withConnection { implicit connection =>
       SQL(PlayerProfileRecord.selectByProfileIdAndPlayerId)
-      .on('profileId -> profileId, 'playerId -> playerId)
+      .on('playerId -> playerId, 'profileId -> profileId)
       .as(PlayerProfileRecord.singleRowParser singleOpt)
       .map(PlayerProfileRecord(_))
     }

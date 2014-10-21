@@ -137,11 +137,15 @@
       },
       addPlayerName: function() {
         var playerName = this.playerNameToCreate();
-        this.playerNames.push(new profile.index.PlayerNameModel({
-          playerId: 1,
-          playerName: playerName
-        }));
-        this.playerNameToCreate('');
+        var promise = repository.addPlayer(playerName, this);
+
+        promise.done(function(data) {
+          this.playerNames.push(new profile.index.PlayerNameModel(data));
+        });
+
+        promise.always(function() {
+          this.playerNameToCreate('');
+        });
       }
     });
 
