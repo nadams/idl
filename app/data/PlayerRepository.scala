@@ -5,7 +5,7 @@ trait PlayerRepositoryComponent {
 
   trait PlayerRepository {
     def getAllPlayers() : Seq[Player]
-    def getPlayerByProfileId(profileId: Int) : Option[Player]
+    def getPlayersByProfileId(profileId: Int) : Seq[Player]
     def getPlayer(playerId: Int) : Option[Player]
     def insertPlayerWithProfile(player: Player, profileId: Int) : Boolean
     def insertPlayerProfile(playerId: Int, profileId: Int) : Boolean
@@ -57,7 +57,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       SQL(selectAllPlayersSql).as(multiRowParser).map(Player(_))
     }
 
-    def getPlayerByProfileId(profileId: Int) : Option[Player] = DB.withConnection { implicit connection => 
+    def getPlayersByProfileId(profileId: Int) : Seq[Player] = DB.withConnection { implicit connection => 
       SQL(
         s"""
           SELECT 
@@ -71,7 +71,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
         """
       )
       .on('profileId -> profileId)
-      .as(singleRowParser singleOpt)
+      .as(multiRowParser)
       .map(Player(_))
     } 
 
