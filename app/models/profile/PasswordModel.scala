@@ -7,22 +7,22 @@ import play.api.data.Forms._
 import play.api.libs.json.Json
 import components.ProfileComponentImpl
 
-case class ProfileModel(currentPassword: String, newPassword: String, confirmPassword: String)
+case class PasswordModel(currentPassword: String, newPassword: String, confirmPassword: String)
 
-object ProfileModel {
-  def apply(): ProfileModel = ProfileModel("", "", "")
+object PasswordModel {
+  def apply(): PasswordModel = PasswordModel("", "", "")
 }
 
-case class ProfileModelErrors(
+case class PasswordModelErrors(
   currentPasswordError: String,
   newPasswordError: String,
   confirmPasswordError: String,
   globalErrors: Seq[String]
 )
 
-object ProfileModelErrors {
-  implicit val writesProfileModelErrors = Json.writes[ProfileModelErrors]
-  lazy val empty = ProfileModelErrors("", "", "", Seq.empty[String])
+object PasswordModelErrors {
+  implicit val writesPasswordModelErrors = Json.writes[PasswordModelErrors]
+  lazy val empty = PasswordModelErrors("", "", "", Seq.empty[String])
 }
 
 object ChangePasswordForm extends ProfileComponentImpl {
@@ -36,7 +36,7 @@ object ChangePasswordForm extends ProfileComponentImpl {
           .verifying("Incorrect password", password => profileService.authenticate(username, password)),
         "newPassword" -> nonEmptyText(minLength = minLength),
         "confirmPassword" -> nonEmptyText(minLength = minLength)
-      )(ProfileModel.apply)(ProfileModel.unapply)
+      )(PasswordModel.apply)(PasswordModel.unapply)
       verifying("error.passwordsDoNotMatch", result => result.newPassword == result.confirmPassword)
     )
   }

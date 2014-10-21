@@ -47,7 +47,7 @@ object ProfileController
         val newPassword = errors("newPassword").formattedMessage._2.getOrElse("")
         val confirmPassword = errors("confirmPassword").formattedMessage._2.getOrElse("")
 
-        BadRequest(Json.toJson(ProfileModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
+        BadRequest(Json.toJson(PasswordModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
       },
       result => 
         if(profileService.updateProfilePassword(username, result.newPassword)) {
