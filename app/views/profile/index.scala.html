@@ -140,7 +140,9 @@
                     </span>
                   </div>
                   <ul class="list-group" data-bind="foreach: playerNames">
-                    <li class="list-group-item clearfix" data-bind="css: { 'list-group-item-warning': !isApproved(), 'list-group-item-success': isApproved() }">
+                    <li class="list-group-item clearfix" data-bind="css: { 
+                      'list-group-item-warning': !isApproved(), 
+                      'list-group-item-success': isApproved() }">
                       <span data-bind="text: playerName"></span>
                       <button class="btn btn-xs btn-danger pull-right" data-bind="click: $parent.removePlayerName"><span class="glyphicon glyphicon-trash"></span></button>
                     </li>
