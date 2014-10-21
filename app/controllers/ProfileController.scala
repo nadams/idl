@@ -76,5 +76,15 @@ object ProfileController
     Ok(views.html.profile.myGames())
   }
 
+  def addPlayer(playerName: String) = IsAuthenticated { username => implicit request =>
+    profileService.getByUsername(username) map { profile =>
+      playerService.createOrAddPlayerToProfile(profile.profileId, playerName) map { player => 
+        playerService.getPlayerProfile(profile.profileId, player.playerId) map { playerProfile =>
+          Ok(Json.toJson(AddPlayerNameResultModel.toModel(player, playerProfile)))
+        } getOrElse(InternalServerError(s"Could not get player profile"))
+      } getOrElse(InternalServerError(s"Could not create player with name: `$playerName`"))
+    } getOrElse(profileNotFound(username))
+  }
+
   private def profileNotFound(username: String) = NotFound("The profile `$username` was not found.")
 }

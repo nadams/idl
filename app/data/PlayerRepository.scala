@@ -19,6 +19,7 @@ trait PlayerRepositoryComponent {
     def playerIsInAnyProfile(playerId: Int) : Boolean
     def addPlayerProfile(profileId: Int, playerId: Int, needsApproval: Boolean) : Option[Player] 
     def createPlayerAndAssignToProfile(profileId: Int, playerName: String) : Option[Player]
+    def getPlayerProfile(profileId: Int, playerId: Int) : Option[PlayerProfile]
   }
 }
 
@@ -208,6 +209,13 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .executeUpdate
 
       Some(Player(playerId, playerName, true))
+    }
+
+    def getPlayerProfile(profileId: Int, playerId: Int) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfile.selectByProfileIdAndPlayerId)
+      .on('profileId -> profileId, 'playerId -> playerId)
+      .as(PlayerProfile.singleRowParser singleOpt)
+      .map(PlayerProfile(_))
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
