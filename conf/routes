@@ -14,6 +14,7 @@ POST    /profile/becomePlayer                   controllers.ProfileController.be
 GET     /profile/myGames                        controllers.ProfileController.myGames
 POST    /profile/addPlayer/:name                controllers.ProfileController.addPlayer(name: String)
 POST    /profile/removePlayer/:playerId         controllers.ProfileController.removePlayer(playerId: Int)
+POST    /profile/updateDisplayName/:displayName controllers.ProfileController.updateDisplayName(displayName: String)
     
 GET     /registration                           controllers.RegistrationController.index
 POST    /registration                           controllers.RegistrationController.register
