@@ -101,13 +101,21 @@
                 <h3>Password Settings </h3>
                 <fieldset>
                   <!-- ko if: hasGlobalErrors -->
-                  <div class="alert alert-danger" data-bind="foreach: globalErrors">
-                    <p class="error" data-bind="text: $data"></p>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="alert alert-danger" data-bind="foreach: globalErrors">
+                        <p class="error" data-bind="text: $data"></p>
+                      </div>
+                    </div>
                   </div>
                   <!-- /ko -->
                   <!-- ko if: successfullyUpdatedPassword -->
-                  <div class="alert alert-success" role="alert">
-                    <span>Password updated successfully</span>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div class="alert alert-success" role="alert">
+                        <span>Password updated successfully</span>
+                      </div>
+                    </div>
                   </div>
                   <!-- /ko -->
                   <div class="row form-group">
