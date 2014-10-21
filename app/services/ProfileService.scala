@@ -14,6 +14,7 @@ trait ProfileServiceComponent {
     def profileIsInRole(username: String, role: Roles.Role): Boolean
     def profileIsInAnyRole(username: String, roles: Set[Roles.Role]): Boolean
     def createProfile(email: String, displayName: String, password: String) : Profile
+    def updateDisplayName(profile: Profile, displayName: String) : Option[Profile]
   }
 }
 
@@ -78,6 +79,13 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
       val profileRoles = profileRepository.getRolesForUsername(username) toSet
 
       profileRoles(Roles.SuperAdmin) || roles.intersect(profileRoles).nonEmpty
+    }
+
+    def updateDisplayName(profile: Profile, displayName: String) = {
+      val updatedProfile = profile.copy(displayName = displayName)
+  
+      if(profileRepository.updateProfile(updatedProfile)) Some(updatedProfile)
+      else None
     }
   }
 }

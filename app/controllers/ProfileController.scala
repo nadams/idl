@@ -96,7 +96,11 @@ object ProfileController
   }
 
   def updateDisplayName(displayName: String) = IsAuthenticated { username => implicit request =>
-    Ok(Json.toJson("arst"))
+    profileService.getByUsername(username) map { profile =>
+      profileService.updateDisplayName(profile, displayName) map { updatedProfile =>
+        Ok(Json.toJson(updatedProfile.displayName))
+      } getOrElse(InternalServerError("Could not update displayName"))
+    } getOrElse(profileNotFound(username))
   }
 
   private def profileNotFound(username: String) = NotFound("The profile `$username` was not found.")
