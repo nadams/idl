@@ -18,6 +18,17 @@ object Player {
           AND pp.${PlayerProfileSchema.profileId} = {profileId}
     """
 
+  lazy val insertPlayer =
+    s"""
+      INSERT INTO ${PlayerSchema.tableName} (
+        ${PlayerSchema.playerName},
+        ${PlayerSchema.isActive}
+      ) VALUES (
+        {playerName},
+        {isActive}
+      )
+    """
+
   lazy val singleRowParser =
     int(PlayerSchema.playerId) ~
     str(PlayerSchema.playerName) ~

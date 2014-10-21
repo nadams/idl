@@ -16,6 +16,9 @@ trait PlayerRepositoryComponent {
     def getPlayers() : Seq[TeamPlayerRecord] 
     def getPlayersForProfile(profileId: Int) : Seq[Player]
     def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
+    def playerIsInAnyProfile(playerId: Int) : Boolean
+    def addPlayerProfile(profileId: Int, playerId: Int, needsApproval: Boolean) : Option[Player] 
+    def createPlayerAndAssignToProfile(profileId: Int, playerName: String) : Option[Player]
   }
 }
 
@@ -178,6 +181,33 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       SQL(PlayerProfile.removePlayerFromProfileSql)
       .on('profileId -> profileId, 'playerId -> playerId)
       .executeUpdate > 0
+    }
+
+    def playerIsInAnyProfile(playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(PlayerProfile.playerIsInAnyProfileSql)
+      .on('playerId -> playerId)
+      .as(scalar[Long] single) > 0
+    }
+
+    def addPlayerProfile(profileId: Int, playerId: Int, needsApproval: Boolean) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfile.insertPlayerProfileSql)
+      .on('profileId -> profileId, 'playerId -> playerId)
+      .executeUpdate > 0
+
+      getPlayer(playerId)
+    }
+
+    def createPlayerAndAssignToProfile(profileId: Int, playerName: String) = DB.withTransaction { implicit connection =>
+      val playerId = SQL(Player.insertPlayer)
+      .on('playerName -> playerName, 'isActive -> true)
+      .executeInsert(scalar[Long] single)
+      .toInt
+
+      SQL(PlayerProfile.insertPlayerProfileSql)
+      .on('playerId -> playerId, 'profileId -> profileId)
+      .executeUpdate
+
+      Some(Player(playerId, playerName, true))
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
