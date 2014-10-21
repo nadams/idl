@@ -149,7 +149,7 @@
                     </span>
                   </div>
                   <ul class="list-group" data-bind="foreach: playerNames">
-                    <li class="list-group-item clearfix" data-bind="css: { 
+                    <li class="list-group-item clearfix" data-bind="attr: { title: itemTitle }, css: { 
                       'list-group-item-warning': !isApproved(), 
                       'list-group-item-success': isApproved() }">
                       <span data-bind="text: playerName"></span>

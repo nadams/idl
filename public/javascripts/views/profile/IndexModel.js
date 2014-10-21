@@ -170,6 +170,10 @@
       this.isApproved = ko.observable(false);
     
       this.initialize(data);
+
+      this.itemTitle = ko.computed(function() {
+        return this.isApproved() ? 'Approved' : 'Needs Approval';
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
