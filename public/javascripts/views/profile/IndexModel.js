@@ -8,7 +8,7 @@
       this.profileId = ko.observable();
       this.profileIsPlayer = ko.observable(false);
       this.passwordModel = new profile.index.ProfileModel();
-      this.playerModel = new profile.index.PlayerModel(data);
+      this.playerModel = new profile.index.PlayerModel(data.playerModel);
 
       this.profileIsNowPlayer = ko.observable(false);
       this.profileIsNowPlayerMessage = ko.observable('');
