@@ -13,6 +13,7 @@ POST    /profile/logout                         controllers.ProfileController.lo
 POST    /profile/becomePlayer                   controllers.ProfileController.becomePlayer
 GET     /profile/myGames                        controllers.ProfileController.myGames
 POST    /profile/addPlayer/:name                controllers.ProfileController.addPlayer(name: String)
+POST    /profile/removePlayer/:playerId         controllers.ProfileController.removePlayer(playerId: Int)
     
 GET     /registration                           controllers.RegistrationController.index
 POST    /registration                           controllers.RegistrationController.register

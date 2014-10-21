@@ -124,11 +124,15 @@
       this.initialize(data);
 
       this.removePlayerName = function(player) {
-        this.playerNames.removeAll(_.filter(this.playerNames(), function(item) {
-          return item.playerId() === player.playerId();
-        }, this));
-      }.bind(this);
+        var promise = repository.removePlayer(player.playerId(), this);
 
+        promise.done(function(data) {
+          this.playerNames.removeAll(_.filter(this.playerNames(), function(item) {
+            return item.playerId() === data;
+          }, this));
+        });
+      }.bind(this);
+      
       this.canAddPlayerName = ko.computed(function() {
         return this.playerNameToCreate().length > 0;
       }, this);

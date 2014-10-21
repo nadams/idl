@@ -25,6 +25,11 @@
         var url = routes.controllers.ProfileController.addPlayer(playerName).url;
         return ajax.post(url, {}, context);
       };
+
+      this.removePlayer = function(playerId, context) {
+        var url = routes.controllers.ProfileController.removePlayer(playerId).url;
+        return ajax.post(url, {}, context);
+      };
     };
 
     return Repository;

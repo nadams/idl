@@ -88,5 +88,12 @@ object ProfileController
     } getOrElse(profileNotFound(username))
   }
 
+  def removePlayer(playerId: Int) = IsAuthenticated { username => implicit request =>
+    profileService.getByUsername(username) map { profile => 
+      if(playerService.removePlayerFromProfile(profile.profileId, playerId)) Ok(Json.toJson(playerId))
+      else BadRequest(s"Could not remove player $playerId from $username")
+    } getOrElse(profileNotFound(username))
+  }
+
   private def profileNotFound(username: String) = NotFound("The profile `$username` was not found.")
 }
