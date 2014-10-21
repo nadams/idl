@@ -53,8 +53,9 @@
       this.currentPasswordError = ko.observable('');
       this.newPasswordError = ko.observable('');
       this.confirmPasswordError = ko.observable('');
-      
       this.globalErrors = ko.observableArray([]);
+
+      this.isUpdatingDisplayName = ko.observable(false);
 
       this.initialize(data);
 
@@ -105,6 +106,8 @@
         });
       },
       updateDisplayName: function() {
+        this.isUpdatingDisplayName(true);
+
         var displayName = this.displayName();
         var promise = repository.updateDisplayName(displayName, this);
 
@@ -113,7 +116,7 @@
         });
 
         promise.always(function() {
-        
+          this.isUpdatingDisplayName(false);
         });
 
         promise.fail(function() {

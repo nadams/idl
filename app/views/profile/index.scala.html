@@ -91,7 +91,14 @@
                       <div class="input-group">
                         <input type="text" id="displayName" name="displayName" class="form-control" data-bind="textInput: displayName" />
                         <span class="input-group-btn">
-                          <button class="btn btn-default" data-bind="click: updateDisplayName">Update</button>
+                          <button class="btn btn-default" data-bind="click: updateDisplayName">
+                            <span data-bind="if: isUpdatingDisplayName">
+                              <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." style="width: 1em; height: 1em;" />
+                            </span>
+                            <span data-bind="ifnot: isUpdatingDisplayName">
+                              <span>Update<span>
+                            </span>
+                          </button>
                         </span>
                       </div>
                     </div>
@@ -155,7 +162,6 @@
                   </div>
                 </fieldset>
               </form>
-
               <!-- /ko -->
             </div>
             <!-- ko if: profileIsPlayer -->
