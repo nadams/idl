@@ -73,6 +73,7 @@ object PlayerProfileSchema {
   val tableName = "PlayerProfile"
   val playerId = "PlayerId"
   val profileId = "ProfileId"
+  val isApproved = "IsApproved"
 }
 
 object GameSchema {

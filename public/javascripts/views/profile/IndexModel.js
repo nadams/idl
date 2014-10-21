@@ -119,14 +119,23 @@
     var Model = function(data) {
       this.playerNames = ko.observableArray();
       this.playerNameToCreate = ko.observable('');
+      this.isAddingPlayerName = ko.observable(false);
     
       this.initialize(data);
 
       this.removePlayerName = function(player) {
-        this.playerNames.removeAll(_.filter(this.playerNames(), function(item) {
-          return item.playerId() === player.playerId();
-        }, this));
+        var promise = repository.removePlayer(player.playerId(), this);
+
+        promise.done(function(data) {
+          this.playerNames.removeAll(_.filter(this.playerNames(), function(item) {
+            return item.playerId() === data;
+          }, this));
+        });
       }.bind(this);
+      
+      this.canAddPlayerName = ko.computed(function() {
+        return this.playerNameToCreate().length > 0;
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
@@ -136,12 +145,18 @@
         }, this));
       },
       addPlayerName: function() {
+        this.isAddingPlayerName(true);
         var playerName = this.playerNameToCreate();
-        this.playerNames.push(new profile.index.PlayerNameModel({
-          playerId: 1,
-          playerName: playerName
-        }));
-        this.playerNameToCreate('');
+        var promise = repository.addPlayer(playerName, this);
+
+        promise.done(function(data) {
+          this.playerNames.push(new profile.index.PlayerNameModel(data));
+        });
+
+        promise.always(function() {
+          this.isAddingPlayerName(false);
+          this.playerNameToCreate('');
+        });
       }
     });
 
@@ -152,6 +167,7 @@
     var Model = function(data) {
       this.playerId = ko.observable();
       this.playerName = ko.observable();
+      this.isApproved = ko.observable(false);
     
       this.initialize(data);
     };
@@ -160,6 +176,7 @@
       initialize: function(data) {
         this.playerId(data.playerId);
         this.playerName(data.playerName);
+        this.isApproved(data.isApproved);
       }
     });
 

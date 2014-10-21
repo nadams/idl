@@ -11,7 +11,9 @@
   <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
 	@helper.javascriptRouter("routes")(
     routes.javascript.ProfileController.becomePlayer,
-    routes.javascript.ProfileController.updatePassword
+    routes.javascript.ProfileController.updatePassword,
+    routes.javascript.ProfileController.addPlayer,
+    routes.javascript.ProfileController.removePlayer
 	)
   <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
   <script>
@@ -134,13 +136,22 @@
                 <div class="col-xs-6">
                   <h4>Doom Names</h4>
                   <div class="input-group add-doom-name">
-                    <input type="text" class="form-control" data-bind="value: playerNameToCreate" />
+                    <input type="text" class="form-control" data-bind="textInput: playerNameToCreate" />
                     <span class="input-group-btn">
-                      <button class="btn btn-default" type="button" data-bind="click: addPlayerName">Add</button>
+                      <button class="btn btn-default" type="button" data-bind="click: addPlayerName, disable: isAddingPlayerName, enable: canAddPlayerName">
+                        <span data-bind="if: isAddingPlayerName">
+                          <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." style="width: 1em; height: 1em;" />
+                        </span>
+                        <span data-bind="ifnot: isAddingPlayerName">
+                          <span>Add<span>
+                        </span>
+                      </button>
                     </span>
                   </div>
                   <ul class="list-group" data-bind="foreach: playerNames">
-                    <li class="list-group-item clearfix">
+                    <li class="list-group-item clearfix" data-bind="css: { 
+                      'list-group-item-warning': !isApproved(), 
+                      'list-group-item-success': isApproved() }">
                       <span data-bind="text: playerName"></span>
                       <button class="btn btn-xs btn-danger pull-right" data-bind="click: $parent.removePlayerName"><span class="glyphicon glyphicon-trash"></span></button>
                     </li>

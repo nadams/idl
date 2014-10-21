@@ -5,7 +5,7 @@ trait PlayerRepositoryComponent {
 
   trait PlayerRepository {
     def getAllPlayers() : Seq[Player]
-    def getPlayerByProfileId(profileId: Int) : Option[Player]
+    def getPlayersByProfileId(profileId: Int) : Seq[Player]
     def getPlayer(playerId: Int) : Option[Player]
     def insertPlayerWithProfile(player: Player, profileId: Int) : Boolean
     def insertPlayerProfile(playerId: Int, profileId: Int) : Boolean
@@ -16,6 +16,12 @@ trait PlayerRepositoryComponent {
     def getPlayers() : Seq[TeamPlayerRecord] 
     def getPlayersForProfile(profileId: Int) : Seq[Player]
     def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
+    def playerIsInAnyProfile(playerId: Int) : Boolean
+    def addPlayerProfile(profileId: Int, playerId: Int, needsApproval: Boolean) : Option[Player] 
+    def createPlayerAndAssignToProfile(profileId: Int, playerName: String) : Option[Player]
+    def getPlayerProfile(profileId: Int, playerId: Int) : Option[PlayerProfile]
+    def getPlayerProfileRecord(profileId: Int, playerId: Int) : Option[PlayerProfileRecord]
+    def getPlayerProfileRecordsForProfile(profileId: Int) : Seq[PlayerProfileRecord] 
   }
 }
 
@@ -51,7 +57,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       SQL(selectAllPlayersSql).as(multiRowParser).map(Player(_))
     }
 
-    def getPlayerByProfileId(profileId: Int) : Option[Player] = DB.withConnection { implicit connection => 
+    def getPlayersByProfileId(profileId: Int) : Seq[Player] = DB.withConnection { implicit connection => 
       SQL(
         s"""
           SELECT 
@@ -65,7 +71,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
         """
       )
       .on('profileId -> profileId)
-      .as(singleRowParser singleOpt)
+      .as(multiRowParser)
       .map(Player(_))
     } 
 
@@ -178,6 +184,54 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       SQL(PlayerProfile.removePlayerFromProfileSql)
       .on('profileId -> profileId, 'playerId -> playerId)
       .executeUpdate > 0
+    }
+
+    def playerIsInAnyProfile(playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(PlayerProfile.playerIsInAnyProfileSql)
+      .on('playerId -> playerId)
+      .as(scalar[Long] single) > 0
+    }
+
+    def addPlayerProfile(profileId: Int, playerId: Int, needsApproval: Boolean) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfile.insertPlayerProfileSql)
+      .on('profileId -> profileId, 'playerId -> playerId, 'isApproved -> !needsApproval)
+      .executeUpdate > 0
+
+      getPlayer(playerId)
+    }
+
+    def createPlayerAndAssignToProfile(profileId: Int, playerName: String) = DB.withTransaction { implicit connection =>
+      val playerId = SQL(Player.insertPlayer)
+      .on('playerName -> playerName, 'isActive -> true)
+      .executeInsert(scalar[Long] single)
+      .toInt
+
+      SQL(PlayerProfile.insertPlayerProfileSql)
+      .on('playerId -> playerId, 'profileId -> profileId, 'isApproved -> true)
+      .executeUpdate
+
+      Some(Player(playerId, playerName, true))
+    }
+
+    def getPlayerProfile(profileId: Int, playerId: Int) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfile.selectByProfileIdAndPlayerId)
+      .on('profileId -> profileId, 'playerId -> playerId)
+      .as(PlayerProfile.singleRowParser singleOpt)
+      .map(PlayerProfile(_))
+    }
+
+    def getPlayerProfileRecord(profileId: Int, playerId: Int) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfileRecord.selectByProfileIdAndPlayerId)
+      .on('playerId -> playerId, 'profileId -> profileId)
+      .as(PlayerProfileRecord.singleRowParser singleOpt)
+      .map(PlayerProfileRecord(_))
+    }
+    
+    def getPlayerProfileRecordsForProfile(profileId: Int) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfileRecord.selectByProfileId)
+      .on('profileId -> profileId)
+      .as(PlayerProfileRecord.multiRowParser)
+      .map(PlayerProfileRecord(_))
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
