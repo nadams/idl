@@ -128,6 +128,10 @@
           return item.playerId() === player.playerId();
         }, this));
       }.bind(this);
+
+      this.canAddPlayerName = ko.computed(function() {
+        return this.playerNameToCreate().length > 0;
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
