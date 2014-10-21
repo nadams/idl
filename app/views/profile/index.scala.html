@@ -137,7 +137,14 @@
                   <div class="input-group add-doom-name">
                     <input type="text" class="form-control" data-bind="value: playerNameToCreate" />
                     <span class="input-group-btn">
-                      <button class="btn btn-default" type="button" data-bind="click: addPlayerName">Add</button>
+                      <button class="btn btn-default" type="button" data-bind="click: addPlayerName">
+                        <span data-bind="if: isAddingPlayerName">
+                          <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." style="width: 1em; height: 1em;" />
+                        </span>
+                        <span data-bind="ifnot: isAddingPlayerName">
+                          <span>Add<span>
+                        </span>
+                      </button>
                     </span>
                   </div>
                   <ul class="list-group" data-bind="foreach: playerNames">

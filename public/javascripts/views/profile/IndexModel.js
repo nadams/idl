@@ -119,6 +119,7 @@
     var Model = function(data) {
       this.playerNames = ko.observableArray();
       this.playerNameToCreate = ko.observable('');
+      this.isAddingPlayerName = ko.observable(false);
     
       this.initialize(data);
 
@@ -136,6 +137,7 @@
         }, this));
       },
       addPlayerName: function() {
+        this.isAddingPlayerName(true);
         var playerName = this.playerNameToCreate();
         var promise = repository.addPlayer(playerName, this);
 
@@ -144,6 +146,7 @@
         });
 
         promise.always(function() {
+          this.isAddingPlayerName(false);
           this.playerNameToCreate('');
         });
       }
