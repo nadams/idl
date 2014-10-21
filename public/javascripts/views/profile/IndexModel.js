@@ -49,6 +49,7 @@
       this.newPassword = ko.observable('');
       this.confirmPassword = ko.observable('');
       this.successfullyUpdatedPassword = ko.observable(false);
+      this.successfullyUpdatedDisplayName = ko.observable(true);
       
       this.currentPasswordError = ko.observable('');
       this.newPasswordError = ko.observable('');

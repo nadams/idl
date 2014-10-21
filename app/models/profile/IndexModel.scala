@@ -11,14 +11,14 @@ object IndexModel {
   implicit val writesProfileModel = Json.writes[ProfileModel]
   implicit val writesIndexModel = Json.writes[IndexModel] 
 
-  def toModel(profileId: Int, profileIsPlayer: Boolean, players: Seq[PlayerProfileRecord]) = 
-    IndexModel(profileId, profileIsPlayer, ProfileModel.toModel, PlayerModel.toModel(players))
+  def toModel(profileId: Int, profileIsPlayer: Boolean, profile: Profile, players: Seq[PlayerProfileRecord]) = 
+    IndexModel(profileId, profileIsPlayer, ProfileModel.toModel(profile), PlayerModel.toModel(players))
 }
 
 case class ProfileModel(displayName: String)
 
 object ProfileModel {
-  def toModel() = ProfileModel("arst")
+  def toModel(profile: Profile) = ProfileModel(profile.displayName)
 }
 
 case class PlayerModel(playerNames: Seq[PlayerName])
