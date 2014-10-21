@@ -18,6 +18,8 @@ trait PlayerServiceComponent {
     def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
     def createOrAddPlayerToProfile(profileId: Int, playerName: String) : Option[Player]
     def getPlayerProfile(profileId: Int, playerId: Int) : Option[PlayerProfile]
+    def getPlayerProfileRecord(profileId: Int, playerId: Int) : Option[PlayerProfileRecord]
+    def getPlayerProfileRecordsForProfile(profileId: Int) : Seq[PlayerProfileRecord] 
   }
 }
 
@@ -34,6 +36,8 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
     def getPlayersForProfile(profileId: Int) = playerRepository.getPlayersForProfile(profileId)
     def removePlayerFromProfile(profileId: Int, playerId: Int) = playerRepository.removePlayerFromProfile(profileId, playerId)
     def getPlayerProfile(profileId: Int, playerId: Int) = playerRepository.getPlayerProfile(profileId, playerId)
+    def getPlayerProfileRecord(profileId: Int, playerId: Int) = playerRepository.getPlayerProfileRecord(profileId, playerId)
+    def getPlayerProfileRecordsForProfile(profileId: Int) = playerRepository.getPlayerProfileRecordsForProfile(profileId)
 
     def createOrAddPlayerToProfile(profileId: Int, playerName: String) = 
       playerRepository.getPlayerByName(playerName) map { player => 

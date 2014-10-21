@@ -20,6 +20,8 @@ trait PlayerRepositoryComponent {
     def addPlayerProfile(profileId: Int, playerId: Int, needsApproval: Boolean) : Option[Player] 
     def createPlayerAndAssignToProfile(profileId: Int, playerName: String) : Option[Player]
     def getPlayerProfile(profileId: Int, playerId: Int) : Option[PlayerProfile]
+    def getPlayerProfileRecord(profileId: Int, playerId: Int) : Option[PlayerProfileRecord]
+    def getPlayerProfileRecordsForProfile(profileId: Int) : Seq[PlayerProfileRecord] 
   }
 }
 
@@ -216,6 +218,20 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .on('profileId -> profileId, 'playerId -> playerId)
       .as(PlayerProfile.singleRowParser singleOpt)
       .map(PlayerProfile(_))
+    }
+
+    def getPlayerProfileRecord(profileId: Int, playerId: Int) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfileRecord.selectByProfileIdAndPlayerId)
+      .on('profileId -> profileId, 'playerId -> playerId)
+      .as(PlayerProfileRecord.singleRowParser singleOpt)
+      .map(PlayerProfileRecord(_))
+    }
+    
+    def getPlayerProfileRecordsForProfile(profileId: Int) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfileRecord.selectByProfileId)
+      .on('profileId -> profileId)
+      .as(PlayerProfileRecord.multiRowParser)
+      .map(PlayerProfileRecord(_))
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 

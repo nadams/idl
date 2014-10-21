@@ -8,6 +8,6 @@ case class AddPlayerNameResultModel(playerId: Int, playerName: String, isApprove
 object AddPlayerNameResultModel {
   implicit val writesAddPlayerNameResultModel = Json.writes[AddPlayerNameResultModel] 
 
-  def toModel(player: Player, playerProfile: PlayerProfile) = 
-    AddPlayerNameResultModel(player.playerId, player.playerName, playerProfile.isApproved)
+  def toModel(player: PlayerProfileRecord) = 
+    AddPlayerNameResultModel(player.playerId, player.playerName, player.isApproved)
 }

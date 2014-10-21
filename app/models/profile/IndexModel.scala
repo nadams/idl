@@ -9,13 +9,14 @@ object IndexModel {
   implicit val writesPlayerName = Json.writes[PlayerName]
   implicit val writesIndexModel = Json.writes[IndexModel] 
 
-  def toModel(profileId: Int, profileIsPlayer: Boolean, players: Seq[Player]) = 
+  def toModel(profileId: Int, profileIsPlayer: Boolean, players: Seq[PlayerProfileRecord]) = 
     IndexModel(profileId, profileIsPlayer, players.map(PlayerName.toModel(_)))
 }
 
 case class PlayerName(playerId: Int, playerName: String, isApproved: Boolean)
 
 object PlayerName {
-  def toModel(player: Player) = PlayerName(player.playerId, player.playerName, true)  
+  def toModel(player: PlayerProfileRecord) = 
+    PlayerName(player.playerId, player.playerName, player.isApproved)  
 }
 

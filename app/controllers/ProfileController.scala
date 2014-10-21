@@ -36,7 +36,7 @@ object ProfileController
 
   def index = IsAuthenticated { username => implicit request =>
     profileService.getByUsername(username).fold(profileNotFound(username)){ profile =>
-      Ok(views.html.profile.index(IndexModel.toModel(profile.profileId, playerService.profileIsPlayer(profile.profileId), playerService.getPlayersForProfile(profile.profileId))))
+      Ok(views.html.profile.index(IndexModel.toModel(profile.profileId, playerService.profileIsPlayer(profile.profileId), playerService.getPlayerProfileRecordsForProfile(profile.profileId))))
     }
   }
 
@@ -80,7 +80,9 @@ object ProfileController
     profileService.getByUsername(username) map { profile =>
       playerService.createOrAddPlayerToProfile(profile.profileId, playerName) map { player => 
         playerService.getPlayerProfile(profile.profileId, player.playerId) map { playerProfile =>
-          Ok(Json.toJson(AddPlayerNameResultModel.toModel(player, playerProfile)))
+          playerService.getPlayerProfileRecord(playerProfile.profileId, playerProfile.playerId) map { playerProfileRecord =>
+            Ok(Json.toJson(AddPlayerNameResultModel.toModel(playerProfileRecord)))
+          } getOrElse(InternalServerError(s"Could not get playerProfilRecord"))
         } getOrElse(InternalServerError(s"Could not get player profile"))
       } getOrElse(InternalServerError(s"Could not create player with name: `$playerName`"))
     } getOrElse(profileNotFound(username))
