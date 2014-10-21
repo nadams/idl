@@ -25,10 +25,12 @@ object PlayerProfile {
     s"""
       INSERT INTO ${PlayerProfileSchema.tableName} (
         ${PlayerProfileSchema.playerId},
-        ${PlayerProfileSchema.profileId}
+        ${PlayerProfileSchema.profileId},
+        ${PlayerProfileSchema.isApproved}
       ) VALUES (
         {playerId},
-        {profileId}
+        {profileId},
+        {isApproved}
       )
     """
 

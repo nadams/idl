@@ -207,7 +207,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .toInt
 
       SQL(PlayerProfile.insertPlayerProfileSql)
-      .on('playerId -> playerId, 'profileId -> profileId)
+      .on('playerId -> playerId, 'profileId -> profileId, 'isApproved -> true)
       .executeUpdate
 
       Some(Player(playerId, playerName, true))
