@@ -194,7 +194,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
 
     def addPlayerProfile(profileId: Int, playerId: Int, needsApproval: Boolean) = DB.withConnection { implicit connection =>
       SQL(PlayerProfile.insertPlayerProfileSql)
-      .on('profileId -> profileId, 'playerId -> playerId)
+      .on('profileId -> profileId, 'playerId -> playerId, 'isApproved -> !needsApproval)
       .executeUpdate > 0
 
       getPlayer(playerId)
