@@ -7,7 +7,7 @@
     var Model = function(data) {
       this.profileId = ko.observable();
       this.profileIsPlayer = ko.observable(false);
-      this.passwordModel = new profile.index.ProfileModel();
+      this.profileModel = new profile.index.ProfileModel(data.profileModel);
       this.playerModel = new profile.index.PlayerModel(data.playerModel);
 
       this.profileIsNowPlayer = ko.observable(false);
@@ -44,6 +44,7 @@
 
   profile.index.ProfileModel = (function() {
     var Model = function(data) {
+      this.displayName = ko.observable();
       this.currentPassword = ko.observable('');
       this.newPassword = ko.observable('');
       this.confirmPassword = ko.observable('');
@@ -54,6 +55,8 @@
       this.confirmPasswordError = ko.observable('');
       
       this.globalErrors = ko.observableArray([]);
+
+      this.initialize(data);
 
       this.hasGlobalErrors = ko.computed(function() {
         return this.globalErrors().length > 0;
@@ -73,6 +76,9 @@
     };
 
     ko.utils.extend(Model.prototype, {
+      initialize: function(data) {
+        this.displayName(data.displayName);
+      },
       updatePassword: function() {
         var promise = repository.updatePassword(
           this.currentPassword(),

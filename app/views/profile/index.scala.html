@@ -80,6 +80,7 @@
               </form>
               <!-- /ko -->
 
+              <!-- ko with: profileModel -->
               <div class="row">
                 <form role="form" class="col-xs-12 col-sm-8 col-md-6">
                   <h3>Profile Settings</h3>
@@ -87,7 +88,7 @@
                     <label for="displayName">Display Name</label>
                     <div class="form-group">
                       <div class="input-group">
-                        <input type="text" id="displayName" name="displayName" class="form-control" />
+                        <input type="text" id="displayName" name="displayName" class="form-control" data-bind="textInput: displayName" />
                         <span class="input-group-btn">
                           <button class="btn btn-default">Update</button>
                         </span>
@@ -97,7 +98,7 @@
                 </form>
               </div>
 
-              <form role="form" data-bind="with: passwordModel">
+              <form role="form">
                 <h3>Password Settings </h3>
                 <fieldset>
                   <!-- ko if: hasGlobalErrors -->
@@ -153,6 +154,8 @@
                   </div>
                 </fieldset>
               </form>
+
+              <!-- /ko -->
             </div>
             <!-- ko if: profileIsPlayer -->
             <div class="tab-pane" id="player" data-bind="with: playerModel">
