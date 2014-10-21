@@ -7,7 +7,7 @@
     var Model = function(data) {
       this.profileId = ko.observable();
       this.profileIsPlayer = ko.observable(false);
-      this.passwordModel = new profile.index.PasswordModel();
+      this.passwordModel = new profile.index.ProfileModel();
       this.playerModel = new profile.index.PlayerModel(data);
 
       this.profileIsNowPlayer = ko.observable(false);
@@ -42,7 +42,7 @@
     return Model;
   })();
 
-  profile.index.PasswordModel = (function() {
+  profile.index.ProfileModel = (function() {
     var Model = function(data) {
       this.currentPassword = ko.observable('');
       this.newPassword = ko.observable('');
