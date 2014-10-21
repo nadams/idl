@@ -81,7 +81,7 @@
               <!-- /ko -->
 
               <div class="row">
-                <form role="form" class="col-xs-6">
+                <form role="form" class="col-xs-12 col-sm-8 col-md-6">
                   <h3>Profile Settings</h3>
                   <fieldset>
                     <label for="displayName">Display Name</label>
@@ -102,7 +102,7 @@
                 <fieldset>
                   <!-- ko if: hasGlobalErrors -->
                   <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-xs-12 col-sm-8 col-md-6">
                       <div class="alert alert-danger" data-bind="foreach: globalErrors">
                         <p class="error" data-bind="text: $data"></p>
                       </div>
@@ -111,7 +111,7 @@
                   <!-- /ko -->
                   <!-- ko if: successfullyUpdatedPassword -->
                   <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-xs-12 col-sm-8 col-md-6">
                       <div class="alert alert-success" role="alert">
                         <span>Password updated successfully</span>
                       </div>
@@ -119,7 +119,7 @@
                   </div>
                   <!-- /ko -->
                   <div class="row form-group">
-                    <div class="col-xs-6" data-bind="css: { 'has-error': hasCurrentPasswordError }">
+                    <div class="col-xs-12 col-sm-8 col-md-6" data-bind="css: { 'has-error': hasCurrentPasswordError }">
                       <label for="currentPassword" class="control-label">Current Password</label>
                       <input type="password" class="form-control" id="currentPassword" data-bind="value: currentPassword" />
                       <!-- ko if: hasCurrentPasswordError -->
@@ -128,7 +128,7 @@
                     </div>
                   </div>
                   <div class="row form-group">
-                    <div class="col-xs-6" data-bind="css: { 'has-error': hasNewPasswordError }">
+                    <div class="col-xs-12 col-sm-8 col-md-6" data-bind="css: { 'has-error': hasNewPasswordError }">
                       <label for="newPassword" class="control-label">New Password</label>
                       <input type="password" class="form-control" id="newPassword" data-bind="value: newPassword" />
                       <!-- ko if: hasNewPasswordError -->
@@ -137,7 +137,7 @@
                     </div>
                   </div>
                   <div class="row form-group">
-                    <div class="col-xs-6" data-bind="css: { 'has-error': hasConfirmPasswordError }">
+                    <div class="col-xs-12 col-sm-8 col-md-6" data-bind="css: { 'has-error': hasConfirmPasswordError }">
                       <label for="confirmPassword" class="control-label">Confirm Password</label>
                       <input type="password" class="form-control" id="confirmPassword" data-bind="value: confirmPassword" />
                       <!-- ko if: hasConfirmPasswordError -->
@@ -146,7 +146,7 @@
                     </div>
                   </div>
                   <div class="row form-group">
-                    <div class="col-xs-6">
+                    <div class="col-xs-12 col-sm-8 col-md-6">
                       <button class="btn btn-primary" data-bind="click: updatePassword">Update Password</button>
                       <a href="#" class="btn btn-default" data-bind="click: clearPasswordForm">Cancel</a>
                     </div>
@@ -158,7 +158,7 @@
             <div class="tab-pane" id="player" data-bind="with: playerModel">
               <h3>Player Settings</h3>
               <div class="row">
-                <div class="col-xs-6">
+                <div class="col-xs-12 col-sm-8 col-md-6">
                   <h4>Doom Names</h4>
                   <div class="input-group add-doom-name">
                     <input type="text" class="form-control" data-bind="textInput: playerNameToCreate" />
