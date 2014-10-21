@@ -13,9 +13,9 @@ object IndexModel {
     IndexModel(profileId, profileIsPlayer, players.map(PlayerName.toModel(_)))
 }
 
-case class PlayerName(playerId: Int, playerName: String)
+case class PlayerName(playerId: Int, playerName: String, isApproved: Boolean)
 
 object PlayerName {
-  def toModel(player: Player) = PlayerName(player.playerId, player.playerName)  
+  def toModel(player: Player) = PlayerName(player.playerId, player.playerName, true)  
 }
 

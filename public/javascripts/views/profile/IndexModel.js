@@ -152,6 +152,7 @@
     var Model = function(data) {
       this.playerId = ko.observable();
       this.playerName = ko.observable();
+      this.isApproved = ko.observable(false);
     
       this.initialize(data);
     };
@@ -160,6 +161,7 @@
       initialize: function(data) {
         this.playerId(data.playerId);
         this.playerName(data.playerName);
+        this.isApproved(data.isApproved);
       }
     });
 
