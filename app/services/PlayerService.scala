@@ -8,7 +8,7 @@ trait PlayerServiceComponent {
 
   trait PlayerService {
     def profileIsPlayer(profileId: Int) : Boolean
-    def makeProfileAPlayer(profile: Profile) : Boolean
+    def makeProfileAPlayer(profile: Profile) : Option[PlayerProfileRecord] 
     def getPlayerNamesThatExist(names: Set[String]) : Set[String]
     def getPlayer(playerId: Int) : Option[Player]
     def getPlayerByName(name: String) : Option[Player]
@@ -55,7 +55,9 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
       playerRepository.getPlayersByProfileId(profileId).nonEmpty
 
     def makeProfileAPlayer(profile: Profile) = 
-      playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, None), profile.profileId)
+      playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, None), profile.profileId) map { playerId =>
+        playerRepository.getPlayerProfileRecord(profile.profileId, playerId) 
+      } getOrElse(None)
 
     def batchCreatePlayerFromName(names: Set[String]) = 
       playerRepository.batchCreatePlayerFromName(names.diff(playerService.getPlayerNamesThatExist(names)))

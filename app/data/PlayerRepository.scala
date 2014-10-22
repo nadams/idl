@@ -7,7 +7,7 @@ trait PlayerRepositoryComponent {
     def getAllPlayers() : Seq[Player]
     def getPlayersByProfileId(profileId: Int) : Seq[Player]
     def getPlayer(playerId: Int) : Option[Player]
-    def insertPlayerWithProfile(player: Player, profileId: Int) : Boolean
+    def insertPlayerWithProfile(player: Player, profileId: Int) : Option[Int] 
     def insertPlayerProfile(playerId: Int, profileId: Int) : Boolean
     def getPlayerByName(name: String) : Option[Player]
     def getPlayerNamesThatExist(names: Set[String]) : Set[String]
@@ -105,16 +105,14 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
           )
         """
       )
-      .on(
-        'playerName -> player.playerName,
-        'isActive -> player.isActive
-      )
+      .on('playerName -> player.playerName, 'isActive -> player.isActive)
       .executeInsert(scalar[Long] single)
       .toInt
 
       val result = insertPlayerProfile(playerId, profileId)
 
-      playerId > 0 && result
+      if(playerId > 0 && result) Some(playerId)
+      else None
     }
 
     def insertPlayerProfile(playerId: Int, profileId: Int) = DB.withConnection { implicit connection =>

@@ -28,9 +28,11 @@
       },
       makeProfilePlayer: function() {
         var promise = repository.becomePlayer(this);
+
         promise.success(function(data) {
           this.profileIsNowPlayer(true);
           this.profileIsPlayer(true);
+          this.playerModel.manuallyAddPlayerName(data.playerResult);
         });
 
         promise.fail(function(data) {
@@ -38,8 +40,7 @@
         });
 
         promise.always(function(data) {
-          console.log(data);
-          this.profileIsNowPlayerMessage(data);
+          this.profileIsNowPlayerMessage(data.resultMessage);
         });
       }
     });
@@ -209,6 +210,9 @@
         promise.fail(function(error) {
           this.playerNameError(error.responseText);
         });
+      },
+      manuallyAddPlayerName: function(name) {
+        this.playerNames.push(new profile.index.PlayerNameModel(name));
       }
     });
 
