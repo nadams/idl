@@ -78,13 +78,15 @@ object ProfileController
 
   def addPlayer(playerName: String) = IsAuthenticated { username => implicit request =>
     profileService.getByUsername(username) map { profile =>
-      playerService.createOrAddPlayerToProfile(profile.profileId, playerName) map { player => 
-        playerService.getPlayerProfile(profile.profileId, player.playerId) map { playerProfile =>
-          playerService.getPlayerProfileRecord(playerProfile.profileId, playerProfile.playerId) map { playerProfileRecord =>
-            Ok(Json.toJson(AddPlayerNameResultModel.toModel(playerProfileRecord)))
-          } getOrElse(InternalServerError(s"Could not get playerProfilRecord"))
-        } getOrElse(InternalServerError(s"Could not get player profile"))
-      } getOrElse(InternalServerError(s"Could not create player with name: `$playerName`"))
+      playerService.createOrAddPlayerToProfile(profile.profileId, playerName) map { tryResult =>
+        tryResult.map { player =>
+          playerService.getPlayerProfile(profile.profileId, player.playerId) map { playerProfile =>
+            playerService.getPlayerProfileRecord(playerProfile.profileId, playerProfile.playerId) map { playerProfileRecord =>
+              Ok(Json.toJson(AddPlayerNameResultModel.toModel(playerProfileRecord)))
+            } getOrElse(InternalServerError(s"Could not get playerProfilRecord"))
+          } getOrElse(InternalServerError(s"Could not get player profile"))
+        } getOrElse(InternalServerError(s"Could not create player with name: `$playerName`"))
+      } getOrElse(BadRequest("Profile has too many player names"))
     } getOrElse(profileNotFound(username))
   }
 

@@ -1,5 +1,6 @@
 package services
 
+import scala.util.Try
 import data._
 
 trait PlayerServiceComponent {
@@ -16,7 +17,7 @@ trait PlayerServiceComponent {
     def getPlayers() : Seq[TeamPlayerRecord]
     def getPlayersForProfile(profileId: Int) : Seq[Player]
     def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
-    def createOrAddPlayerToProfile(profileId: Int, playerName: String) : Option[Player]
+    def createOrAddPlayerToProfile(profileId: Int, playerName: String) : Try[Option[Player]]
     def getPlayerProfile(profileId: Int, playerId: Int) : Option[PlayerProfile]
     def getPlayerProfileRecord(profileId: Int, playerId: Int) : Option[PlayerProfileRecord]
     def getPlayerProfileRecordsForProfile(profileId: Int) : Seq[PlayerProfileRecord] 
@@ -39,11 +40,16 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
     def getPlayerProfileRecord(profileId: Int, playerId: Int) = playerRepository.getPlayerProfileRecord(profileId, playerId)
     def getPlayerProfileRecordsForProfile(profileId: Int) = playerRepository.getPlayerProfileRecordsForProfile(profileId)
 
-    def createOrAddPlayerToProfile(profileId: Int, playerName: String) = 
-      playerRepository.getPlayerByName(playerName) map { player => 
-        if(playerRepository.playerIsInAnyProfile(player.playerId)) playerRepository.addPlayerProfile(profileId, player.playerId, true)
-        else playerRepository.addPlayerProfile(profileId, player.playerId, true) 
-      } getOrElse(playerRepository.createPlayerAndAssignToProfile(profileId, playerName))
+    def createOrAddPlayerToProfile(profileId: Int, playerName: String) = Try(
+      if(playerRepository.getNumberOfPlayersForProfile(profileId) <= 15) {
+        playerRepository.getPlayerByName(playerName) map { player => 
+          if(playerRepository.playerIsInAnyProfile(player.playerId)) playerRepository.addPlayerProfile(profileId, player.playerId, true)
+          else playerRepository.addPlayerProfile(profileId, player.playerId, true) 
+        } getOrElse(playerRepository.createPlayerAndAssignToProfile(profileId, playerName))
+      } else {
+        throw ProfileExceededPlayerCount() 
+      }
+    )
     
     def profileIsPlayer(profileId: Int) = 
       playerRepository.getPlayersByProfileId(profileId).nonEmpty
@@ -55,3 +61,5 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
       playerRepository.batchCreatePlayerFromName(names.diff(playerService.getPlayerNamesThatExist(names)))
   }
 }
+
+case class ProfileExceededPlayerCount() extends Exception()

@@ -20,6 +20,13 @@ object PlayerProfile {
       FROM ${PlayerProfileSchema.tableName}
       WHERE ${PlayerProfileSchema.playerId} = {playerId}
     """
+    
+  lazy val numberOfPlayersForProfileSql =
+    s"""
+      SELECT COUNT(*)
+      FROM ${PlayerProfileSchema.tableName}
+      WHERE ${PlayerProfileSchema.profileId} = {profileId}
+    """
 
   lazy val insertPlayerProfileSql =
     s"""

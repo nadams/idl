@@ -16,6 +16,7 @@ trait PlayerRepositoryComponent {
     def getPlayers() : Seq[TeamPlayerRecord] 
     def getPlayersForProfile(profileId: Int) : Seq[Player]
     def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
+    def getNumberOfPlayersForProfile(playerId: Int) : Int
     def playerIsInAnyProfile(playerId: Int) : Boolean
     def addPlayerProfile(profileId: Int, playerId: Int, needsApproval: Boolean) : Option[Player] 
     def createPlayerAndAssignToProfile(profileId: Int, playerName: String) : Option[Player]
@@ -232,6 +233,13 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .on('profileId -> profileId)
       .as(PlayerProfileRecord.multiRowParser)
       .map(PlayerProfileRecord(_))
+    }
+
+    def getNumberOfPlayersForProfile(profileId: Int) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfile.numberOfPlayersForProfileSql)
+      .on('profileId -> profileId)
+      .as(scalar[Long] single)
+      .toInt
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
