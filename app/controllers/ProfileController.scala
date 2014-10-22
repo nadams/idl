@@ -85,8 +85,8 @@ object ProfileController
               Ok(Json.toJson(AddPlayerNameResultModel.toModel(playerProfileRecord)))
             } getOrElse(InternalServerError(s"Could not get playerProfilRecord"))
           } getOrElse(InternalServerError(s"Could not get player profile"))
-        } getOrElse(InternalServerError(s"Could not create player with name: `$playerName`"))
-      } getOrElse(BadRequest("Profile has too many player names"))
+        } getOrElse(InternalServerError("Player name already exists"))
+      } getOrElse(BadRequest("You have too many player names"))
     } getOrElse(profileNotFound(username))
   }
 

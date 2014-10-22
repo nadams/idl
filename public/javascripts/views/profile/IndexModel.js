@@ -3,6 +3,10 @@
 (function(ko, _, profile, repository) {
   'use strict';
 
+  var nullOrEmpty = function(string) {
+    return typeof string === 'undefined' || string.length === 0;
+  };
+
   profile.index.IndexModel = (function() {
     var Model = function(data) {
       this.profileId = ko.observable();
@@ -65,15 +69,15 @@
       }, this);
       
       this.hasCurrentPasswordError = ko.computed(function() {
-        return !this.nullOrEmpty(this.currentPasswordError());
+        return !nullOrEmpty(this.currentPasswordError());
       }, this);
       
       this.hasNewPasswordError = ko.computed(function() {
-        return !this.nullOrEmpty(this.newPasswordError());
+        return !nullOrEmpty(this.newPasswordError());
       }, this);
 
       this.hasConfirmPasswordError = ko.computed(function() {
-        return !this.nullOrEmpty(this.confirmPasswordError());
+        return !nullOrEmpty(this.confirmPasswordError());
       }, this);
     };
 
@@ -132,9 +136,6 @@
         this.newPasswordError('');
         this.confirmPasswordError('');
         this.globalErrors.removeAll();
-      },
-      nullOrEmpty: function(string) {
-        return typeof string === 'undefined' || string.length === 0;
       }
     });
 
@@ -146,8 +147,13 @@
       this.playerNames = ko.observableArray();
       this.playerNameToCreate = ko.observable('');
       this.isAddingPlayerName = ko.observable(false);
+      this.playerNameError = ko.observable();
     
       this.initialize(data);
+
+      this.hasPlayerNameError = ko.computed(function() {
+        return !nullOrEmpty(this.playerNameError());
+      }, this);
 
       this.removePlayerName = function(player) {
         var promise = repository.removePlayer(player.playerId(), this);
@@ -182,6 +188,10 @@
         promise.always(function() {
           this.isAddingPlayerName(false);
           this.playerNameToCreate('');
+        });
+
+        promise.fail(function(error) {
+          this.playerNameError(error.responseText);
         });
       }
     });
