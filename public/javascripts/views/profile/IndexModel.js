@@ -178,6 +178,7 @@
       },
       addPlayerName: function() {
         this.isAddingPlayerName(true);
+        this.playerNameError('');
         var playerName = this.playerNameToCreate();
         var promise = repository.addPlayer(playerName, this);
 
