@@ -13,6 +13,7 @@
       this.profileIsPlayer = ko.observable(false);
       this.profileModel = new profile.index.ProfileModel(data.profileModel);
       this.playerModel = new profile.index.PlayerModel(data.playerModel);
+      this.teamModel = new profile.index.TeamModel(data.teamModel);
 
       this.profileIsNowPlayer = ko.observable(false);
       this.profileIsNowPlayerMessage = ko.observable('');
@@ -236,6 +237,21 @@
       },
       toggleConfirmDelete: function() {
         this.isConfirmingRemoval(!this.isConfirmingRemoval());
+      }
+    });
+
+    return Model;
+  })();
+
+  profile.index.TeamModel = (function() {
+    var Model = function(data) {
+      
+      this.initialize(data);
+    };
+
+    ko.utils.extend(Model.prototype, {
+      initialize: function(data) {
+      
       }
     });
 
