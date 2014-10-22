@@ -115,7 +115,7 @@
 
           this.successfullyUpdatedPassword(false);
           this.currentPasswordError(data.currentPasswordError);
-          this.newPasswordError(data.currentPasswordError);
+          this.newPasswordError(data.newPasswordError);
           this.confirmPasswordError(data.confirmPasswordError);
           this.globalErrors.removeAll();
           this.globalErrors(data.globalErrors);
