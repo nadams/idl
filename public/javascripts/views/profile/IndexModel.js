@@ -205,6 +205,7 @@
       this.playerId = ko.observable();
       this.playerName = ko.observable();
       this.isApproved = ko.observable(false);
+      this.isConfirmingRemoval = ko.observable(false);
     
       this.initialize(data);
 
@@ -218,6 +219,9 @@
         this.playerId(data.playerId);
         this.playerName(data.playerName);
         this.isApproved(data.isApproved);
+      },
+      toggleConfirmDelete: function() {
+        this.isConfirmingRemoval(!this.isConfirmingRemoval());
       }
     });
 

@@ -193,8 +193,17 @@
                       'list-group-item-warning': !isApproved(), 
                       'list-group-item-success': isApproved() }">
                       <span data-bind="text: playerName"></span>
-                      <button class="btn btn-xs btn-danger pull-right" data-bind="click: $parent.removePlayerName"><span class="glyphicon glyphicon-trash"></span></button>
+                      <button class="btn btn-xs btn-danger pull-right" data-bind="click: toggleConfirmDelete"><span class="glyphicon glyphicon-trash"></span></button>
                     </li>
+                    <!-- ko if: isConfirmingRemoval -->
+                    <li class="list-group-item list-group-item-danger clearfix">
+                      <span>Are you sure you want to remove <span data-bind="text: playerName"></span>?</span>
+                      <span class="pull-right">
+                        <button class="btn btn-xs btn-primary" data-bind="click: toggleConfirmDelete">No</button>
+                        <button class="btn btn-xs btn-danger" data-bind="click: $parent.removePlayerName">Yes</button>
+                      </span>
+                    </li>
+                    <!-- /ko -->
                   </ul>
                 </div>
               </div>
