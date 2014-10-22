@@ -49,12 +49,14 @@
   profile.index.ProfileModel = (function() {
     var Model = function(data) {
       this.displayName = ko.observable();
+      this.displayNameInput = ko.observable();
       this.currentPassword = ko.observable('');
       this.newPassword = ko.observable('');
       this.confirmPassword = ko.observable('');
       this.successfullyUpdatedPassword = ko.observable(false);
-      this.successfullyUpdatedDisplayName = ko.observable(true);
+      this.successfullyUpdatedDisplayName = ko.observable(false);
       
+      this.displayNameError = ko.observable();
       this.currentPasswordError = ko.observable('');
       this.newPasswordError = ko.observable('');
       this.confirmPasswordError = ko.observable('');
@@ -63,6 +65,14 @@
       this.isUpdatingDisplayName = ko.observable(false);
 
       this.initialize(data);
+
+      this.canUpdateDisplayName = ko.computed(function() {
+        return !nullOrEmpty(this.displayNameInput()) && this.displayNameInput() !== this.displayName();
+      }, this);
+
+      this.hasDisplayNameError = ko.computed(function() {
+        return !nullOrEmpty(this.displayNameError());
+      }, this);
 
       this.hasGlobalErrors = ko.computed(function() {
         return this.globalErrors().length > 0;
@@ -84,6 +94,7 @@
     ko.utils.extend(Model.prototype, {
       initialize: function(data) {
         this.displayName(data.displayName);
+        this.displayNameInput(data.displayName);
       },
       updatePassword: function() {
         var promise = repository.updatePassword(
@@ -113,19 +124,22 @@
       updateDisplayName: function() {
         this.isUpdatingDisplayName(true);
 
-        var displayName = this.displayName();
+        var displayName = this.displayNameInput();
         var promise = repository.updateDisplayName(displayName, this);
 
         promise.done(function() {
-          console.log('success');
+          this.successfullyUpdatedDisplayName(true);
+          this.displayNameError('');
+          this.displayName(this.displayNameInput());
         });
 
         promise.always(function() {
           this.isUpdatingDisplayName(false);
         });
 
-        promise.fail(function() {
-          console.log('failure');
+        promise.fail(function(error) {
+          this.successfullyUpdatedDisplayName(false);
+          this.displayNameError(error.responseText);
         });
       },
       clearPasswordForm: function() {
