@@ -103,5 +103,5 @@ object ProfileController
     } getOrElse(profileNotFound(username))
   }
 
-  private def profileNotFound(username: String) = NotFound("The profile `$username` was not found.")
+  private def profileNotFound(username: String) = NotFound(s"The profile `$username` was not found.")
 }
