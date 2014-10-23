@@ -71,7 +71,7 @@ object ProfileController
   }
 
   def games = IsAuthenticated { username => implicit request => 
-    Ok(views.html.profile.myGames())
+    Ok("")
   }
 
   def addPlayer(playerName: String) = IsAuthenticated { username => implicit request =>
