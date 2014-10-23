@@ -70,7 +70,7 @@ object ProfileController
     } getOrElse(profileNotFound(username))
   }
 
-  def myGames = IsAuthenticated { username => implicit request => 
+  def games = IsAuthenticated { username => implicit request => 
     Ok(views.html.profile.myGames())
   }
 
