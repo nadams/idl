@@ -36,7 +36,17 @@ object ProfileController
 
   def index = IsAuthenticated { username => implicit request =>
     profileService.getByUsername(username).fold(profileNotFound(username)){ profile =>
-      Ok(views.html.profile.index(IndexModel.toModel(profile.profileId, playerService.profileIsPlayer(profile.profileId), profile, playerService.getPlayerProfileRecordsForProfile(profile.profileId))))
+      Ok(
+        views.html.profile.index(
+          IndexModel.toModel(
+            profile.profileId, 
+            playerService.profileIsPlayer(profile.profileId), 
+            profile, 
+            playerService.getPlayerProfileRecordsForProfile(profile.profileId),
+            playerService.getFellowPlayersForProfile(profile.profileId)
+          )
+        )
+      )
     }
   }
 
