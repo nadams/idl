@@ -23,6 +23,7 @@ trait PlayerRepositoryComponent {
     def getPlayerProfile(profileId: Int, playerId: Int) : Option[PlayerProfile]
     def getPlayerProfileRecord(profileId: Int, playerId: Int) : Option[PlayerProfileRecord]
     def getPlayerProfileRecordsForProfile(profileId: Int) : Seq[PlayerProfileRecord] 
+    def getFellowPlayersForProfile(profileId: Int) : Seq[FellowPlayerRecord]
   }
 }
 
@@ -239,6 +240,13 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .as(scalar[Long] single)
       .toInt
     }
+
+    def getFellowPlayersForProfile(profileId: Int) = DB.withConnection { implicit connection =>
+      SQL(FellowPlayerRecord.selectByPlayerId)
+      .on('profileId -> profileId)
+      .as(FellowPlayerRecord.multiRowParser)
+      .map(FellowPlayerRecord(_))
+    } 
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
       Player(
