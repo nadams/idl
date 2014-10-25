@@ -14,7 +14,6 @@ trait PlayerRepositoryComponent {
     def createPlayerFromName(name: String) : Player
     def batchCreatePlayerFromName(names: Set[String]) : Set[Player]
     def getPlayers() : Seq[TeamPlayerRecord] 
-    def getPlayersForProfile(profileId: Int) : Seq[Player]
     def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
     def getNumberOfPlayersForProfile(playerId: Int) : Int
     def playerIsInAnyProfile(playerId: Int) : Boolean
@@ -35,62 +34,26 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
     import anorm.SqlParser._
     import play.api.db.DB
     import play.api.Play.current
-
-    val singleRowParser = 
-      int(PlayerSchema.playerId) ~ 
-      str(PlayerSchema.playerName) ~ 
-      bool(PlayerSchema.isActive) ~ 
-      get[Option[Int]](TeamPlayerSchema.teamId) map flatten
-
-    val multiRowParser = singleRowParser *
-
-    val selectAllPlayersSql = 
-      s"""
-        SELECT 
-          p.${PlayerSchema.playerId},
-          p.${PlayerSchema.playerName},
-          p.${PlayerSchema.isActive},
-          tp.${TeamPlayerSchema.teamId}
-        FROM ${PlayerSchema.tableName} AS p
-          LEFT OUTER JOIN ${TeamPlayerSchema.tableName} AS tp ON p.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
-      """
+    import org.joda.time.{ DateTime, DateTimeZone }
+    import AnormExtensions._
 
     def getAllPlayers() : Seq[Player] = DB.withConnection { implicit connection => 
-      SQL(selectAllPlayersSql).as(multiRowParser).map(Player(_))
+      SQL(Player.selectAllPlayersSql)
+      .as(Player.multiRowParser)
+      .map(Player(_))
     }
 
     def getPlayersByProfileId(profileId: Int) : Seq[Player] = DB.withConnection { implicit connection => 
-      SQL(
-        s"""
-          SELECT 
-            p.${PlayerSchema.playerId},
-            p.${PlayerSchema.playerName},
-            p.${PlayerSchema.isActive},
-            NULL AS ${TeamPlayerSchema.teamId}
-          FROM ${PlayerSchema.tableName} AS p
-            INNER JOIN ${PlayerProfileSchema.tableName} AS pp ON p.${PlayerSchema.playerId} = pp.${PlayerProfileSchema.playerId}
-          WHERE ${PlayerProfileSchema.profileId} = {profileId}
-        """
-      )
+      SQL(Player.selectByProfileId)
       .on('profileId -> profileId)
-      .as(multiRowParser)
+      .as(Player.multiRowParser)
       .map(Player(_))
     } 
 
     def getPlayer(playerId: Int) : Option[Player] = DB.withConnection { implicit connection => 
-      SQL(
-        s"""
-          SELECT 
-            p.${PlayerSchema.playerId},
-            p.${PlayerSchema.playerName},
-            p.${PlayerSchema.isActive},
-            NULL AS ${TeamPlayerSchema.teamId}
-          FROM ${PlayerSchema.tableName} AS p
-          WHERE ${PlayerSchema.playerId} = {playerId}
-        """
-      )
+      SQL(Player.selectPlayer)
       .on('playerId -> playerId)
-      .as(singleRowParser singleOpt)
+      .as(Player.singleRowParser singleOpt)
       .map(Player(_))
     }
 
@@ -136,13 +99,9 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
     }
 
     def getPlayerByName(name: String) = DB.withConnection { implicit connection => 
-      SQL(
-        s"""
-          $selectAllPlayersSql
-          WHERE p.${PlayerSchema.playerName} = {playerName}
-        """
-      ).on('playerName -> name)
-      .as(singleRowParser singleOpt)
+      SQL(Player.selectByPlayerName)
+      .on('playerName -> name)
+      .as(Player.singleRowParser singleOpt)
       .map(Player(_))
     }
 
@@ -173,13 +132,6 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .map(TeamPlayerRecord(_))
     }
 
-    def getPlayersForProfile(profileId: Int) = DB.withConnection { implicit connection => 
-      SQL(Player.selectByProfileId)
-      .on('profileId -> profileId)
-      .as(Player.multiRowParser)
-      .map(Player(_))
-    }
-
     def removePlayerFromProfile(profileId: Int, playerId: Int) = DB.withConnection { implicit connection => 
       SQL(PlayerProfile.removePlayerFromProfileSql)
       .on('profileId -> profileId, 'playerId -> playerId)
@@ -201,8 +153,10 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
     }
 
     def createPlayerAndAssignToProfile(profileId: Int, playerName: String) = DB.withTransaction { implicit connection =>
+      val now = new DateTime(DateTimeZone.UTC)
+
       val playerId = SQL(Player.insertPlayer)
-      .on('playerName -> playerName, 'isActive -> true)
+      .on('playerName -> playerName, 'isActive -> true, 'dateCreated -> now)
       .executeInsert(scalar[Long] single)
       .toInt
 
@@ -210,7 +164,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .on('playerId -> playerId, 'profileId -> profileId, 'isApproved -> true)
       .executeUpdate
 
-      Some(Player(playerId, playerName, true))
+      Some(Player(playerId, playerName, true, now))
     }
 
     def getPlayerProfile(profileId: Int, playerId: Int) = DB.withConnection { implicit connection =>
@@ -248,26 +202,19 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .map(FellowPlayerRecord(_))
     } 
 
-    private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = 
+    private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = {
+      val now = new DateTime(DateTimeZone.UTC)
       Player(
-        SQL(
-          s"""
-            INSERT INTO ${PlayerSchema.tableName} (
-              ${PlayerSchema.playerName},
-              ${PlayerSchema.isActive}
-            ) VALUES (
-              {playerName},
-              {isActive}
-            )
-          """
-        ).on(
+        SQL(Player.insertPlayer).on(
           'playerName -> name,
-          'isActive -> true
+          'isActive -> true,
+          'dateCreated -> now
         ).executeInsert(scalar[Long] single)
         .toInt,
         name,
         true,
-        None
+        now
       )
+    }
   }
 }

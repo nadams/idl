@@ -5,6 +5,7 @@ object PlayerSchema {
   val playerId = "PlayerId"
   val playerName = "PlayerName"
   val isActive = "IsActive"
+  val dateCreated = "DateCreated"
 }
 
 object TeamSchema {

@@ -1,6 +1,7 @@
 package services
 
 import scala.util.Try
+import org.joda.time.{ DateTime, DateTimeZone }
 import data._
 
 trait PlayerServiceComponent {
@@ -15,7 +16,6 @@ trait PlayerServiceComponent {
     def createPlayerFromName(name: String) : Player
     def batchCreatePlayerFromName(names: Set[String]) : Set[Player]
     def getPlayers() : Seq[TeamPlayerRecord]
-    def getPlayersForProfile(profileId: Int) : Seq[Player]
     def removePlayerFromProfile(profileId: Int, playerId: Int) : Boolean
     def createOrAddPlayerToProfile(profileId: Int, playerName: String) : Try[Option[Player]]
     def getPlayerProfile(profileId: Int, playerId: Int) : Option[PlayerProfile]
@@ -35,7 +35,6 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
     def getPlayerNamesThatExist(names: Set[String]) = playerRepository.getPlayerNamesThatExist(names)
     def createPlayerFromName(name: String) = playerRepository.createPlayerFromName(name)
     def getPlayers() = playerRepository.getPlayers() 
-    def getPlayersForProfile(profileId: Int) = playerRepository.getPlayersForProfile(profileId)
     def removePlayerFromProfile(profileId: Int, playerId: Int) = playerRepository.removePlayerFromProfile(profileId, playerId)
     def getPlayerProfile(profileId: Int, playerId: Int) = playerRepository.getPlayerProfile(profileId, playerId)
     def getPlayerProfileRecord(profileId: Int, playerId: Int) = playerRepository.getPlayerProfileRecord(profileId, playerId)
@@ -57,7 +56,7 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
       playerRepository.getPlayersByProfileId(profileId).nonEmpty
 
     def makeProfileAPlayer(profile: Profile) = 
-      playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, None), profile.profileId) map { playerId =>
+      playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, new DateTime(DateTimeZone.UTC), None), profile.profileId) map { playerId =>
         playerRepository.getPlayerProfileRecord(profile.profileId, playerId) 
       } getOrElse(None)
 
