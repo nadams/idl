@@ -250,6 +250,7 @@
   profile.index.TeamsModel = (function() {
     var Model = function(data) {
       this.teams = ko.observableArray();
+      this.selectedTeam = ko.observable();
       
       this.initialize(data);
 
@@ -268,6 +269,10 @@
       this.firstTeam = ko.computed(function() {
         return this.teams()[0];
       }, this);
+      
+      this.switchTeam = function(team) {
+        this.selectedTeam(team);
+      }.bind(this);
     };
 
     ko.utils.extend(Model.prototype, {
@@ -275,6 +280,10 @@
         this.teams(_.map(data, function(item) {
           return new profile.index.TeamMembershipModel(item);
         }, this));
+
+        if(this.teams().length > 0) {
+          this.selectedTeam(this.teams()[0]);
+        }
       }
     });
 

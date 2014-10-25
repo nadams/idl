@@ -38,6 +38,7 @@
     })();
   </script>
   <script type="text/html" id="teamMembersTemplate">
+    <h4>Team: <span data-bind="text: teamName"></span></h4>
     <ul class="list-group" data-bind="foreach: membersOrdered">
       <li class="list-group-item" data-bind="text: formattedName"></li>
     </ul>
@@ -239,13 +240,19 @@
                   <p>No Teams</p>
                   <!-- /ko -->
                   <!-- ko if: hasSingleTeam -->
-                  <div data-bind="with: firstTeam()">
-                    <h4>Team: <span data-bind="text: teamName"></span></h4>
-                    <div data-bind="template: { name: 'teamMembersTemplate' }"></div>
-                  </div>
+                  <div data-bind="template: { name: 'teamMembersTemplate', data: firstTeam }"></div>
                   <!-- /ko -->
                   <!-- ko if: hasMultipleTeams -->
-
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                      Teams 
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: teams">
+                      <li role="presentation"><a role="menuitem" href="#" tabindex="-1" data-bind="text: teamName, click: $parent.switchTeam"></a></li>
+                    </ul>
+                  </div>
+                  <div data-bind="template: { name: 'teamMembersTemplate', data: selectedTeam }"></div>
                   <!-- /ko -->
                 </div>
               </div>
