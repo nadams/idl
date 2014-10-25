@@ -56,7 +56,7 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
       playerRepository.getPlayersByProfileId(profileId).nonEmpty
 
     def makeProfileAPlayer(profile: Profile) = 
-      playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, new DateTime(DateTimeZone.UTC), None), profile.profileId) map { playerId =>
+      playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, new DateTime(DateTimeZone.UTC)), profile.profileId) map { playerId =>
         playerRepository.getPlayerProfileRecord(profile.profileId, playerId) 
       } getOrElse(None)
 

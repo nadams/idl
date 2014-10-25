@@ -2,7 +2,7 @@ package data
 
 import org.joda.time.DateTime
 
-case class Player(playerId: Int, playerName: String, isActive: Boolean, dateCreated: DateTime, teamId: Option[Int])
+case class Player(playerId: Int, playerName: String, isActive: Boolean, dateCreated: DateTime)
 
 object Player {
   import anorm._ 
@@ -15,8 +15,7 @@ object Player {
         p.${PlayerSchema.playerId},
         p.${PlayerSchema.playerName},
         p.${PlayerSchema.isActive},
-        p.${PlayerSchema.dateCreated},
-        NULL AS ${TeamPlayerSchema.teamId}
+        p.${PlayerSchema.dateCreated}
       FROM ${PlayerSchema.tableName} AS p
       WHERE ${PlayerSchema.playerId} = {playerId}
     """
@@ -27,10 +26,8 @@ object Player {
         p.${PlayerSchema.playerId},
         p.${PlayerSchema.playerName},
         p.${PlayerSchema.isActive},
-        p.${PlayerSchema.dateCreated},
-        tp.${TeamPlayerSchema.teamId}
+        p.${PlayerSchema.dateCreated}
       FROM ${PlayerSchema.tableName} AS p
-        LEFT OUTER JOIN ${TeamPlayerSchema.tableName} AS tp ON p.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
     """
 
   lazy val selectByProfileId = 
@@ -72,6 +69,5 @@ object Player {
 
   lazy val multiRowParser = singleRowParser *
 
-  def apply(x: (Int, String, Boolean, DateTime, Option[Int])) : Player = Player(x._1, x._2, x._3, x._4, x._5)
-  def apply(x: (Int, String, Boolean, DateTime)) : Player = Player(x._1, x._2, x._3, x._4, None)
+  def apply(x: (Int, String, Boolean, DateTime)) : Player = Player(x._1, x._2, x._3, x._4)
 }
