@@ -1,6 +1,6 @@
 package data 
 
-case class FellowPlayerRecord(playerId: Int, playerName: String, teamId: Int, teamName: String)
+case class FellowPlayerRecord(playerId: Int, playerName: String, isCaptain: Boolean, teamId: Int, teamName: String)
 
 object FellowPlayerRecord {
   import anorm._ 
@@ -12,6 +12,7 @@ object FellowPlayerRecord {
       SELECT DISTINCT
         teams.${PlayerSchema.playerId}, 
         teams.${PlayerSchema.playerName},
+        teams.${TeamPlayerSchema.isCaptain},
         t.${TeamSchema.teamId}, 
         t.${TeamSchema.teamName}
       FROM ${PlayerSchema.tableName} AS pl 
@@ -23,7 +24,8 @@ object FellowPlayerRecord {
           SELECT 
             t2.${TeamSchema.teamId},
             pl2.${PlayerSchema.playerId},
-            pl2.${PlayerSchema.playerName}
+            pl2.${PlayerSchema.playerName},
+            tp2.${TeamPlayerSchema.isCaptain}
           FROM ${TeamSchema.tableName} AS t2 
           INNER JOIN ${TeamPlayerSchema.tableName} AS tp2 ON t2.${TeamSchema.teamId} = tp2.${TeamPlayerSchema.teamId}
           INNER JOIN ${PlayerSchema.tableName} AS pl2 ON tp2.${TeamPlayerSchema.playerId} = pl2.${PlayerSchema.playerId} AND pl2.${PlayerSchema.playerId}
@@ -35,12 +37,13 @@ object FellowPlayerRecord {
   lazy val singleRowParser =
     int(PlayerSchema.playerId) ~
     str(PlayerSchema.playerName) ~
+    bool(TeamPlayerSchema.isCaptain) ~
     int(TeamSchema.teamId) ~
     str(TeamSchema.teamName) map flatten
 
   lazy val multiRowParser = singleRowParser *
 
-  def apply(x: (Int, String, Int, String)) : FellowPlayerRecord = 
-    FellowPlayerRecord(x._1, x._2, x._3, x._4)
+  def apply(x: (Int, String, Boolean, Int, String)) : FellowPlayerRecord = 
+    FellowPlayerRecord(x._1, x._2, x._3, x._4, x._5)
 }
 
