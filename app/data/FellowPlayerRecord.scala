@@ -9,7 +9,7 @@ object FellowPlayerRecord {
 
   lazy val selectByPlayerId =
     s"""
-      SELECT 
+      SELECT DISTINCT
         teams.${PlayerSchema.playerId}, 
         teams.${PlayerSchema.playerName},
         t.${TeamSchema.teamId}, 
