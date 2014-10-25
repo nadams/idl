@@ -37,6 +37,11 @@
       }
     })();
   </script>
+  <script type="text/html" id="teamMembersTemplate">
+    <ul class="list-group" data-bind="foreach: membersOrdered">
+      <li class="list-group-item" data-bind="text: formattedName"></li>
+    </ul>
+  </script>
   <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
   <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
 }
@@ -228,12 +233,27 @@
             </div>
             <div class="tab-pane" id="team" data-bind="with: teamsModel">
               <h3>Team Settings</h3>
+              <div class="row">
+                <div class="col-xs-12 col-sm-8 col-md-6">
+                  <!-- ko ifnot: hasTeams -->
+                  <p>No Teams</p>
+                  <!-- /ko -->
+                  <!-- ko if: hasSingleTeam -->
+                  <div data-bind="with: firstTeam()">
+                    <h4>Team: <span data-bind="text: teamName"></span></h4>
+                    <div data-bind="template: { name: 'teamMembersTemplate' }"></div>
+                  </div>
+                  <!-- /ko -->
+                  <!-- ko if: hasMultipleTeams -->
+
+                  <!-- /ko -->
+                </div>
+              </div>
             </div>
             <!-- /ko -->
           </div>
         </div>
       </div>
-      <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 		</div>
 	</div>
 }

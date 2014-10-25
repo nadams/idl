@@ -252,6 +252,22 @@
       this.teams = ko.observableArray();
       
       this.initialize(data);
+
+      this.hasTeams = ko.computed(function() {
+        return this.teams().length > 0;
+      }, this);
+      
+      this.hasSingleTeam = ko.computed(function() {
+        return this.teams().length === 1;
+      }, this);
+
+      this.hasMultipleTeams = ko.computed(function() {
+        return this.teams().length > 1;
+      }, this);
+
+      this.firstTeam = ko.computed(function() {
+        return this.teams()[0];
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
@@ -272,6 +288,10 @@
       this.members = ko.observableArray();
     
       this.initialize(data);
+
+      this.membersOrdered = ko.computed(function() {
+        return _.sortBy(this.members(), function(item) { return item.playerName(); });
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
@@ -291,14 +311,20 @@
     var Model = function(data) {
       this.playerId = ko.observable();
       this.playerName = ko.observable();
+      this.isCaptain = ko.observable();
     
       this.initialize(data);
+
+      this.formattedName = ko.computed(function() {
+        return this.isCaptain() ? this.playerName() + ' - Team Captain' : this.playerName();
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
       initialize: function(data) {
         this.playerId(data.playerId);
         this.playerName(data.playerName);
+        this.isCaptain(data.isCaptain);
       }
     });
 
