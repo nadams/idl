@@ -226,13 +226,14 @@
                 </div>
               </div>
             </div>
-            <div class="tab-pane" id="team" data-bind="with: teamModel">
+            <div class="tab-pane" id="team" data-bind="with: teamsModel">
               <h3>Team Settings</h3>
             </div>
             <!-- /ko -->
           </div>
         </div>
       </div>
+      <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 		</div>
 	</div>
 }

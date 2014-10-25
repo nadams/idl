@@ -13,7 +13,7 @@
       this.profileIsPlayer = ko.observable(false);
       this.profileModel = new profile.index.ProfileModel(data.profileModel);
       this.playerModel = new profile.index.PlayerModel(data.playerModel);
-      this.teamModel = new profile.index.TeamModel(data.teamModel);
+      this.teamsModel = new profile.index.TeamsModel(data.teams);
 
       this.profileIsNowPlayer = ko.observable(false);
       this.profileIsNowPlayerMessage = ko.observable('');
@@ -247,15 +247,58 @@
     return Model;
   })();
 
-  profile.index.TeamModel = (function() {
+  profile.index.TeamsModel = (function() {
     var Model = function(data) {
+      this.teams = ko.observableArray();
       
       this.initialize(data);
     };
 
     ko.utils.extend(Model.prototype, {
       initialize: function(data) {
-      
+        this.teams(_.map(data, function(item) {
+          return new profile.index.TeamMembershipModel(item);
+        }, this));
+      }
+    });
+
+    return Model;
+  })();
+
+  profile.index.TeamMembershipModel = (function() {
+    var Model = function(data) {
+      this.teamId = ko.observable();
+      this.teamName = ko.observable();
+      this.members = ko.observableArray();
+    
+      this.initialize(data);
+    };
+
+    ko.utils.extend(Model.prototype, {
+      initialize: function(data) {
+        this.teamId(data.teamId);
+        this.teamName(data.teamName);
+        this.members(_.map(data.members, function(item) {
+          return new profile.index.TeamPlayerModel(item);
+        }, this));
+      }
+    });
+
+    return Model;
+  })();
+
+  profile.index.TeamPlayerModel = (function() {
+    var Model = function(data) {
+      this.playerId = ko.observable();
+      this.playerName = ko.observable();
+    
+      this.initialize(data);
+    };
+
+    ko.utils.extend(Model.prototype, {
+      initialize: function(data) {
+        this.playerId(data.playerId);
+        this.playerName(data.playerName);
       }
     });
 
