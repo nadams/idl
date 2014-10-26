@@ -96,10 +96,10 @@ object RegularSeasonStatsModel {
         tempStats(team1Stats.teamId).wins += 1
         tempStats(team2Stats.teamId).losses += 1
       } else if(team2Stats.wins > team1Stats.wins) {
-    	  tempStats(team1Stats.teamId).losses += 1
+        tempStats(team1Stats.teamId).losses += 1
         tempStats(team2Stats.teamId).wins += 1
       } else {
-    	  tempStats(team1Stats.teamId).ties += 1
+        tempStats(team1Stats.teamId).ties += 1
         tempStats(team2Stats.teamId).ties += 1
       }
     }
