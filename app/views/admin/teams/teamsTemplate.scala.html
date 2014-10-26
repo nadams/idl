@@ -1,24 +1,24 @@
 @(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel)
 
 @extraNavItemsTemplate = {
-	<ul class="nav navbar-nav navbar-right nav-actions">
-		<li><a href="@routes.TeamController.players">Team Players</a></li>
-		<li><a href="@routes.TeamController.create">Add</a></li>
-		<li><a href="@routes.TeamController.index">Teams</a></li>
-	</ul>
+  <ul class="nav navbar-nav navbar-right nav-actions">
+    <li><a href="@routes.TeamController.players">Team Players</a></li>
+    <li><a href="@routes.TeamController.create">Add</a></li>
+    <li><a href="@routes.TeamController.index">Teams</a></li>
+  </ul>
 
-	@extraNavItems
+  @extraNavItems
 }
 
 @extraCssTemplate = {
-	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/admin.css")" />
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/admin.css")" />
     @extraCss
 }
 
 @extraScriptsTemplate = { 
-	@extraScripts
+  @extraScripts
 }
 
 @main(title, extraCssTemplate, extraScriptsTemplate, extraNavItemsTemplate) {
-	@content
+  @content
 }

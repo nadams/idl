@@ -9,13 +9,13 @@
 @extraScripts = {
   <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
   <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
-	@helper.javascriptRouter("routes")(
+  @helper.javascriptRouter("routes")(
     routes.javascript.ProfileController.becomePlayer,
     routes.javascript.ProfileController.updatePassword,
     routes.javascript.ProfileController.addPlayer,
     routes.javascript.ProfileController.removePlayer,
     routes.javascript.ProfileController.updateDisplayName
-	)
+  )
   <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
   <script>
     var profile = profile || {};
@@ -48,11 +48,11 @@
 }
 
 @main("Profile", extraScripts = extraScripts, extraCss = extraCss) {
-	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
-		<div class="panel-heading">
-			<h4>Manage Profile</h4>
-		</div>
-		<div class="panel-body">
+  <div class="panel panel-default" style="display: none;" data-bind="visible: true">
+    <div class="panel-heading">
+      <h4>Manage Profile</h4>
+    </div>
+    <div class="panel-body">
       <!-- ko if: profileIsNowPlayer -->
       <div class="alert alert-success">
         <p data-bind="text: profileIsNowPlayerMessage"></p>
@@ -261,6 +261,6 @@
           </div>
         </div>
       </div>
-		</div>
-	</div>
+    </div>
+  </div>
 }
