@@ -41,8 +41,8 @@ case class TeamMembershipModel(teamId: Int, teamName: String, isApproved: Boolea
 
 object TeamMembershipModel {
   def toModel(teams: Seq[FellowPlayerRecord]) = 
-    teams.groupBy(x => (x.teamId, x.teamName)).map { case (teamInfo, value) =>
-      TeamMembershipModel(teamInfo._1, teamInfo._2, false, value.map(y => TeamMembershipPlayerModel(y.playerId, y.playerName, y.isCaptain))) 
+    teams.groupBy(x => (x.teamId, x.teamName, x.isApproved)).map { case (teamInfo, value) =>
+      TeamMembershipModel(teamInfo._1, teamInfo._2, teamInfo._3, value.map(y => TeamMembershipPlayerModel(y.playerId, y.playerName, y.isCaptain))) 
     }.toSeq
 }
 

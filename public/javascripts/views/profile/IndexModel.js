@@ -320,6 +320,7 @@
       initialize: function(data) {
         this.teamId(data.teamId);
         this.teamName(data.teamName);
+        this.isApproved(data.isApproved);
         this.members(_.map(data.members, function(item) {
           return new profile.index.TeamPlayerModel(item);
         }, this));
@@ -347,7 +348,6 @@
         this.playerId(data.playerId);
         this.playerName(data.playerName);
         this.isCaptain(data.isCaptain);
-        this.isApproved(data.isApproved);
       }
     });
 
