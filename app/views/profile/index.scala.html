@@ -37,12 +37,6 @@
       }
     })();
   </script>
-  <script type="text/html" id="teamMembersTemplate">
-    <h4>Team: <span data-bind="text: teamName"></span></h4>
-    <ul class="list-group" data-bind="foreach: membersOrdered">
-      <li class="list-group-item" data-bind="text: formattedName"></li>
-    </ul>
-  </script>
   <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
   <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
 }
@@ -236,24 +230,50 @@
               <h3>Team Settings</h3>
               <div class="row">
                 <div class="col-xs-12 col-sm-8 col-md-6">
-                  <!-- ko ifnot: hasTeams -->
-                  <p>No Teams</p>
-                  <!-- /ko -->
-                  <!-- ko if: hasSingleTeam -->
-                  <div data-bind="template: { name: 'teamMembersTemplate', data: firstTeam }"></div>
-                  <!-- /ko -->
-                  <!-- ko if: hasMultipleTeams -->
-                  <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-                      Teams 
-                      <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: teams">
-                      <li role="presentation"><a role="menuitem" href="#" tabindex="-1" data-bind="text: teamName, click: $parent.switchTeam"></a></li>
-                    </ul>
+                  <div>
+                    <h4>Teams Enrolled In</h4>
+                    <div class="team-settings-subsection">
+                      <!-- ko ifnot: hasTeams -->
+                      <p>No Teams</p>
+                      <!-- /ko -->
+                      <!-- ko if: hasTeams -->
+                      <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                          Choose... 
+                          <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                          <!-- ko if: hasEnrolledTeams -->
+                            <li role="presentation" class="dropdown-header">Enrolled Teams</li>
+                            <!-- ko foreach: enrolledTeams -->
+                              <li role="presentation"><a role="menuitem" href="#" tabindex="-1" data-bind="text: teamName, click: $parent.switchTeam"></a></li>
+                            <!-- /ko -->
+                          <!-- /ko -->
+
+                          <!-- ko if: hasPendingTeams -->
+                            <li role="presentation" class="dropdown-header">Pending Teams</li>
+                            <!-- ko foreach: pendingTeams -->
+                              <li role="presentation"><a role="menuitem" href="#" tabindex="-1" data-bind="text: teamName, click: $parent.switchTeam"></a></li>
+                            <!-- /ko -->
+                          <!-- /ko -->
+                        </ul>
+                      </div>
+
+                      <div data-bind="with: selectedTeam">
+                        <h5>Team: <span data-bind="text: teamName"></span></h5>
+                        <ul class="list-group" data-bind="foreach: membersOrdered">
+                          <li class="list-group-item" data-bind="text: formattedName"></li>
+                        </ul>
+                      </div>
+                      <!-- /ko -->
+                    </div>
                   </div>
-                  <div data-bind="template: { name: 'teamMembersTemplate', data: selectedTeam }"></div>
-                  <!-- /ko -->
+                  <div>
+                    <h4>Request to Join a Team</h4>
+                    <div class="team-settings-subsection">
+                      
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

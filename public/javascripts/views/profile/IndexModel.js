@@ -258,14 +258,6 @@
         return this.teams().length > 0;
       }, this);
       
-      this.hasSingleTeam = ko.computed(function() {
-        return this.teams().length === 1;
-      }, this);
-
-      this.hasMultipleTeams = ko.computed(function() {
-        return this.teams().length > 1;
-      }, this);
-
       this.firstTeam = ko.computed(function() {
         return this.teams()[0];
       }, this);
@@ -273,6 +265,22 @@
       this.switchTeam = function(team) {
         this.selectedTeam(team);
       }.bind(this);
+
+      this.enrolledTeams = ko.computed(function() {
+        return this.teams();
+      }, this);
+
+      this.pendingTeams = ko.computed(function() {
+        return this.teams();
+      }, this);
+
+      this.hasEnrolledTeams = ko.computed(function() {
+        return true;
+      }, this);
+
+      this.hasPendingTeams = ko.computed(function() {
+        return true;
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
