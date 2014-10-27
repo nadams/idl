@@ -7,7 +7,6 @@ trait TeamRepositoryComponent {
     def getTeamsForSeason(seasonId: Int) : Seq[Team]
     def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false, isApproved: Boolean = false) : Boolean
     def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean
-    def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean
     def getAllActiveTeams() : Seq[Team]
     def insertTeam(team: Team) : Boolean
     def updateTeam(team: Team) : Boolean
@@ -81,21 +80,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         'teamId -> teamId
       )
       .as(scalar[Long] single) match {
-        case x if x == 0 => SQL(
-          s"""
-            INSERT INTO ${TeamPlayerSchema.tableName} (
-              ${TeamPlayerSchema.teamId},
-              ${TeamPlayerSchema.playerId}, 
-              ${TeamPlayerSchema.isCaptain},
-              ${TeamPlayerSchema.isApproved}
-            ) VALUES(
-              {teamId}, 
-              {playerId}, 
-              {isCaptain},
-              {isApproved}
-            )
-          """
-        )
+        case x if x == 0 => SQL(TeamPlayer.insertTeamPlayer)
         .on(
           'teamId -> teamId,
           'playerId -> playerId,
@@ -108,36 +93,10 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
     }
 
     def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean = DB.withConnection { implicit collection => 
-      SQL(
-        s"""
-          DELETE FROM 
-            ${TeamPlayerSchema.tableName}
-          WHERE 
-            ${TeamPlayerSchema.playerId} = {playerId} AND 
-            ${TeamPlayerSchema.teamId} = {teamId}
-        """
-      )
+      SQL(TeamPlayer.removeTeamPlayer)
       .on(
         'playerId -> playerId,
         'teamId -> teamId
-      )
-      .executeUpdate > 0
-    }
-
-    def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean = DB.withConnection { implicit connection => 
-      SQL(
-        s"""
-          UPDATE ${TeamPlayerSchema.tableName}
-          SET ${TeamPlayerSchema.isCaptain} = {isCaptain}
-          WHERE 
-            ${TeamPlayerSchema.playerId} = {playerId} AND 
-            ${TeamPlayerSchema.teamId} = {teamId}
-        """
-      )
-      .on(
-        'playerId -> playerId,
-        'teamId -> teamId,
-        'isCaptain -> isCaptain
       )
       .executeUpdate > 0
     }
