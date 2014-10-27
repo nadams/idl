@@ -306,8 +306,8 @@
     var Model = function(data) {
       this.teamId = ko.observable();
       this.teamName = ko.observable();
-      this.isApproved = ko.observable();
       this.members = ko.observableArray();
+      this.isApproved = ko.observable();
     
       this.initialize(data);
 
@@ -347,6 +347,7 @@
         this.playerId(data.playerId);
         this.playerName(data.playerName);
         this.isCaptain(data.isCaptain);
+        this.isApproved(data.isApproved);
       }
     });
 

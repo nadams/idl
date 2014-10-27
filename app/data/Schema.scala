@@ -21,6 +21,7 @@ object TeamPlayerSchema {
   val teamId = "TeamId"
   val playerId = "PlayerId"
   val isCaptain = "IsCaptain"
+  val isApproved = "IsApproved"
 }
 
 object TeamSeasonSchema {

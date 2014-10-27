@@ -37,12 +37,12 @@ object PlayerName {
     PlayerName(player.playerId, player.playerName, player.isApproved)  
 }
 
-case class TeamMembershipModel(teamId: Int, teamName: String, members: Seq[TeamMembershipPlayerModel])
+case class TeamMembershipModel(teamId: Int, teamName: String, isApproved: Boolean, members: Seq[TeamMembershipPlayerModel])
 
 object TeamMembershipModel {
   def toModel(teams: Seq[FellowPlayerRecord]) = 
     teams.groupBy(x => (x.teamId, x.teamName)).map { case (teamInfo, value) =>
-      TeamMembershipModel(teamInfo._1, teamInfo._2, value.map(y => TeamMembershipPlayerModel(y.playerId, y.playerName, y.isCaptain))) 
+      TeamMembershipModel(teamInfo._1, teamInfo._2, false, value.map(y => TeamMembershipPlayerModel(y.playerId, y.playerName, y.isCaptain))) 
     }.toSeq
 }
 
