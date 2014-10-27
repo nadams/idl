@@ -38,7 +38,7 @@ trait TeamServiceComponentImpl extends TeamServiceComponent {
     def makeCaptain(teamId: Int, playerId: Int) = teamRepository.makeCaptain(teamId, playerId)
 
     def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) =
-      playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId) }
+      playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId, isApproved = true) }
 
     def removePlayersFromTeam(teamId: Int, playerIds: Seq[Int]) =
       playerIds.filter { playerId => teamRepository.removePlayerFromTeam(playerId, teamId) }

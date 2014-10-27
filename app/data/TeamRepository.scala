@@ -5,7 +5,7 @@ trait TeamRepositoryComponent {
 
   trait TeamRepository {
     def getTeamsForSeason(seasonId: Int) : Seq[Team]
-    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) : Boolean
+    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false, isApproved: Boolean = false) : Boolean
     def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean
     def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean
     def getAllActiveTeams() : Seq[Team]
@@ -66,7 +66,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       .map(Team(_))
     }
 
-    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) = DB.withConnection { implicit connection =>
+    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false, isAproved: Boolean = false) = DB.withConnection { implicit connection =>
       SQL(
         s"""
           SELECT COUNT(*) AS Results
@@ -86,18 +86,21 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
             INSERT INTO ${TeamPlayerSchema.tableName} (
               ${TeamPlayerSchema.teamId},
               ${TeamPlayerSchema.playerId}, 
-              ${TeamPlayerSchema.isCaptain}
+              ${TeamPlayerSchema.isCaptain},
+              ${TeamPlayerSchema.isApproved}
             ) VALUES(
               {teamId}, 
               {playerId}, 
-              {isCaptain}
+              {isCaptain},
+              {isApproved}
             )
           """
         )
         .on(
           'teamId -> teamId,
           'playerId -> playerId,
-          'isCaptain -> isCaptain
+          'isCaptain -> isCaptain,
+          'isApproved -> isAproved
         )
         .executeUpdate > 0
         case _ => false
