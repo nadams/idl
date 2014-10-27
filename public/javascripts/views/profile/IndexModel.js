@@ -267,19 +267,23 @@
       }.bind(this);
 
       this.enrolledTeams = ko.computed(function() {
-        return this.teams();
+        return _.filter(this.teams(), function(item) {
+          return item.isApproved();
+        });
       }, this);
 
       this.pendingTeams = ko.computed(function() {
-        return this.teams();
+        return _.filter(this.teams(), function(item) {
+          return !item.isApproved();
+        });
       }, this);
 
       this.hasEnrolledTeams = ko.computed(function() {
-        return true;
+        return this.enrolledTeams().length > 0;
       }, this);
 
       this.hasPendingTeams = ko.computed(function() {
-        return true;
+        return this.pendingTeams().length > 0;
       }, this);
     };
 
@@ -302,6 +306,7 @@
     var Model = function(data) {
       this.teamId = ko.observable();
       this.teamName = ko.observable();
+      this.isApproved = ko.observable();
       this.members = ko.observableArray();
     
       this.initialize(data);
