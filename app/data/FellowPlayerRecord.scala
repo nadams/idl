@@ -36,6 +36,7 @@ object FellowPlayerRecord {
           LEFT OUTER JOIN ${PlayerProfileSchema.tableName} AS pp ON pl2.${PlayerSchema.playerId} = pp.${PlayerProfileSchema.playerId} AND pp.${PlayerProfileSchema.isApproved} = 1
         ) AS teams ON t.${TeamSchema.teamId} = teams.${TeamSchema.teamId} 
       WHERE p.${ProfileSchema.profileId} = {profileId}
+      ORDER BY t.${TeamSchema.teamName}, teams.${PlayerSchema.playerName}
     """
 
   lazy val singleRowParser =
