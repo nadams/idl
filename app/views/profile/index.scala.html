@@ -237,9 +237,9 @@
                       <p>No Teams</p>
                       <!-- /ko -->
                       <!-- ko if: hasTeams -->
-                      <div class="dropdown">
+                      <div class="dropdown team-dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-                          Choose... 
+                          <span data-bind="text: chosenTeamName"></span>
                           <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
@@ -259,8 +259,7 @@
                         </ul>
                       </div>
 
-                      <div data-bind="with: selectedTeam">
-                        <h5>Team: <span data-bind="text: teamName"></span></h5>
+                      <div class="team-list" data-bind="with: selectedTeam">
                         <ul class="list-group" data-bind="foreach: membersOrdered">
                           <li class="list-group-item" data-bind="text: formattedName"></li>
                         </ul>

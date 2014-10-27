@@ -285,6 +285,12 @@
       this.hasPendingTeams = ko.computed(function() {
         return this.pendingTeams().length > 0;
       }, this);
+
+      this.chosenTeamName = ko.computed(function() {
+        var selectedTeam = this.selectedTeam();
+
+        return typeof selectedTeam === 'undefined' ? 'Choose...' : selectedTeam.teamName();
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
