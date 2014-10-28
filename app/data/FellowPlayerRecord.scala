@@ -36,7 +36,7 @@ object FellowPlayerRecord {
           LEFT OUTER JOIN ${PlayerProfileSchema.tableName} AS pp ON pl2.${PlayerSchema.playerId} = pp.${PlayerProfileSchema.playerId} AND pp.${PlayerProfileSchema.isApproved} = 1
         ) AS teams ON t.${TeamSchema.teamId} = teams.${TeamSchema.teamId} 
       WHERE p.${ProfileSchema.profileId} = {profileId}
-        AND (({playerId} IS NULL AND {teamId} IS NULL) OR ({playerId} = tp.${TeamPlayerSchema.playerId} AND {teamId} = ${TeamPlayerSchema.teamId}))
+        AND (({playerId} IS NULL AND {teamId} IS NULL) OR ({playerId} = tp.${TeamPlayerSchema.playerId} AND {teamId} = tp.${TeamPlayerSchema.teamId}))
       ORDER BY t.${TeamSchema.teamName}, teams.${PlayerSchema.playerName}
     """
 

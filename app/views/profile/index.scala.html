@@ -270,7 +270,13 @@
                   <div>
                     <h4>Request to Join a Team</h4>
                     <div class="team-settings-subsection">
-                      
+                      <form>
+                        <input type="text" data-bind="textInput: teamToJoin" />
+                        <select data-bind="options: playerModel.playerNames(), 
+                          value: selectedPlayer, 
+                          optionsText: 'playerName', 
+                          optionsCaption: 'Choose...'"></select>
+                      </form>
                     </div>
                   </div>
                 </div>

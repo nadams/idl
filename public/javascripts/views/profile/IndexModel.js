@@ -13,7 +13,7 @@
       this.profileIsPlayer = ko.observable(false);
       this.profileModel = new profile.index.ProfileModel(data.profileModel);
       this.playerModel = new profile.index.PlayerModel(data.playerModel);
-      this.teamsModel = new profile.index.TeamsModel(data.teams);
+      this.teamsModel = new profile.index.TeamsModel(data.teams, this.playerModel);
 
       this.profileIsNowPlayer = ko.observable(false);
       this.profileIsNowPlayerMessage = ko.observable('');
@@ -248,9 +248,12 @@
   })();
 
   profile.index.TeamsModel = (function() {
-    var Model = function(data) {
+    var Model = function(data, playerModel) {
+      this.playerModel = playerModel;
       this.teams = ko.observableArray();
       this.selectedTeam = ko.observable();
+      this.teamToJoin = ko.observable();
+      this.selectedPlayer = ko.observable();
       
       this.initialize(data);
 
@@ -302,6 +305,9 @@
         if(this.teams().length > 0) {
           this.selectedTeam(this.teams()[0]);
         }
+      },
+      requestToJoinTeam: function() {
+      
       }
     });
 

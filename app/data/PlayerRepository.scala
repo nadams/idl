@@ -198,7 +198,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
 
     def getFellowPlayersForProfile(profileId: Int) = DB.withConnection { implicit connection =>
       SQL(FellowPlayerRecord.selectByPlayerId)
-      .on('profileId -> profileId)
+      .on('profileId -> profileId, 'playerId -> None, 'teamId -> None)
       .as(FellowPlayerRecord.multiRowParser)
       .map(FellowPlayerRecord(_))
     } 
