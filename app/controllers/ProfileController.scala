@@ -113,5 +113,17 @@ object ProfileController
     } getOrElse(profileNotFound(username))
   }
 
+  def requestToJoinTeam = IsAuthenticated { username => implicit request =>
+    import models.profile.IndexModel._
+
+    handleJsonPost[RequestToJoinTeamModel] { model => 
+      profileService.getByUsername(username) map { profile =>
+        teamService.assignPlayersToTeam(model.teamId, Seq(model.playerId)).headOption map { teamId => 
+          Ok(Json.toJson(TeamMembershipModel.toModel(playerService.getFellowPlayersForTeamPlayer(profile.profileId, model.playerId, teamId))))
+        } getOrElse(InternalServerError("Could not add player to team"))
+      } getOrElse(profileNotFound(username))
+    }
+  }
+
   private def profileNotFound(username: String) = NotFound(s"The profile `$username` was not found.")
 }

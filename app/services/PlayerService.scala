@@ -22,6 +22,7 @@ trait PlayerServiceComponent {
     def getPlayerProfileRecord(profileId: Int, playerId: Int) : Option[PlayerProfileRecord]
     def getPlayerProfileRecordsForProfile(profileId: Int) : Seq[PlayerProfileRecord] 
     def getFellowPlayersForProfile(profileId: Int) : Seq[FellowPlayerRecord]
+    def getFellowPlayersForTeamPlayer(profileId: Int, playerId: Int, teamId: Int) : Seq[FellowPlayerRecord]
   }
 }
 
@@ -40,6 +41,7 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
     def getPlayerProfileRecord(profileId: Int, playerId: Int) = playerRepository.getPlayerProfileRecord(profileId, playerId)
     def getPlayerProfileRecordsForProfile(profileId: Int) = playerRepository.getPlayerProfileRecordsForProfile(profileId)
     def getFellowPlayersForProfile(profileId: Int) = playerRepository.getFellowPlayersForProfile(profileId)
+    def getFellowPlayersForTeamPlayer(profileId: Int, playerId: Int, teamId: Int) = playerRepository.getFellowPlayersForTeamPlayer(profileId, playerId, teamId)
 
     def createOrAddPlayerToProfile(profileId: Int, playerName: String) = Try(
       if(playerRepository.getNumberOfPlayersForProfile(profileId) <= 15) {
