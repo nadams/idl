@@ -14,7 +14,8 @@
     routes.javascript.ProfileController.updatePassword,
     routes.javascript.ProfileController.addPlayer,
     routes.javascript.ProfileController.removePlayer,
-    routes.javascript.ProfileController.updateDisplayName
+    routes.javascript.ProfileController.updateDisplayName,
+    routes.javascript.ProfileController.requestToJoinTeam
   )
   <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
   <script>
@@ -284,7 +285,7 @@
                           </div>
                         </div>
 
-                        <button class="btn btn-primary" data-bind="">Join</button>
+                        <button class="btn btn-primary" data-bind="click: requestToJoinTeam">Join</button>
                       </form>
                     </div>
                   </div>

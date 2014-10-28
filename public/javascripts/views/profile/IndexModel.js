@@ -307,7 +307,21 @@
         }
       },
       requestToJoinTeam: function() {
-      
+        var playerId = this.selectedPlayer().playerId();
+        var teamName = this.teamToJoin();
+        var promise = repository.requestToJoinTeam(playerId, teamName, this);
+
+        promise.done(function(data) {
+        
+        });
+
+        promise.fail(function(data) {
+        
+        });
+
+        promise.always(function() {
+        
+        });
       }
     });
 

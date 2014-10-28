@@ -11,6 +11,7 @@ trait TeamRepositoryComponent {
     def insertTeam(team: Team) : Boolean
     def updateTeam(team: Team) : Boolean
     def getTeam(teamId: Int) : Option[Team]
+    def getTeamByName(teamName: String) : Option[Team]
     def getAllTeams() : Seq[Team]
     def removeTeam(teamId: Int) : Boolean
     def getTeamsForGame(gameId: Int) : Option[(Team, Team)]
@@ -36,14 +37,6 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         FROM ${TeamSchema.tableName} AS t
       """
 
-    val teamParser = 
-      int(TeamSchema.teamId) ~ 
-      str(TeamSchema.teamName) ~ 
-      bool(TeamSchema.isActive) ~ 
-      datetime(TeamSchema.dateCreated) map flatten
-
-    val multiRowParser = teamParser *
-
     def teamProjection(alias: String) = 
       s"""
         $alias.${TeamSchema.teamId},
@@ -61,7 +54,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         """
       )
       .on('seasonId -> seasonId)
-      .as(multiRowParser)
+      .as(Team.multiRowParser)
       .map(Team(_))
     }
 
@@ -108,7 +101,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
           WHERE t.${TeamSchema.isActive} = 1
         """
       )
-      .as(multiRowParser)
+      .as(Team.multiRowParser)
       .map(Team(_))
     }
 
@@ -164,13 +157,13 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       .on(
         'teamId -> teamId
       )
-      .as(teamParser singleOpt)
+      .as(Team.singleRowParser singleOpt)
       .map(Team(_))
     }
 
     def getAllTeams() = DB.withConnection { implicit connection => 
       SQL(selectAllTeamsSql)
-      .as(multiRowParser)
+      .as(Team.multiRowParser)
       .map(Team(_))
     }
 
@@ -246,6 +239,13 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         Team(data._1, data._2, data._3, data._4), 
         Team(data._5, data._6, data._7, data._8)
       )}
+    }
+
+    def getTeamByName(teamName: String) = DB.withConnection { implicit connection =>
+      SQL(Team.selectByName)
+      .on('teamName -> teamName)
+      .as(Team.singleRowParser singleOpt)
+      .map(Team(_))
     }
   }
 }

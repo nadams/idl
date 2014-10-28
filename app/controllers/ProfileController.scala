@@ -118,9 +118,11 @@ object ProfileController
 
     handleJsonPost[RequestToJoinTeamModel] { model => 
       profileService.getByUsername(username) map { profile =>
-        teamService.assignPlayersToTeam(model.teamId, Seq(model.playerId)).headOption map { teamId => 
-          Ok(Json.toJson(TeamMembershipModel.toModel(playerService.getFellowPlayersForTeamPlayer(profile.profileId, model.playerId, teamId))))
-        } getOrElse(InternalServerError("Could not add player to team"))
+        teamService.getTeamByName(model.teamName) map { team => 
+          teamService.assignPlayersToTeam(team.teamId, Seq(model.playerId)).headOption map { teamId => 
+            Ok(Json.toJson(TeamMembershipModel.toModel(playerService.getFellowPlayersForTeamPlayer(profile.profileId, model.playerId, teamId))))
+          } getOrElse(InternalServerError("Could not add player to team"))
+        } getOrElse(NotFound("Could not find team"))
       } getOrElse(profileNotFound(username))
     }
   }

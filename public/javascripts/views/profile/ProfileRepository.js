@@ -35,6 +35,16 @@
         var url = routes.controllers.ProfileController.updateDisplayName(displayName).url;
         return ajax.post(url, {}, context);
       };
+
+      this.requestToJoinTeam = function(playerId, teamName, context) {
+        var url = routes.controllers.ProfileController.requestToJoinTeam().url;
+        var data = {
+          playerId: playerId,
+          teamName: teamName
+        };
+
+        return ajax.post(url, data, context);
+      };
     };
 
     return Repository;
