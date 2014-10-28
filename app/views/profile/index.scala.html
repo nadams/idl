@@ -270,12 +270,21 @@
                   <div>
                     <h4>Request to Join a Team</h4>
                     <div class="team-settings-subsection">
-                      <form>
-                        <input type="text" data-bind="textInput: teamToJoin" />
-                        <select data-bind="options: playerModel.playerNames(), 
-                          value: selectedPlayer, 
-                          optionsText: 'playerName', 
-                          optionsCaption: 'Choose...'"></select>
+                      <form class="form-inline">
+                        <div class="team-request-form">
+                          <div class="form-group ">
+                            <label class="sr-only" for="teamName">Team Name</label>
+                            <input type="text" id="teamName" class="form-control" placeholder="Team Name" data-bind="textInput: teamToJoin" />
+
+                            <label class="sr-only" for="playerNames">Player Name</label>
+                            <select id="playerNames" class="form-control" data-bind="options: playerModel.playerNames(), 
+                              value: selectedPlayer, 
+                              optionsText: 'playerName', 
+                              optionsCaption: 'Player Name...'"></select>
+                          </div>
+                        </div>
+
+                        <button class="btn btn-primary" data-bind="">Join</button>
                       </form>
                     </div>
                   </div>
