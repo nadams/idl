@@ -122,7 +122,7 @@ object ProfileController
           teamService.assignPlayersToTeam(team.teamId, Seq(model.playerId)).headOption map { teamId => 
             Ok(Json.toJson(TeamMembershipModel.toModel(playerService.getFellowPlayersForTeamPlayer(profile.profileId, model.playerId, teamId))))
           } getOrElse(InternalServerError("Could not add player to team"))
-        } getOrElse(NotFound("Could not find team"))
+        } getOrElse(NotFound(s"Team '${model.teamName}' does not exist"))
       } getOrElse(profileNotFound(username))
     }
   }

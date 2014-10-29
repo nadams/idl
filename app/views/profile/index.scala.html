@@ -271,9 +271,14 @@
                   <div>
                     <h4>Request to Join a Team</h4>
                     <div class="team-settings-subsection">
+                      <!-- ko if: hasTeamJoinError -->
+                      <div class="alert alert-danger">
+                        <p class="error" data-bind="text: teamJoinError"></p>
+                      </div>
+                      <!-- /ko -->
                       <form class="form-inline">
                         <div class="team-request-form">
-                          <div class="form-group ">
+                          <div class="form-group">
                             <label class="sr-only" for="teamName">Team Name</label>
                             <input type="text" id="teamName" class="form-control" placeholder="Team Name" data-bind="textInput: teamToJoin" />
 

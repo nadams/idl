@@ -254,6 +254,7 @@
       this.selectedTeam = ko.observable();
       this.teamToJoin = ko.observable();
       this.selectedPlayer = ko.observable();
+      this.teamJoinError = ko.observable();
       
       this.initialize(data);
 
@@ -294,6 +295,10 @@
 
         return typeof selectedTeam === 'undefined' ? 'Choose...' : selectedTeam.teamName();
       }, this);
+
+      this.hasTeamJoinError = ko.computed(function() {
+        return !nullOrEmpty(this.teamJoinError());
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
@@ -316,7 +321,7 @@
         });
 
         promise.fail(function(data) {
-        
+          this.teamJoinError(data.responseText);
         });
 
         promise.always(function() {
