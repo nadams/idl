@@ -276,6 +276,11 @@
                         <p class="error" data-bind="text: teamJoinError"></p>
                       </div>
                       <!-- /ko -->
+                      <!-- ko if: hasTeamJoinSuccess -->
+                      <div class="alert alert-success">
+                        <p data-bind="text: joinTeamSuccess"></p>
+                      </div>
+                      <!-- /ko -->
                       <form class="form-inline">
                         <div class="team-request-form">
                           <div class="form-group">

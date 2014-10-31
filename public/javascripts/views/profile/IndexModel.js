@@ -255,6 +255,7 @@
       this.teamToJoin = ko.observable();
       this.selectedPlayer = ko.observable();
       this.teamJoinError = ko.observable();
+      this.teamJoinSuccess = ko.observable();
       
       this.initialize(data);
 
@@ -299,6 +300,10 @@
       this.hasTeamJoinError = ko.computed(function() {
         return !nullOrEmpty(this.teamJoinError());
       }, this);
+
+      this.hasTeamJoinSuccess = ko.computed(function() {
+        return !nullOrEmpty(this.teamJoinSuccess());
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
@@ -317,6 +322,7 @@
         var promise = repository.requestToJoinTeam(playerId, teamName, this);
 
         promise.done(function(data) {
+          console.log(data);
         
         });
 
