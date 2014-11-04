@@ -25,8 +25,15 @@ val compass = taskKey[Int]("Compile sass")
 
 val compassClean = taskKey[Int]("Clean sass")
 
+val productionCompile = taskKey[Int]("Compile for production")
+
 compass := {
   "compass compile" !
+}
+
+productionCompile := {
+  compile.value
+  "compass compile --output-style compressed --force" !
 }
 
 compassClean := {
