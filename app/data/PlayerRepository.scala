@@ -59,18 +59,8 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
     }
 
     def insertPlayerWithProfile(player: Player, profileId: Int) = DB.withConnection { implicit connection =>
-      val playerId = SQL(
-        s"""
-          INSERT INTO ${PlayerSchema.tableName} (
-            ${PlayerSchema.playerName},
-            ${PlayerSchema.isActive}
-          ) VALUES (
-            {playerName},
-            {isActive}
-          )
-        """
-      )
-      .on('playerName -> player.playerName, 'isActive -> player.isActive)
+      val playerId = SQL(Player.insertPlayer)
+      .on('playerName -> player.playerName, 'isActive -> player.isActive, 'dateCreated -> player.dateCreated)
       .executeInsert(scalar[Long] single)
       .toInt
 
