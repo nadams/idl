@@ -256,6 +256,8 @@
       this.selectedPlayer = ko.observable();
       this.teamJoinError = ko.observable();
       this.teamJoinSuccess = ko.observable();
+      this.hasTeamNameError = ko.observable(false);
+      this.hasPlayerNameError = ko.observable(false);
       
       this.initialize(data);
 
@@ -317,22 +319,36 @@
         }
       },
       requestToJoinTeam: function() {
-        var playerId = this.selectedPlayer().playerId();
-        var teamName = this.teamToJoin();
-        var promise = repository.requestToJoinTeam(playerId, teamName, this);
-
-        promise.done(function(data) {
-          console.log(data);
+        if(nullOrEmpty(this.teamToJoin())) {
+          this.hasTeamNameError(true);
+        } else {
+          this.hasTeamNameError(false);
+        }
         
-        });
-
-        promise.fail(function(data) {
-          this.teamJoinError(data.responseText);
-        });
-
-        promise.always(function() {
+        if(typeof this.selectedPlayer() === 'undefined') {
+          this.hasPlayerNameError(true);
+        } else {
+          this.hasPlayerNameError(false);
+        }
         
-        });
+        if(!this.hasTeamNameError() && !this.hasPlayerNameError()) {
+          var playerId = this.selectedPlayer().playerId();
+          var teamName = this.teamToJoin();
+          var promise = repository.requestToJoinTeam(playerId, teamName, this);
+
+          promise.done(function(data) {
+            console.log(data);
+          
+          });
+
+          promise.fail(function(data) {
+            this.teamJoinError(data.responseText);
+          });
+
+          promise.always(function() {
+          
+          });
+        }
       }
     });
 
