@@ -258,6 +258,7 @@
       this.teamJoinSuccess = ko.observable();
       this.hasTeamNameError = ko.observable(false);
       this.hasPlayerNameError = ko.observable(false);
+      this.isJoiningTeam = ko.observable();
       
       this.initialize(data);
 
@@ -332,6 +333,8 @@
         }
         
         if(!this.hasTeamNameError() && !this.hasPlayerNameError()) {
+          this.isJoiningTeam(true);
+
           var playerId = this.selectedPlayer().playerId();
           var teamName = this.teamToJoin();
           var promise = repository.requestToJoinTeam(playerId, teamName, this);
@@ -346,7 +349,7 @@
           });
 
           promise.always(function() {
-          
+            this.isJoiningTeam(false);
           });
         }
       }
