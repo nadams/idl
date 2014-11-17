@@ -12,6 +12,7 @@ trait ProfileRepositoryComponent {
     def getRolesForUsername(username: String) : Seq[Roles.Role]
     def insertProfile(profile: Profile) : Profile
     def addProfileToRole(profileId: Int, role: Roles.Role) : Boolean
+    def searchProfiles(name: String) : Seq[ProfileSearchRecord]
   }
 }
 
@@ -107,6 +108,13 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
         'roleId -> role.id
       )
       .executeUpdate > 0
+    }
+
+    def searchProfiles(name: String) = DB.withConnection { implicit connection => 
+      SQL(ProfileSearchRecord.searchByName)
+      .on('name -> name)
+      .as(ProfileSearchRecord.multiRowParser)
+      .map(ProfileSearchRecord(_))
     }
   }
 }
