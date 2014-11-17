@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.json.Json
 import components._
+import models.admin.profile._
 import security.Roles
 
 object AdminProfileController extends Controller 
@@ -17,7 +18,9 @@ object AdminProfileController extends Controller
     Ok(views.html.admin.profile.index())
   }
 
-  def search(name: String) = IsAuthenticated { username => implicit request => 
-    Ok(Json.toJson(""))
+  def search(name: String) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    import ProfileSearchModel._
+
+    Ok(Json.toJson(ProfileSearchModel.toModel(profileService.searchProfiles(name))))
   }
 }
