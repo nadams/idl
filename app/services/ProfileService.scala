@@ -15,6 +15,7 @@ trait ProfileServiceComponent {
     def profileIsInAnyRole(username: String, roles: Set[Roles.Role]): Boolean
     def createProfile(email: String, displayName: String, password: String) : Profile
     def updateDisplayName(profile: Profile, displayName: String) : Option[Profile]
+    def searchProfiles(name: String) : Seq[ProfileSearchRecord]
   }
 }
 
@@ -87,5 +88,7 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
       if(profileRepository.updateProfile(updatedProfile)) Some(updatedProfile)
       else None
     }
+
+    def searchProfiles(name: String) = profileRepository.searchProfiles(name)
   }
 }
