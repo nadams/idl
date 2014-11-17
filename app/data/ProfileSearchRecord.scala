@@ -28,6 +28,7 @@ object ProfileSearchRecord {
       WHERE p.${ProfileSchema.displayName} LIKE '%{name}%' 
         OR p.${ProfileSchema.email} LIKE '%{name}%'
         OR p2.${PlayerSchema.playerName} = '%{name}%'
+      LIMIT 25
     """
 
   lazy val singleRowParser = 
