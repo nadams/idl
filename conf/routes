@@ -62,6 +62,8 @@ POST    /admin/season/:seasonId/games/:gameId/stats/:playerId/demo  controllers.
 POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/remove controllers.GameController.removeRound(seasonId: Int, gameId: Int, roundId: Int)
 POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/update controllers.GameController.updateRound(seasonId: Int, gameId: Int, roundId: Int)
 
+GET     /admin/profile                          controllers.AdminProfileController.index
+
 GET     /brackets                               controllers.BracketsController.index
         
 # Map static resources from the /public folder to the /assets URL path
