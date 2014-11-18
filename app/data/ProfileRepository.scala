@@ -112,7 +112,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 
     def searchProfiles(name: String) = DB.withConnection { implicit connection => 
       SQL(ProfileSearchRecord.searchByName)
-      .on('name -> name)
+      .on('name -> ("%" + name + "%"))
       .as(ProfileSearchRecord.multiRowParser)
       .map(ProfileSearchRecord(_))
     }
