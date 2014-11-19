@@ -10,7 +10,7 @@
       this.profileSearchValue.subscribe(function(newValue) {
         var value = this.profileSearchValue();
 
-        if(value.length > 0) {
+        if(value.length) {
           var promise = repository.searchProfiles(value, this);
           promise.done(function(data) {
             console.log(data);
