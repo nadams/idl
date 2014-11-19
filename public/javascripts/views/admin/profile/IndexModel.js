@@ -8,19 +8,23 @@
     var Model = function(data) {
       this.profileSearchValue = ko.observable().extend({ throttle: 250 });
       this.profileSearchValue.subscribe(function(newValue) {
-        var promise = repository.searchProfiles(this.profileSearchValue(), this);
-        promise.done(function(data) {
-          console.log(data);
-        
-        });
+        var value = this.profileSearchValue();
 
-        promise.fail(function(data) {
-        
-        });
+        if(value.length > 0) {
+          var promise = repository.searchProfiles(value, this);
+          promise.done(function(data) {
+            console.log(data);
+          
+          });
 
-        promise.always(function(data) {
-        
-        });
+          promise.fail(function(data) {
+          
+          });
+
+          promise.always(function(data) {
+          
+          });
+        }
       }, this);
     };
 
