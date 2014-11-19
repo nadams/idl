@@ -1,6 +1,17 @@
 @()(implicit header: MenuModel, req: RequestHeader)
 
-@views.html.admin.profile.profileTemplate("Manage Profiles") {
+@extraScripts = {
+  @helper.javascriptRouter("routes")(
+    routes.javascript.AdminProfileController.search
+  )
+  <script>
+    var admin = {};
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/admin/profile/ProfileRepository.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/admin/profile/IndexModel.js")"></script>
+}
+
+@views.html.admin.profile.profileTemplate("Manage Profiles", extraScripts = extraScripts) {
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4>Search for Profiles</h4>
@@ -10,10 +21,11 @@
         <div class="row">
           <div class="col-xs-4">
             <label>Profile Name</label>
-            <input type="text" class="form-control" placeholder="Search..." />
+            <input type="text" class="form-control" placeholder="Search..." data-bind="textInput: profileSearchValue" />
           </div>
         </div>
       </div>
+      <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
     </form>
   </div>
 }
