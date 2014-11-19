@@ -16,16 +16,38 @@
     <div class="panel-heading">
       <h4>Search for Profiles</h4>
     </div>
-    <form class="form panel-body" role="form">
-      <div class="form-group">
-        <div class="row">
-          <div class="col-xs-4">
-            <label>Profile Name</label>
-            <input type="text" class="form-control" placeholder="Search..." data-bind="textInput: profileSearchValue" />
+    <div class="panel-body">
+      <form class="form" role="form">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-xs-4">
+              <label>Profile Name</label>
+              <input type="text" class="form-control" placeholder="Search..." data-bind="textInput: profileSearchValue" />
+            </div>
           </div>
         </div>
-      </div>
+      </form>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Display Name</th>
+            <th>Email</th>
+            <th>Player Names</th>
+          </tr>
+        </thead>
+        <tbody data-bind="foreach: results">
+          <tr>
+            <td data-bind="text: displayName"></td>
+            <td data-bind="text: email"></td>
+            <td>
+              <ul class="list-group" data-bind="foreach: playerNames">
+                <li class="list-group-item" data-bind="text: playerName, css: { 'list-group-item-warning': isApproved }"></li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
-    </form>
+    </div>
   </div>
 }
