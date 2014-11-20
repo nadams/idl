@@ -33,8 +33,8 @@ object ProfileSearchRecord {
 
   lazy val singleRowParser = 
     int(ProfileSchema.profileId) ~
-    str(ProfileSchema.email) ~
     str(ProfileSchema.displayName) ~
+    str(ProfileSchema.email) ~
     get[Option[Int]](PlayerProfileSchema.playerId) ~
     get[Option[Boolean]](PlayerProfileSchema.isApproved) ~
     get[Option[String]](PlayerSchema.playerName) map flatten 
