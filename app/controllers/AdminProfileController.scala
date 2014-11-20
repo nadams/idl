@@ -19,7 +19,11 @@ object AdminProfileController extends Controller
   }
 
   def profile(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok(views.html.admin.profile.profile())
+    profileService.getById(profileId) map { profile => 
+      val players = playerService.getPlayersByProfileId(profile.profileId)
+      
+      Ok(views.html.admin.profile.profile(ProfileInformationModel.toModel(profile, players)))
+    } getOrElse(NotFound("Profile not found"))
   }
 
   def search(name: String) = IsAuthenticated(Roles.Admin) { username => implicit request => 

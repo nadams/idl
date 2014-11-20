@@ -8,6 +8,7 @@ trait ProfileServiceComponent {
 
   trait ProfileService {
     def getByUsername(username: String) : Option[Profile]
+    def getById(profileId: Int) : Option[Profile]
     def authenticate(username: String, password: String) : Boolean
     def updateProfilePassword(username: String, password: String) : Boolean
     def getProfileIdByUsername(username: String) : Option[Int]
@@ -31,6 +32,8 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 
     def getByUsername(username: String) : Option[Profile] =
       profileRepository.getByUsername(username)
+
+    def getById(profileId: Int) = profileRepository.getById(profileId)
 
     def authenticate(username: String, password: String) : Boolean =
       password != "" && getByUsername(username).exists(checkCredentials(_, password))
