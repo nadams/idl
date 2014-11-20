@@ -1,5 +1,54 @@
 @()(implicit header: MenuModel, req: RequestHeader)
 
 @views.html.admin.profile.profileTemplate("Profile Details") {
+  <div class="panel panel-default">
+    <div class="panel-heading"></div>
+    <div class="panel-body">
+      <h3>Profile Information</h3>
+      <form class="form-horizontal" role="form" data-bind="">
+        <div class="form-group">
+          <label for="displayName" class="col-sm-2 control-label">Display Name</label>
+          <div class="col-sm-4">
+            <input type="text" id="displayName" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email" class="col-sm-2 control-label">Email</label>
+          <div class="col-sm-4">
+            <input type="text" id="email" class="form-control" readonly="readonly" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="passwordExpired" class="col-sm-2 control-label">Password Expired</label>
+          <div class="col-sm-4">
+            <input type="checkbox" id="passwordExpired" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="lastLoginDate" class="col-sm-2 control-label">Last Login</label>
+          <div class="col-sm-4">
+            <span></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-4">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="" class="btn btn-default">Cancel</a>
+          </div>
+        </div>
+      </form>
+      <h3>Player Names</h3>
+      <div class="row">
+        <div class="col-sm-4">
+          <ul class="list-group">
+            <li class="list-group-item">qwfp</li>
+            <li class="list-group-item">qwfp</li>
+            <li class="list-group-item">qwfp</li>
+            <li class="list-group-item">qwfp</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 
 }
