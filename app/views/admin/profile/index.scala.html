@@ -18,12 +18,20 @@
       <h4>Search for Profiles</h4>
     </div>
     <div class="panel-body">
-      <form class="form" role="form">
+      <form class="form" role="form" data-bind="submit: searchProfiles">
         <div class="form-group">
           <div class="row">
             <div class="col-xs-4">
               <label>Profile Name</label>
-              <input type="text" class="form-control" placeholder="Search..." data-bind="textInput: profileSearchValue" />
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search..." data-bind="textInput: profileSearchValue" />
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="submit">
+                    <span data-bind="visible: !isSearching()">Search</span>
+                    <img data-bind="visible: isSearching()" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." class="loading-spinner" />
+                  </button>
+                </span>
+              </div>
             </div>
           </div>
         </div>

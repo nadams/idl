@@ -6,13 +6,21 @@
   admin.profile = admin.profile || {};
   admin.profile.IndexModel = (function() {
     var Model = function(data) {
-      this.profileSearchValue = ko.observable().extend({ throttle: 250 });
+      this.profileSearchValue = ko.observable('');
       this.results = ko.observableArray([]);
+      this.isSearching = ko.observable(false);
 
-      this.profileSearchValue.subscribe(function(newValue) {
+      this.hasResults = ko.computed(function() {
+        return this.results().length > 0;
+      }, this);
+    };
+
+    ko.utils.extend(Model.prototype, {
+      searchProfiles: function() {
         var value = this.profileSearchValue();
 
         if(value.length) {
+          this.isSearching(true);
           var promise = repository.searchProfiles(value, this);
           promise.done(function(data) {
             this.results.removeAll();
@@ -26,15 +34,13 @@
           });
 
           promise.always(function(data) {
-          
+            this.isSearching(false);
           });
         }
-      }, this);
 
-      this.hasResults = ko.computed(function() {
-        return this.results().length > 0;
-      }, this);
-    };
+        return false;
+      }
+    });
 
     return Model;
   })();
