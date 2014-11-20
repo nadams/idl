@@ -40,9 +40,15 @@
             <td data-bind="text: displayName"></td>
             <td data-bind="text: email"></td>
             <td>
+              <!-- ko if: hasPlayerNames -->
               <ul class="list-group" data-bind="foreach: playerNames">
                 <li class="list-group-item" data-bind="text: playerName, css: { 'list-group-item-warning': isApproved }"></li>
               </ul>
+              <!-- /ko -->
+
+              <!-- ko ifnot: hasPlayerNames -->
+              <span>No player names</span>
+              <!-- /ko -->
             </td>
           </tr>
         </tbody>
