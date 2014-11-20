@@ -1,9 +1,12 @@
 @(model: models.admin.profile.ProfileInformationModel)(implicit header: MenuModel, req: RequestHeader)
 
+@import play.api.libs.json.Json
+
 @views.html.admin.profile.profileTemplate("Profile Details") {
   <div class="panel panel-default">
     <div class="panel-heading"></div>
     <div class="panel-body">
+      @Html(Json.toJson(model).toString)
       <h3>Profile Information</h3>
       <form class="form-horizontal" role="form" data-bind="">
         <div class="form-group">

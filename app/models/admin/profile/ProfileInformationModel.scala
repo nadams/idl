@@ -1,7 +1,9 @@
 package models.admin.profile
 
+import play.api.libs.json.Json
 import org.joda.time.DateTime
 import data._
+import formatters.DateTimeFormatter._
 
 case class ProfileInformationModel(
   profileId: Int, 
@@ -13,6 +15,9 @@ case class ProfileInformationModel(
 )
 
 object ProfileInformationModel {
+  implicit val writesPlayerNameModel = Json.writes[PlayerNameModel]
+  implicit val writesProfileInformationModel = Json.writes[ProfileInformationModel]
+
   def toModel(profile: Profile, playerNames: Seq[Player]) = ProfileInformationModel(
     profile.profileId,
     profile.displayName,
