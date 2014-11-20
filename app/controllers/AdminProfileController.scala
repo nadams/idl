@@ -18,6 +18,10 @@ object AdminProfileController extends Controller
     Ok(views.html.admin.profile.index())
   }
 
+  def profile(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Ok(views.html.admin.profile.profile())
+  }
+
   def search(name: String) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     import ProfileSearchModel._
 

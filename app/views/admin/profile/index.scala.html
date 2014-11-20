@@ -2,7 +2,8 @@
 
 @extraScripts = {
   @helper.javascriptRouter("routes")(
-    routes.javascript.AdminProfileController.search
+    routes.javascript.AdminProfileController.search,
+    routes.javascript.AdminProfileController.profile
   )
   <script>
     var admin = {};
@@ -37,7 +38,7 @@
         </thead>
         <tbody data-bind="foreach: results">
           <tr>
-            <td data-bind="text: displayName"></td>
+            <td><a data-bind="text: displayName, attr: { href: profileUrl }"></a></td>
             <td data-bind="text: email"></td>
             <td>
               <!-- ko if: hasPlayerNames -->

@@ -1,6 +1,6 @@
-/* global ko, _, admin */
+/* global ko, _, admin, routes */
 
-(function(ko, _, admin, repository) {
+(function(ko, _, admin, routes, repository) {
   'use strict';
 
   admin.profile = admin.profile || {};
@@ -44,6 +44,10 @@
 
       this.initialize(data);
 
+      this.profileUrl = ko.computed(function() {
+        return routes.controllers.AdminProfileController.profile(this.profileId()).url;
+      }, this);
+
       this.hasPlayerNames = ko.computed(function() {
         return this.playerNames().length > 0;
       }, this);
@@ -82,7 +86,7 @@
 
     return Model;
   })();
-})(ko, _, admin, new admin.profile.ProfileRepository());
+})(ko, _, admin, routes, new admin.profile.ProfileRepository());
 
 (function(ko, admin) {
   'use strict';
