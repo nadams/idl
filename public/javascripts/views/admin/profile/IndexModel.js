@@ -30,6 +30,10 @@
           });
         }
       }, this);
+
+      this.hasResults = ko.computed(function() {
+        return this.results().length > 0;
+      }, this);
     };
 
     return Model;

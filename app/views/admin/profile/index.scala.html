@@ -28,6 +28,8 @@
           </div>
         </div>
       </form>
+
+      <!-- ko if: hasResults -->
       <table class="table table-striped">
         <thead>
           <tr>
@@ -54,6 +56,7 @@
           </tr>
         </tbody>
       </table>
+      <!-- /ko -->
       <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
     </div>
   </div>
