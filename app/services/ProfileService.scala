@@ -17,6 +17,7 @@ trait ProfileServiceComponent {
     def createProfile(email: String, displayName: String, password: String) : Profile
     def updateDisplayName(profile: Profile, displayName: String) : Option[Profile]
     def searchProfiles(name: String) : Seq[ProfileSearchRecord]
+    def updateLastLoginDate(username: String) : Boolean
   }
 }
 
@@ -93,5 +94,8 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
     }
 
     def searchProfiles(name: String) = profileRepository.searchProfiles(name)
+
+    def updateLastLoginDate(username: String) = 
+      profileRepository.updateLastLoginDate(username)
   }
 }

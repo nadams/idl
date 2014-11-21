@@ -66,6 +66,13 @@ object Profile {
       )
     """
 
+  lazy val updateLastLoginDate = 
+    s"""
+      UPDATE ${ProfileSchema.tableName}
+      SET ${ProfileSchema.lastLoginDate} = {lastLoginDate}
+      WHERE ${ProfileSchema.email} = {email}
+    """
+
   lazy val singleRowParser  = 
     int(ProfileSchema.profileId) ~ 
     str(ProfileSchema.email) ~ 

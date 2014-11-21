@@ -13,6 +13,7 @@ trait ProfileRepositoryComponent {
     def insertProfile(profile: Profile) : Profile
     def addProfileToRole(profileId: Int, role: Roles.Role) : Boolean
     def searchProfiles(name: String) : Seq[ProfileSearchRecord]
+    def updateLastLoginDate(username: String) : Boolean
   }
 }
 
@@ -23,7 +24,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     import java.sql._
     import anorm._ 
     import anorm.SqlParser._
-    import org.joda.time.DateTime
+    import org.joda.time.{ DateTime, DateTimeZone }
     import play.api.db.DB
     import play.api.Play.current
     import AnormExtensions._
@@ -115,6 +116,12 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       .on('name -> ("%" + name + "%"))
       .as(ProfileSearchRecord.multiRowParser)
       .map(ProfileSearchRecord(_))
+    }
+
+    def updateLastLoginDate(username: String) = DB.withConnection { implicit connection =>
+      SQL(Profile.updateLastLoginDate)
+      .on('lastLoginDate -> new DateTime(DateTimeZone.UTC), 'email -> username)
+      .executeUpdate > 0
     }
   }
 }
