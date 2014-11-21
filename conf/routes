@@ -65,6 +65,7 @@ POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/update controllers
 GET     /admin/profile                          controllers.AdminProfileController.index
 GET     /admin/profile/:profileId               controllers.AdminProfileController.profile(profileId: Int)
 GET     /admin/profile/search/:name             controllers.AdminProfileController.search(name: String)
+POST    /admin/profile/:profileId/update        controllers.AdminProfileController.updateProfile(profileId: Int)
 
 GET     /brackets                               controllers.BracketsController.index
         

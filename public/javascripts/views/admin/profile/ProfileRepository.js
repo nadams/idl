@@ -8,6 +8,18 @@
       this.searchProfiles = function(name, context) {
         return ajax.get(routes.controllers.AdminProfileController.search(name).url, context);
       };
+
+      this.updateProfile = function(profileId, displayName, email, passwordExpired, context) {
+        var url = routes.controllers.AdminProfileController.updateProfile(profileId).url;
+        var data = {
+          profileId: profileId,
+          displayName: displayName,
+          email: email,
+          passwordExpired: passwordExpired
+        };
+
+        return ajax.post(url, data, context);
+      };
     };
 
     return Repository;

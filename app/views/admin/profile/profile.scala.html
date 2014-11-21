@@ -3,6 +3,9 @@
 @import play.api.libs.json.Json
 
 @extraScripts = {
+  @helper.javascriptRouter("routes")(
+    routes.javascript.AdminProfileController.updateProfile
+  )
   <script>
     admin.profile.data = @Html(Json.toJson(model).toString)
   </script>
@@ -15,7 +18,7 @@
     <div class="panel-heading"></div>
     <div class="panel-body">
       <h3>Profile Information</h3>
-      <form class="form-horizontal" role="form" data-bind="">
+      <form class="form-horizontal" role="form" data-bind="submit: updateProfile">
         <div class="form-group">
           <label for="displayName" class="col-sm-2 control-label">Display Name</label>
           <div class="col-sm-4">

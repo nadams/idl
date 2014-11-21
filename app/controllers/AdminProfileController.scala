@@ -31,4 +31,8 @@ object AdminProfileController extends Controller
 
     Ok(Json.toJson(ProfileSearchModel.toModel(profileService.searchProfiles(name))))
   }
+
+  def updateProfile(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Ok("")
+  }
 }

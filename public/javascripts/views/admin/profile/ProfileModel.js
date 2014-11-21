@@ -1,10 +1,11 @@
 /* global ko, _, moment, admin */
 
-(function(ko, _, moment, admin) {
+(function(ko, _, moment, admin, repository) {
   'use strict';
 
   admin.profile.ProfileModel = (function() {
     var Model = function(data) {
+      this.profileId = ko.observable();
       this.displayName = ko.observable();
       this.email = ko.observable();
       this.passwordExpired = ko.observable();
@@ -20,6 +21,7 @@
 
     ko.utils.extend(Model.prototype, {
       initialize: function(data) {
+        this.profileId(data.profileId);
         this.displayName(data.displayName);
         this.email(data.email);
         this.passwordExpired(data.passwordExpired);
@@ -28,6 +30,17 @@
         this.playerNames(_.map(data.playernames, function(item) {
           return new admin.profile.PlayerNameModel(item);
         }));
+      },
+      updateProfile: function() {
+        var promise = repository.updateProfile(this.profileId(), this.displayName(), this.email(), this.passwordExpired(), this);
+        promise.done(function(data) {
+        
+        });
+
+        promise.fail(function() {});
+        promise.always(function() {});
+
+        return false;
       }
     });
 
@@ -53,7 +66,7 @@
 
     return Model;
   })();
-})(ko, _, moment, admin);
+})(ko, _, moment, admin, new admin.profile.ProfileRepository());
 
 (function(ko, admin) {
   'use strict';
