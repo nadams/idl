@@ -4,6 +4,7 @@ import play.api.libs.json.Json
 import org.joda.time.DateTime
 import data._
 import formatters.DateTimeFormatter._
+import security.Roles
 
 case class ProfileInformationModel(
   profileId: Int, 
@@ -11,20 +12,25 @@ case class ProfileInformationModel(
   email: String, 
   passwordExpired: Boolean, 
   lastLoginDate: DateTime, 
-  playerNames: Seq[PlayerNameModel]
+  roles: Seq[ProfileRoleModel],
+  playerNames: Seq[PlayerNameModel],
+  allRoles: Seq[ProfileRoleModel]
 )
 
 object ProfileInformationModel {
   implicit val writesPlayerNameModel = Json.writes[PlayerNameModel]
+  implicit val writesProfileRoleModel = Json.writes[ProfileRoleModel]
   implicit val writesProfileInformationModel = Json.writes[ProfileInformationModel]
 
-  def toModel(profile: Profile, playerNames: Seq[Player]) = ProfileInformationModel(
+  def toModel(profile: Profile, profileRoles: Seq[Roles.Role], playerNames: Seq[Player]) = ProfileInformationModel(
     profile.profileId,
     profile.displayName,
     profile.email,
     profile.passwordExpired,
     profile.lastLoginDate,
-    playerNames.map(PlayerNameModel.toModel(_))
+    profileRoles.map(ProfileRoleModel.toModel(_)),
+    playerNames.map(PlayerNameModel.toModel(_)),
+    Roles.values.map(ProfileRoleModel.toModel(_)).toSeq
   )
 }
 
@@ -36,5 +42,11 @@ object PlayerNameModel {
     player.playerName,
     true
   )
+}
+
+case class ProfileRoleModel(roleId: Int, roleName: String)
+
+object ProfileRoleModel {
+  def toModel(data: Roles.Role) = ProfileRoleModel(data.id, data.toString)
 }
 
