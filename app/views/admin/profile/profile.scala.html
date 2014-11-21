@@ -75,7 +75,7 @@
             data-bind="
               options: profileRoles, 
               optionsText: 'roleName', 
-              value: 'roleId'"></select>
+              optionValue: 'roleId'"></select>
         </div>
         <div class="col-md-3">
           <div class="visible-xs visible-sm">
@@ -111,7 +111,7 @@
             data-bind="
               options: availableRoles, 
               optionsText: 'roleName', 
-              value: 'roleId'"></select>
+              optionsValue: 'roleId'"></select>
         </div>
       </div>
       <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
