@@ -72,7 +72,10 @@
             class="form-control"
             multiple="multiple" 
             size="5"
-            data-bind=""></select>
+            data-bind="
+              options: profileRoles, 
+              optionsText: 'roleName', 
+              value: 'roleId'"></select>
         </div>
         <div class="col-md-3">
           <div class="visible-xs visible-sm">
@@ -105,9 +108,13 @@
             class="form-control"
             multiple="multiple" 
             size="5"
-            data-bind=""></select>
+            data-bind="
+              options: availableRoles, 
+              optionsText: 'roleName', 
+              value: 'roleId'"></select>
         </div>
       </div>
+      <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
     </div>
   </div>
 

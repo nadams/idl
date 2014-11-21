@@ -12,7 +12,7 @@ case class ProfileInformationModel(
   email: String, 
   passwordExpired: Boolean, 
   lastLoginDate: DateTime, 
-  roles: Seq[ProfileRoleModel],
+  profileRoles: Seq[ProfileRoleModel],
   playerNames: Seq[PlayerNameModel],
   allRoles: Seq[ProfileRoleModel]
 )

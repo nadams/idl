@@ -10,12 +10,24 @@
       this.email = ko.observable();
       this.passwordExpired = ko.observable();
       this.lastLoginDate = ko.observable();
-      this.playerNames = ko.observableArray();
+      this.profileRoles = ko.observableArray([]);
+      this.playerNames = ko.observableArray([]);
+      this.allRoles = ko.observableArray([]);
     
       this.initialize(data);
 
       this.lastLoginDateFormatted = ko.computed(function() {
         return moment.utc(this.lastLoginDate()).fromNow();
+      }, this);
+
+      this.availableRoles = ko.computed(function() {
+        var profileRoles = this.profileRoles();
+
+        return _.reject(this.allRoles(), function(role) {
+          return _.find(profileRoles, function(item) {
+            return item.roleId() === role.roleId();
+          });
+        }, this);
       }, this);
     };
 
@@ -26,6 +38,14 @@
         this.email(data.email);
         this.passwordExpired(data.passwordExpired);
         this.lastLoginDate(data.lastLoginDate);
+
+        this.profileRoles(_.map(data.profileRoles, function(item) {
+          return new admin.profile.RoleModel(item);
+        }));
+
+        this.allRoles(_.map(data.allRoles, function(item) {
+          return new admin.profile.RoleModel(item);
+        }));
 
         this.playerNames(_.map(data.playernames, function(item) {
           return new admin.profile.PlayerNameModel(item);
@@ -61,6 +81,24 @@
         this.playerId(data.playerId);
         this.playerName(data.playerName);
         this.isApproved(data.isApproved);
+      }
+    });
+
+    return Model;
+  })();
+
+  admin.profile.RoleModel = (function() {
+    var Model = function(data) {
+      this.roleId = ko.observable();
+      this.roleName = ko.observable();
+
+      this.initialize(data);
+    };
+
+    ko.utils.extend(Model.prototype, {
+      initialize: function(data) {
+        this.roleId(data.roleId);
+        this.roleName(data.roleName);
       }
     });
 
