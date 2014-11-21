@@ -29,7 +29,9 @@ object ProfileController
 
         BadRequest(views.html.profile.login(loginModel, errorMessages))
       },
-      user => request.queryString.get(Secured.returnUrl).fold(Redirect(routes.HomeController.index))(url => Redirect(url.head))
+      user => request.queryString.get(Secured.returnUrl)
+        .map(url => Redirect(url.head))
+        .getOrElse(Redirect(routes.HomeController.index))
         .withSession(SessionKeys.username -> user.username)
     )
   }
