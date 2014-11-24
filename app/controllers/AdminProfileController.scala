@@ -52,4 +52,20 @@ object AdminProfileController extends Controller
       } getOrElse(profileNotFound)
     }
   }
+
+  def addRoles(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    import AlterRolesModel._
+
+    handleJsonPost[AlterRolesModel] { model => 
+      Ok("")
+    }
+  }
+
+  def removeRoles(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    import AlterRolesModel._
+
+    handleJsonPost[AlterRolesModel] { model => 
+      Ok("")
+    }
+  }
 }

@@ -66,6 +66,8 @@ GET     /admin/profile                          controllers.AdminProfileControll
 GET     /admin/profile/:profileId               controllers.AdminProfileController.profile(profileId: Int)
 GET     /admin/profile/search/:name             controllers.AdminProfileController.search(name: String)
 POST    /admin/profile/:profileId/update        controllers.AdminProfileController.updateProfile(profileId: Int)
+POST    /admin/profile/:profileId/addRoles      controllers.AdminProfileController.addRoles(profileId: Int)
+POST    /admin/profile/:profileId/removeRoles   controllers.AdminProfileController.removeRoles(profileId: Int)
 
 GET     /brackets                               controllers.BracketsController.index
         
