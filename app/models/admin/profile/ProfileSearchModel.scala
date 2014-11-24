@@ -17,7 +17,7 @@ object ProfileSearchModel {
         playerName <- x.playerName
         isApproved <- x.isApproved
       } yield PlayerNameSearchResultModel(playerId, playerName, isApproved) } ) 
-    }
+    }.toSeq.sortBy(_.displayName)
 }
 
 case class ProfileSearchResultModel(profileId: Int, displayName: String, email: String, playerNames: Seq[PlayerNameSearchResultModel])
