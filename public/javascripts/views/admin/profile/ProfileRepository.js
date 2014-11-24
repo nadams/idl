@@ -20,6 +20,24 @@
 
         return ajax.post(url, data, context);
       };
+
+      this.removeRoles = function(profileId, roles, context) {
+        var url = routes.controllers.AdminProfileController.removeRoles(profileId).url;
+        var data = {
+          roleIds: roles
+        };
+
+        return ajax.post(url, data, context);
+      };
+
+      this.addRoles = function(profileId, roles, context) {
+        var url = routes.controllers.AdminProfileController.addRoles(profileId).url;
+        var data = {
+          roleIds: roles
+        };
+
+        return ajax.post(url, data, context);
+      };
     };
 
     return Repository;

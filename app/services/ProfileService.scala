@@ -58,14 +58,11 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
         profileRepository.updateProfile(updatedProfile)
       }
 
-    def getProfileIdByUsername(username: String) : Option[Int] =
-      getByUsername(username).map(_.profileId)
+    def getProfileIdByUsername(username: String) : Option[Int] = getByUsername(username).map(_.profileId)
 
-    def checkCredentials(profile: Profile, givenPassword: String) =
-      hasher.validatePassword(givenPassword, profile.password)
+    def checkCredentials(profile: Profile, givenPassword: String) = hasher.validatePassword(givenPassword, profile.password)
 
-    def hashPassword(password: String) : String = 
-      hasher.createHash(password)
+    def hashPassword(password: String) = hasher.createHash(password)
 
     def createProfile(email: String, displayName: String, password: String) : Profile = {
       val now = new DateTime(DateTimeZone.UTC)
@@ -105,7 +102,7 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
       else None
 
     def removeProfileFromRoles(profileId: Int, roles: Seq[Int]) =
-      roles.filter(roleId => profileRepository.removeProfileFromRole(profileId, roleId))
+      roles.filterNot(_ == Roles.SuperAdmin.id).filter(roleId => profileRepository.removeProfileFromRole(profileId, roleId))
 
     def addProfileToRoles(profileId: Int, roles: Seq[Int]) =
       roles.filter(roleId => profileRepository.assignProfileToRole(profileId, roleId))

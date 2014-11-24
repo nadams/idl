@@ -4,7 +4,9 @@
 
 @extraScripts = {
   @helper.javascriptRouter("routes")(
-    routes.javascript.AdminProfileController.updateProfile
+    routes.javascript.AdminProfileController.updateProfile,
+    routes.javascript.AdminProfileController.addRoles,
+    routes.javascript.AdminProfileController.removeRoles
   )
   <script>
     admin.profile.data = @Html(Json.toJson(model).toString)
@@ -78,14 +80,15 @@
             data-bind="
               options: profileRoles, 
               optionsText: 'roleName', 
-              optionValue: 'roleId'"></select>
+              optionValue: 'roleId',
+              selectedOptions: selectedRolesToRemove"></select>
         </div>
         <div class="col-md-3">
           <div class="visible-xs visible-sm">
             <button class="btn btn-default" data-bind="">
               <span class="glyphicon glyphicon-arrow-up"></span>
             </button>
-            <button class="btn btn-default" data-bind="">
+            <button class="btn btn-default" data-bind="click: removeRoles">
               <span class="glyphicon glyphicon-arrow-down"></span>
             </button>
           </div>
@@ -95,7 +98,7 @@
                 <button class="btn btn-default" data-bind="">
                   <span class="glyphicon glyphicon-arrow-left"></span>
                 </button>
-                <button class="btn btn-default" data-bind="">
+                <button class="btn btn-default" data-bind="click: removeRoles">
                   <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>
               </div>

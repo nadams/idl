@@ -134,7 +134,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 
     def removeProfileFromRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
       SQL(Profile.removeProfileFromRole)
-      .on('role -> roleId, 'profileId -> profileId)
+      .on('roleId -> roleId, 'profileId -> profileId)
       .executeUpdate > 0
     }
   }
