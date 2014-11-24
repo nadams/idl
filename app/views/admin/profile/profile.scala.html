@@ -55,17 +55,16 @@
           </div>
         </div>
       </form>
+      <!-- ko if: hasPlayerNames -->
       <h3>Player Names</h3>
       <div class="row">
         <div class="col-sm-4">
-          <ul class="list-group">
-            <li class="list-group-item">qwfp</li>
-            <li class="list-group-item">qwfp</li>
-            <li class="list-group-item">qwfp</li>
-            <li class="list-group-item">qwfp</li>
+          <ul class="list-group" data-bind="foreach: playerNames">
+            <li class="list-group-item" data-bind="text: playerName"></li>
           </ul>
         </div>
       </div>
+      <!-- /ko -->
       <h3>Roles</h3>
       <div class="row">
         <div class="col-md-3">

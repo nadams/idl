@@ -29,6 +29,10 @@
           });
         }, this);
       }, this);
+
+      this.hasPlayerNames = ko.computed(function() {
+        return this.playerNames().length > 0;
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
