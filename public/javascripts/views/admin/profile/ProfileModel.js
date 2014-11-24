@@ -54,7 +54,9 @@
       updateProfile: function() {
         var promise = repository.updateProfile(this.profileId(), this.displayName(), this.email(), this.passwordExpired(), this);
         promise.done(function(data) {
-        
+          this.displayName(data.displayName);
+          this.email(data.email);
+          this.passwordExpired(data.passwordExpired);
         });
 
         promise.fail(function() {});

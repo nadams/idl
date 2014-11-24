@@ -14,6 +14,8 @@ object AdminProfileController extends Controller
   with TeamComponentImpl
   with PlayerComponentImpl {
 
+  private val profileNotFound = NotFound("Profile not found")
+
   def index = IsAuthenticated(Roles.Admin) { username => implicit request => 
     Ok(views.html.admin.profile.index())
   }
@@ -24,7 +26,7 @@ object AdminProfileController extends Controller
       val roles = profileService.getRolesForUsername(username)
       
       Ok(views.html.admin.profile.profile(ProfileInformationModel.toModel(profile, roles, players)))
-    } getOrElse(NotFound("Profile not found"))
+    } getOrElse(profileNotFound)
   }
 
   def search(name: String) = IsAuthenticated(Roles.Admin) { username => implicit request => 
@@ -34,10 +36,20 @@ object AdminProfileController extends Controller
   }
 
   def updateProfile(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    profileService.getById(profilId) map { profile => 
+    import UpdateProfileModel._
 
+    handleJsonPost[UpdateProfileModel] { model => 
+      profileService.getById(profileId) map { profile => 
+        val updatedProfile = profile.copy(
+          displayName = model.displayName,
+          email = model.email,
+          passwordExpired = model.passwordExpired
+        )
+
+        profileService.updateProfile(updatedProfile) map { result => 
+          Ok(Json.toJson(UpdateProfileModel.toModel(result)))
+        } getOrElse(InternalServerError("Could not update profile information"))
+      } getOrElse(profileNotFound)
     }
-
-    Ok("")
   }
 }

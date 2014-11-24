@@ -19,7 +19,7 @@ trait ProfileServiceComponent {
     def searchProfiles(name: String) : Seq[ProfileSearchRecord]
     def updateLastLoginDate(username: String) : Boolean
     def getRolesForUsername(username: String) : Seq[Roles.Role]
-    def updateProfile(profile: Profile) : Boolean
+    def updateProfile(profile: Profile) : Option[Profile]
   }
 }
 
@@ -98,6 +98,8 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
     def searchProfiles(name: String) = profileRepository.searchProfiles(name)
     def updateLastLoginDate(username: String) = profileRepository.updateLastLoginDate(username)
     def getRolesForUsername(username: String) = profileRepository.getRolesForUsername(username)
-    def updateProfile(profile: Profile) = profileRepository.updateProfile(profile)
+    def updateProfile(profile: Profile) = 
+      if(profileRepository.updateProfile(profile)) Some(profile)
+      else None
   }
 }
