@@ -91,6 +91,21 @@
 
           this.profileRoles.removeAll(rolesToRemove);
         });
+      },
+      addRoles: function() {
+        var promise = repository.addRoles(this.profileId(), this.selectedRolesToAssign(), this);
+        this.selectedRolesToAssign.removeAll();
+        promise.done(function(data) {
+          var rolesToAdd = _.filter(this.allRoles(), function(item) {
+            return _.find(data.roleIds, function(roleId) {
+              return roleId === item.roleId();
+            });
+          });
+
+          _.forEach(rolesToAdd, function(item) {
+            this.profileRoles.push(item);
+          }, this);
+        });
       }
     });
 

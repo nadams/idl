@@ -85,7 +85,7 @@
         </div>
         <div class="col-md-3">
           <div class="visible-xs visible-sm">
-            <button class="btn btn-default" data-bind="">
+            <button class="btn btn-default" data-bind="click: addRoles">
               <span class="glyphicon glyphicon-arrow-up"></span>
             </button>
             <button class="btn btn-default" data-bind="click: removeRoles">
@@ -95,7 +95,7 @@
           <div class="visible-md visible-lg text-left">
             <div class="mutate-buttons">
               <div class="button-group">
-                <button class="btn btn-default" data-bind="">
+                <button class="btn btn-default" data-bind="click: addRoles">
                   <span class="glyphicon glyphicon-arrow-left"></span>
                 </button>
                 <button class="btn btn-default" data-bind="click: removeRoles">
@@ -117,7 +117,8 @@
             data-bind="
               options: availableRoles, 
               optionsText: 'roleName', 
-              optionsValue: 'roleId'"></select>
+              optionsValue: 'roleId',
+              selectedOptions: selectedRolesToAssign"></select>
         </div>
       </div>
       <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>

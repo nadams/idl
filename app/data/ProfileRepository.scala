@@ -128,7 +128,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 
     def assignProfileToRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
       SQL(Profile.assignProfileToRole)
-      .on('role -> roleId, 'profileId -> profileId)
+      .on('roleId -> roleId, 'profileId -> profileId)
       .executeUpdate > 0
     }
 
