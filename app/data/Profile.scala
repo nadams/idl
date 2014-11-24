@@ -73,6 +73,24 @@ object Profile {
       WHERE ${ProfileSchema.email} = {email}
     """
 
+  lazy val assignProfileToRole = 
+    s"""
+      INSERT INTO ${ProfileRoleSchema.tableName} (
+        ${ProfileRoleSchema.roleId},
+        ${ProfileRoleSchema.profileId}
+      ) VALUE (
+        {roleId},
+        {profileId}
+      )
+    """
+
+  lazy val removeProfileFromRole = 
+    s"""
+      DELETE FROM ${ProfileRoleSchema.tableName}
+      WHERE ${ProfileRoleSchema.roleId} = {roleId}
+        AND ${ProfileRoleSchema.profileId} = {profileId}
+    """
+
   lazy val singleRowParser  = 
     int(ProfileSchema.profileId) ~ 
     str(ProfileSchema.email) ~ 

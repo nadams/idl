@@ -127,11 +127,15 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     }
 
     def assignProfileToRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
-      true
+      SQL(Profile.assignProfileToRole)
+      .on('role -> roleId, 'profileId -> profileId)
+      .executeUpdate > 0
     }
 
     def removeProfileFromRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
-      true
+      SQL(Profile.removeProfileFromRole)
+      .on('role -> roleId, 'profileId -> profileId)
+      .executeUpdate > 0
     }
   }
 }
