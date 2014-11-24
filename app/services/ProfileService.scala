@@ -20,6 +20,8 @@ trait ProfileServiceComponent {
     def updateLastLoginDate(username: String) : Boolean
     def getRolesForUsername(username: String) : Seq[Roles.Role]
     def updateProfile(profile: Profile) : Option[Profile]
+    def addProfileToRoles(profileId: Int, roles: Seq[Int]) : Seq[Int]
+    def removeProfileFromRoles(profileId: Int, roles: Seq[Int]) : Seq[Int]
   }
 }
 
@@ -101,5 +103,11 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
     def updateProfile(profile: Profile) = 
       if(profileRepository.updateProfile(profile)) Some(profile)
       else None
+
+    def removeProfileFromRoles(profileId: Int, roles: Seq[Int]) =
+      roles.filter(roleId => profileRepository.removeProfileFromRole(profileId, roleId))
+
+    def addProfileToRoles(profileId: Int, roles: Seq[Int]) =
+      roles.filter(roleId => profileRepository.assignProfileToRole(profileId, roleId))
   }
 }

@@ -14,6 +14,8 @@ trait ProfileRepositoryComponent {
     def addProfileToRole(profileId: Int, role: Roles.Role) : Boolean
     def searchProfiles(name: String) : Seq[ProfileSearchRecord]
     def updateLastLoginDate(username: String) : Boolean
+    def assignProfileToRole(profileId: Int, roleId: Int) : Boolean
+    def removeProfileFromRole(profileId: Int, roleId: Int) : Boolean
   }
 }
 
@@ -122,6 +124,14 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       SQL(Profile.updateLastLoginDate)
       .on('lastLoginDate -> new DateTime(DateTimeZone.UTC), 'email -> username)
       .executeUpdate > 0
+    }
+
+    def assignProfileToRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
+      true
+    }
+
+    def removeProfileFromRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
+      true
     }
   }
 }

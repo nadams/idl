@@ -53,19 +53,16 @@ object AdminProfileController extends Controller
     }
   }
 
-  def addRoles(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+  def addRoles(profileId: Int) = rolesAction(profileId, profileService.addProfileToRoles)
+  def removeRoles(profileId: Int) = rolesAction(profileId, profileService.removeProfileFromRoles)
+
+  private def rolesAction(profileId: Int, serviceMethod: (Int, Seq[Int]) => Seq[Int]) = IsAuthenticated(Roles.Admin) { username => implicit request => 
     import AlterRolesModel._
 
     handleJsonPost[AlterRolesModel] { model => 
-      Ok("")
-    }
-  }
-
-  def removeRoles(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    import AlterRolesModel._
-
-    handleJsonPost[AlterRolesModel] { model => 
-      Ok("")
+      profileService.getById(profileId) map { profile => 
+        Ok(Json.toJson(serviceMethod(profile.profileId, model.roleIds)))
+      } getOrElse(profileNotFound)
     }
   }
 }
