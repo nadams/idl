@@ -61,7 +61,7 @@ object AdminProfileController extends Controller
 
     handleJsonPost[AlterRolesModel] { model => 
       profileService.getById(profileId) map { profile => 
-        Ok(Json.toJson(serviceMethod(profile.profileId, model.roleIds)))
+        Ok(Json.toJson(AlterRolesModel.toModel(serviceMethod(profile.profileId, model.roleIds))))
       } getOrElse(profileNotFound)
     }
   }
