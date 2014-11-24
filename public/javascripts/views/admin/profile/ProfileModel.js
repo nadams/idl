@@ -33,6 +33,14 @@
       this.hasPlayerNames = ko.computed(function() {
         return this.playerNames().length > 0;
       }, this);
+
+      this.canAssignRoles = ko.computed(function() {
+        return this.selectedRolesToAssign().length > 0;
+      }, this);
+
+      this.canRemoveRoles = ko.computed(function() {
+        return this.selectedRolesToRemove().length > 0;
+      }, this);
     };
 
     ko.utils.extend(Model.prototype, {
@@ -79,37 +87,41 @@
         return false;
       },
       removeRoles: function() {
-        var roleIds = _.map(this.selectedRolesToRemove(), function(item) {
-          return item.roleId();
-        });
-
-        this.selectedRolesToRemove.removeAll();
-        
-        var promise = repository.removeRoles(this.profileId(), roleIds, this);
-        promise.done(function(data) {
-          var rolesToRemove = _.filter(this.profileRoles(), function(item) {
-            return _.find(data.roleIds, function(roleId) {
-              return roleId === item.roleId();
-            });
+        if(this.canRemoveRoles()) {
+          var roleIds = _.map(this.selectedRolesToRemove(), function(item) {
+            return item.roleId();
           });
 
-          this.profileRoles.removeAll(rolesToRemove);
-        });
+          this.selectedRolesToRemove.removeAll();
+          
+          var promise = repository.removeRoles(this.profileId(), roleIds, this);
+          promise.done(function(data) {
+            var rolesToRemove = _.filter(this.profileRoles(), function(item) {
+              return _.find(data.roleIds, function(roleId) {
+                return roleId === item.roleId();
+              });
+            });
+
+            this.profileRoles.removeAll(rolesToRemove);
+          });
+        }
       },
       addRoles: function() {
-        var promise = repository.addRoles(this.profileId(), this.selectedRolesToAssign(), this);
-        this.selectedRolesToAssign.removeAll();
-        promise.done(function(data) {
-          var rolesToAdd = _.filter(this.allRoles(), function(item) {
-            return _.find(data.roleIds, function(roleId) {
-              return roleId === item.roleId();
+        if(this.canAssignRoles()) {
+          var promise = repository.addRoles(this.profileId(), this.selectedRolesToAssign(), this);
+          this.selectedRolesToAssign.removeAll();
+          promise.done(function(data) {
+            var rolesToAdd = _.filter(this.allRoles(), function(item) {
+              return _.find(data.roleIds, function(roleId) {
+                return roleId === item.roleId();
+              });
             });
-          });
 
-          _.forEach(rolesToAdd, function(item) {
-            this.profileRoles.push(item);
-          }, this);
-        });
+            _.forEach(rolesToAdd, function(item) {
+              this.profileRoles.push(item);
+            }, this);
+          });
+        }
       }
     });
 
