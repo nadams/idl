@@ -45,7 +45,10 @@
         </div>
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-4">
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary" data-bind="disable: isUpdatingProfile">
+              <span data-bind="ifnot: isUpdatingProfile">Save</span>
+              <span data-bind="if: isUpdatingProfile"><img src="@routes.Assets.at("images/ajax-loader-blue.gif")" alt="Loading..." class="loading-spinner" /></span>
+            </button>
             <a href="" class="btn btn-default">Cancel</a>
           </div>
         </div>

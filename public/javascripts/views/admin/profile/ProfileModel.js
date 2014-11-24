@@ -39,6 +39,8 @@
         this.passwordExpired(data.passwordExpired);
         this.lastLoginDate(data.lastLoginDate);
 
+        this.isUpdatingProfile = ko.observable(false);
+
         this.profileRoles(_.map(data.profileRoles, function(item) {
           return new admin.profile.RoleModel(item);
         }));
@@ -52,6 +54,7 @@
         }));
       },
       updateProfile: function() {
+        this.isUpdatingProfile(true);
         var promise = repository.updateProfile(this.profileId(), this.displayName(), this.email(), this.passwordExpired(), this);
         promise.done(function(data) {
           this.displayName(data.displayName);
@@ -60,7 +63,9 @@
         });
 
         promise.fail(function() {});
-        promise.always(function() {});
+        promise.always(function() {
+          this.isUpdatingProfile(false);
+        });
 
         return false;
       }
