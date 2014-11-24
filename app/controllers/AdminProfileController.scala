@@ -34,6 +34,10 @@ object AdminProfileController extends Controller
   }
 
   def updateProfile(profileId: Int) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    profileService.getById(profilId) map { profile => 
+
+    }
+
     Ok("")
   }
 }

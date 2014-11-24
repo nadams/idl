@@ -15,7 +15,7 @@
 
 @views.html.admin.profile.profileTemplate("Profile Details", extraScripts = extraScripts) {
   <div class="panel panel-default">
-    <div class="panel-heading"></div>
+    <div class="panel-heading"><h3>Edit Profile: <span data-bind="text: displayName"></span></h3></div>
     <div class="panel-body">
       <h3>Profile Information</h3>
       <form class="form-horizontal" role="form" data-bind="submit: updateProfile">
