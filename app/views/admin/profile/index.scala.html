@@ -53,7 +53,7 @@
             <td>
               <!-- ko if: hasPlayerNames -->
               <ul class="list-group" data-bind="foreach: playerNames">
-                <li class="list-group-item" data-bind="text: playerName, css: { 'list-group-item-warning': isApproved }"></li>
+                <li class="list-group-item" data-bind="text: playerName, css: { 'list-group-item-warning': !isApproved(), 'list-group-item-success': isApproved() }"></li>
               </ul>
               <!-- /ko -->
 
