@@ -40,7 +40,7 @@ object PlayerNameModel {
   def toModel(player: Player) = PlayerNameModel(
     player.playerId,
     player.playerName,
-    true
+    player.isApproved
   )
 }
 

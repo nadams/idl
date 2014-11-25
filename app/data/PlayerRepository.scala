@@ -155,7 +155,7 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .on('playerId -> playerId, 'profileId -> profileId, 'isApproved -> true)
       .executeUpdate
 
-      Some(Player(playerId, playerName, true, now))
+      Some(Player(playerId, playerName, true, now, true))
     }
 
     def getPlayerProfile(profileId: Int, playerId: Int) = DB.withConnection { implicit connection =>
@@ -211,7 +211,8 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
         .toInt,
         name,
         true,
-        now
+        now,
+        true
       )
     }
   }
