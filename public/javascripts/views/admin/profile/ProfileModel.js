@@ -66,7 +66,7 @@
           }, this);
         }, this));
 
-        this.playerNames(_.map(data.playernames, function(item) {
+        this.playerNames(_.map(data.playerNames, function(item) {
           return new admin.profile.PlayerNameModel(item);
         }));
       },
