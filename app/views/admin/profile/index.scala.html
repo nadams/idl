@@ -10,6 +10,11 @@
   </script>
   <script src="@routes.Assets.at("javascripts/views/admin/profile/ProfileRepository.js")"></script>
   <script src="@routes.Assets.at("javascripts/views/admin/profile/IndexModel.js")"></script>
+  <script>
+    $(function() {
+      $('#profileSearch').focus();
+    });
+  </script>
 }
 
 @views.html.admin.profile.profileTemplate("Manage Profiles", extraScripts = extraScripts) {
@@ -24,7 +29,7 @@
             <div class="col-xs-4">
               <label>Profile Name</label>
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search..." data-bind="textInput: profileSearchValue" />
+                <input type="text" id="profileSearch" class="form-control" placeholder="Search..." data-bind="textInput: profileSearchValue" />
                 <span class="input-group-btn">
                   <button class="btn btn-default" type="submit">
                     <span data-bind="visible: !isSearching()">Search</span>
