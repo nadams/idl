@@ -47,7 +47,7 @@
         </div>
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-4">
-            <button type="submit" class="btn btn-primary" data-bind="disable: isUpdatingProfile">
+            <button type="submit" class="btn btn-primary" id="saveProfileInformation" data-bind="disable: isUpdatingProfile">
               <span data-bind="ifnot: isUpdatingProfile">Save</span>
               <span data-bind="if: isUpdatingProfile"><img src="@routes.Assets.at("images/ajax-loader-blue.gif")" alt="Loading..." class="loading-spinner" /></span>
             </button>
@@ -60,7 +60,18 @@
       <div class="row">
         <div class="col-sm-4">
           <ul class="list-group" data-bind="foreach: playerNames">
-            <li class="list-group-item" data-bind="text: playerName, css: { 'list-group-item-warning': !isApproved(), 'list-group-item-success': isApproved() }"></li>
+            <li class="list-group-item" data-bind="css: { 'list-group-item-warning': !isApproved(), 'list-group-item-success': isApproved() }">
+              <span data-bind="text: playerName"></span>
+              <!-- ko if: isApproved -->
+              <button class="btn btn-danger btn-xs pull-right" data-bind="">Unapprove</button>
+              <!-- /ko -->
+              <!-- ko ifnot: isApproved -->
+              <div class="pull-right">
+                <button class="btn btn-success btn-xs" data-bind="">Approve</button>
+                <button class="btn btn-danger btn-xs" data-bind="">Remove</button>
+              </div>
+              <!-- /ko -->
+            </li>
           </ul>
         </div>
       </div>
