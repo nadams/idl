@@ -1,5 +1,6 @@
 package controllers
 
+import scala.util.Try
 import play.api._
 import play.api.mvc._
 import play.api.libs.json.Json
@@ -53,6 +54,9 @@ object AdminProfileController extends Controller
     }
   }
 
+  def unapprovePlayer(playerId: Int) = playerAction(playerId, playerService.unapprovePlayer)
+  def approvePlayer(playerId: Int) = playerAction(playerId, playerService.approvePlayer)
+  def removePlayer(playerId: Int) = playerAction(playerId, playerService.removePlayer)
   def addRoles(profileId: Int) = rolesAction(profileId, profileService.addProfileToRoles)
   def removeRoles(profileId: Int) = rolesAction(profileId, profileService.removeProfileFromRoles)
 
@@ -64,5 +68,9 @@ object AdminProfileController extends Controller
         Ok(Json.toJson(AlterRolesModel.toModel(serviceMethod(profile.profileId, model.roleIds))))
       } getOrElse(profileNotFound)
     }
+  }
+
+  private def playerAction(playerId: Int, serviceMethod: Int => Try[Int]) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    Ok("")
   }
 }

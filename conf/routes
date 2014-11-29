@@ -62,12 +62,15 @@ POST    /admin/season/:seasonId/games/:gameId/stats/:playerId/demo  controllers.
 POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/remove controllers.GameController.removeRound(seasonId: Int, gameId: Int, roundId: Int)
 POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/update controllers.GameController.updateRound(seasonId: Int, gameId: Int, roundId: Int)
 
-GET     /admin/profile                          controllers.AdminProfileController.index
-GET     /admin/profile/:profileId               controllers.AdminProfileController.profile(profileId: Int)
-GET     /admin/profile/search/:name             controllers.AdminProfileController.search(name: String)
-POST    /admin/profile/:profileId/update        controllers.AdminProfileController.updateProfile(profileId: Int)
-POST    /admin/profile/:profileId/addRoles      controllers.AdminProfileController.addRoles(profileId: Int)
-POST    /admin/profile/:profileId/removeRoles   controllers.AdminProfileController.removeRoles(profileId: Int)
+GET     /admin/profile                            controllers.AdminProfileController.index
+GET     /admin/profile/:profileId                 controllers.AdminProfileController.profile(profileId: Int)
+GET     /admin/profile/search/:name               controllers.AdminProfileController.search(name: String)
+POST    /admin/profile/:profileId/update          controllers.AdminProfileController.updateProfile(profileId: Int)
+POST    /admin/profile/:profileId/addRoles        controllers.AdminProfileController.addRoles(profileId: Int)
+POST    /admin/profile/:profileId/removeRoles     controllers.AdminProfileController.removeRoles(profileId: Int)
+POST    /admin/profile/:playerId/unapprovePlayer controllers.AdminProfileController.unapprovePlayer(playerId: Int)
+POST    /admin/profile/:playerId/approvePlayer   controllers.AdminProfileController.approvePlayer(playerId: Int)
+POST    /admin/profile/:playerId/removePlayer    controllers.AdminProfileController.removePlayer(playerId: Int)
 
 GET     /brackets                               controllers.BracketsController.index
         

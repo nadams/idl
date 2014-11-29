@@ -6,7 +6,10 @@
   @helper.javascriptRouter("routes")(
     routes.javascript.AdminProfileController.updateProfile,
     routes.javascript.AdminProfileController.addRoles,
-    routes.javascript.AdminProfileController.removeRoles
+    routes.javascript.AdminProfileController.removeRoles,
+    routes.javascript.AdminProfileController.unapprovePlayer,
+    routes.javascript.AdminProfileController.approvePlayer,
+    routes.javascript.AdminProfileController.removePlayer
   )
   <script>
     admin.profile.data = @Html(Json.toJson(model).toString)
