@@ -39,19 +39,31 @@
         return ajax.post(url, data, context);
       };
 
-      this.unapprovePlayer = function(playerId, context) {
-        var url = routes.controllers.AdminProfileController.unapprovePlayer(playerId).url;
-        return ajax.post(url, {}, context);
+      this.unapprovePlayer = function(profileId, playerId, context) {
+        var url = routes.controllers.AdminProfileController.unapprovePlayer(profileId).url;
+        var data = {
+          playerId: playerId
+        };
+
+        return ajax.post(url, data, context);
       };
 
-      this.approvePlayer = function(playerId, context) {
-        var url = routes.controllers.AdminProfileController.approvePlayer(playerId).url;
-        return ajax.post(url, {}, context);
+      this.approvePlayer = function(profileId, playerId, context) {
+        var url = routes.controllers.AdminProfileController.approvePlayer(profileId).url;
+        var data = {
+          playerId: playerId
+        };
+
+        return ajax.post(url, data, context);
       };
 
-      this.removePlayer = function(playerId, context) {
-        var url = routes.controllers.AdminProfileController.removePlayer(playerId).url;
-        return ajax.post(url, {}, context);
+      this.removePlayer = function(profileId, playerId, context) {
+        var url = routes.controllers.AdminProfileController.removePlayer(profileId).url;
+        var data = {
+          playerId: playerId
+        };
+
+        return ajax.post(url, data, context);
       };
     };
 

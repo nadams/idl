@@ -24,9 +24,9 @@ trait PlayerServiceComponent {
     def getFellowPlayersForProfile(profileId: Int) : Seq[FellowPlayerRecord]
     def getFellowPlayersForTeamPlayer(profileId: Int, playerId: Int, teamId: Int) : Seq[FellowPlayerRecord]
     def getPlayersByProfileId(profileId: Int) : Seq[Player]
-    def unapprovePlayer(playerId: Int) : Try[Int]
-    def approvePlayer(playerId: Int) : Try[Int]
-    def removePlayer(playerId: Int) : Try[Int]
+    def unapprovePlayer(profileId: Int, playerId: Int) : Try[Int]
+    def approvePlayer(profileId: Int, playerId: Int) : Try[Int]
+    def removePlayer(profileId: Int, playerId: Int) : Try[Int]
   }
 }
 
@@ -70,9 +70,9 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
     def batchCreatePlayerFromName(names: Set[String]) = 
       playerRepository.batchCreatePlayerFromName(names.diff(playerService.getPlayerNamesThatExist(names)))
 
-    def unapprovePlayer(playerId: Int) = ???
-    def approvePlayer(playerId: Int) = ???
-    def removePlayer(playerId: Int) = ???
+    def unapprovePlayer(profileId: Int, playerId: Int) = ???
+    def approvePlayer(profileId: Int, playerId: Int) = ???
+    def removePlayer(profileId: Int, playerId: Int) = ???
   }
 }
 

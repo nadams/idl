@@ -68,9 +68,9 @@ GET     /admin/profile/search/:name               controllers.AdminProfileContro
 POST    /admin/profile/:profileId/update          controllers.AdminProfileController.updateProfile(profileId: Int)
 POST    /admin/profile/:profileId/addRoles        controllers.AdminProfileController.addRoles(profileId: Int)
 POST    /admin/profile/:profileId/removeRoles     controllers.AdminProfileController.removeRoles(profileId: Int)
-POST    /admin/profile/:playerId/unapprovePlayer controllers.AdminProfileController.unapprovePlayer(playerId: Int)
-POST    /admin/profile/:playerId/approvePlayer   controllers.AdminProfileController.approvePlayer(playerId: Int)
-POST    /admin/profile/:playerId/removePlayer    controllers.AdminProfileController.removePlayer(playerId: Int)
+POST    /admin/profile/:profileId/unapprovePlayer controllers.AdminProfileController.unapprovePlayer(profileId: Int)
+POST    /admin/profile/:profileId/approvePlayer   controllers.AdminProfileController.approvePlayer(profileId: Int)
+POST    /admin/profile/:profileId/removePlayer    controllers.AdminProfileController.removePlayer(profileId: Int)
 
 GET     /brackets                               controllers.BracketsController.index
         

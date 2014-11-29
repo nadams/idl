@@ -54,9 +54,9 @@ object AdminProfileController extends Controller
     }
   }
 
-  def unapprovePlayer(playerId: Int) = playerAction(playerId, playerService.unapprovePlayer)
-  def approvePlayer(playerId: Int) = playerAction(playerId, playerService.approvePlayer)
-  def removePlayer(playerId: Int) = playerAction(playerId, playerService.removePlayer)
+  def unapprovePlayer(profileId: Int) = playerAction(profileId, playerService.unapprovePlayer)
+  def approvePlayer(profileId: Int) = playerAction(profileId, playerService.approvePlayer)
+  def removePlayer(profileId: Int) = playerAction(profileId, playerService.removePlayer)
   def addRoles(profileId: Int) = rolesAction(profileId, profileService.addProfileToRoles)
   def removeRoles(profileId: Int) = rolesAction(profileId, profileService.removeProfileFromRoles)
 
@@ -70,7 +70,12 @@ object AdminProfileController extends Controller
     }
   }
 
-  private def playerAction(playerId: Int, serviceMethod: Int => Try[Int]) = IsAuthenticated(Roles.Admin) { username => implicit request => 
-    Ok("")
+  private def playerAction(profileId: Int, serviceMethod: (Int, Int) => Try[Int]) = IsAuthenticated(Roles.Admin) { username => implicit request => 
+    import AlterPlayerModel._
+
+    handleJsonPost[AlterPlayerModel] { model => 
+      serviceMethod(profileId, model.playerId)
+      Ok("")
+    }
   }
 }
