@@ -58,10 +58,10 @@
           </div>
         </div>
       </form>
-      <!-- ko if: hasPlayerNames -->
       <h3>Player Names</h3>
       <div class="row">
         <div class="col-sm-4">
+          <!-- ko if: hasPlayerNames -->
           <ul class="list-group" data-bind="foreach: playerNames">
             <li class="list-group-item" data-bind="css: { 'list-group-item-warning': !isApproved(), 'list-group-item-success': isApproved() }">
               <span data-bind="text: playerName"></span>
@@ -86,9 +86,12 @@
             </li>
             <!-- /ko -->
           </ul>
+          <!-- /ko -->
+          <!-- ko ifnot: hasPlayerNames -->
+          <span>This profile has no player names.</span>
+          <!-- /ko -->
         </div>
       </div>
-      <!-- /ko -->
       <h3>Roles</h3>
       <div class="row">
         <div class="col-md-3">
