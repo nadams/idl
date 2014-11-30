@@ -24,6 +24,7 @@ trait PlayerRepositoryComponent {
     def getPlayerProfileRecordsForProfile(profileId: Int) : Seq[PlayerProfileRecord] 
     def getFellowPlayersForProfile(profileId: Int) : Seq[FellowPlayerRecord]
     def getFellowPlayersForTeamPlayer(profileId: Int, playerId: Int, teamId: Int) : Seq[FellowPlayerRecord]
+    def updatePlayerProfile(playerProfile: PlayerProfile) : Boolean
   }
 }
 
@@ -198,6 +199,15 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .on('profileId -> profileId, 'playerId -> playerId, 'teamId -> teamId)
       .as(FellowPlayerRecord.multiRowParser)
       .map(FellowPlayerRecord(_))
+    }
+
+    def updatePlayerProfile(playerProfile: PlayerProfile) = DB.withConnection { implicit connection =>
+      SQL(PlayerProfile.updatePlayerProfile)
+      .on(
+        'profileId -> playerProfile.profileId, 
+        'playerId -> playerProfile.playerId,
+        'isApproved -> playerProfile.isApproved
+      ).executeUpdate > 0
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = {

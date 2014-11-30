@@ -70,9 +70,24 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
     def batchCreatePlayerFromName(names: Set[String]) = 
       playerRepository.batchCreatePlayerFromName(names.diff(playerService.getPlayerNamesThatExist(names)))
 
-    def unapprovePlayer(profileId: Int, playerId: Int) = ???
-    def approvePlayer(profileId: Int, playerId: Int) = ???
-    def removePlayer(profileId: Int, playerId: Int) = ???
+    def unapprovePlayer(profileId: Int, playerId: Int) = Try(
+      playerRepository.getPlayerProfile(profileId, playerId) map { playerProfile =>
+        if(playerRepository.updatePlayerProfile(playerProfile.copy(isApproved = false))) playerProfile.profileId
+        else throw CouldNotUpdatePlayerProfileException("Unable to unapprove player profile")
+      } getOrElse(throw CouldNotGetPlayerProfile())
+    )
+
+    def approvePlayer(profileId: Int, playerId: Int) = Try(
+      playerRepository.getPlayerProfile(profileId, playerId) map { playerProfile =>
+        if(playerRepository.updatePlayerProfile(playerProfile.copy(isApproved = true))) playerProfile.profileId
+        else throw CouldNotUpdatePlayerProfileException("Unable to approve player profile")
+      } getOrElse(throw CouldNotGetPlayerProfile())
+    )
+
+    def removePlayer(profileId: Int, playerId: Int) = Try(
+      if(playerRepository.removePlayerFromProfile(profileId, playerId)) playerId
+      else throw CouldNotUpdatePlayerProfileException("Could not remove player profile from player") 
+    )
   }
 }
 

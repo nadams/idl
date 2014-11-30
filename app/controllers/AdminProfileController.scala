@@ -1,6 +1,6 @@
 package controllers
 
-import scala.util.Try
+import scala.util.{ Try, Success, Failure }
 import play.api._
 import play.api.mvc._
 import play.api.libs.json.Json
@@ -74,8 +74,10 @@ object AdminProfileController extends Controller
     import AlterPlayerModel._
 
     handleJsonPost[AlterPlayerModel] { model => 
-      serviceMethod(profileId, model.playerId)
-      Ok("")
+      serviceMethod(profileId, model.playerId) match {
+        case Success(result) => Ok(Json.toJson(AlterPlayerModel.toModel(result)))
+        case Failure(ex) => InternalServerError(ex.toString)
+      }
     }
   }
 }

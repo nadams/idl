@@ -52,6 +52,14 @@ object PlayerProfile {
         AND ${PlayerProfileSchema.profileId} = {profileId}
     """
 
+  lazy val updatePlayerProfile =
+    s"""
+      UPDATE ${PlayerProfileSchema.tableName}
+      SET ${PlayerProfileSchema.isApproved} = {isApproved}
+      WHERE ${PlayerProfileSchema.profileId} = {profileId}
+        AND ${PlayerProfileSchema.playerId} = {playerId}
+    """
+
   lazy val singleRowParser = 
     int(PlayerProfileSchema.profileId) ~
     int(PlayerProfileSchema.playerId) ~
@@ -93,3 +101,6 @@ object PlayerProfileRecord {
   def apply(x: (Int, Int, String, Boolean)) : PlayerProfileRecord = 
     PlayerProfileRecord(x._1, x._2, x._3, x._4)
 }
+
+case class CouldNotUpdatePlayerProfileException(message: String) extends Exception(message)
+case class CouldNotGetPlayerProfile(message: String = "Could not get player profile") extends Exception(message)

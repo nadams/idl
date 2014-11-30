@@ -6,5 +6,7 @@ case class AlterPlayerModel(playerId: Int)
 
 object AlterPlayerModel {
   implicit val formatsAlterPlayerModel = Json.format[AlterPlayerModel]
+
+  def toModel(playerId: Int) = AlterPlayerModel(playerId)
 }
 
