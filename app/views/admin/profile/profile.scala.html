@@ -70,11 +70,20 @@
               <!-- /ko -->
               <!-- ko ifnot: isApproved -->
               <div class="pull-right">
-                <button class="btn btn-success btn-xs" data-bind="click: function(data, event) { approvePlayer(data, $parent.profileId()) }">Approve</button>
-                <button class="btn btn-danger btn-xs" data-bind="click: function(data, event) { $parent.removePlayer($parent, $data) }">Remove</button>
+                <button class="btn btn-primary btn-xs" data-bind="click: function(data, event) { approvePlayer(data, $parent.profileId()) }">Approve</button>
+                <button class="btn btn-danger btn-xs" data-bind="click: toggleRemovePromptWarning">Remove</button>
               </div>
               <!-- /ko -->
             </li>
+            <!-- ko if: promptRemoveWarning -->
+            <li class="list-group-item list-group-item-danger">
+              <span>Are you sure?</span>
+              <div class="pull-right">
+                <button class="btn btn-primary btn-xs" data-bind="click: hideRemovePromptWarning">No</button>
+                <button class="btn btn-danger btn-xs" data-bind="click: function(data, event) { $parent.removePlayer($parent, $data) }">Yes</button>
+              </div>
+            </li>
+            <!-- /ko -->
           </ul>
         </div>
       </div>

@@ -145,6 +145,8 @@
       this.playerName = ko.observable();
       this.isApproved = ko.observable();
 
+      this.promptRemoveWarning = ko.observable(false);
+
       this.initialize(data);
     };
 
@@ -175,6 +177,15 @@
 
         promise.fail(function(message) {
         });
+      },
+      showRemovePromptWarning: function() {
+        this.promptRemoveWarning(true);
+      },
+      hideRemovePromptWarning: function() {
+        this.promptRemoveWarning(false);
+      },
+      toggleRemovePromptWarning: function() {
+        this.promptRemoveWarning(!this.promptRemoveWarning());
       }
     });
 
