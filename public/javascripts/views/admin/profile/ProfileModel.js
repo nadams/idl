@@ -124,6 +124,7 @@
         }
       },
       removePlayer: function(context, player) {
+        player.isUpdatingPlayer(true);
         var promise = repository.removePlayer(context.profileId(), player.playerId(), context);
         promise.done(function(result) {
           this.playerNames.remove(function(item) {
@@ -132,6 +133,10 @@
         });
 
         promise.fail(function(message) {
+        });
+
+        promise.always(function() {
+          player.isUpdatingPlayer(false);
         });
       }
     });
@@ -146,6 +151,7 @@
       this.isApproved = ko.observable();
 
       this.promptRemoveWarning = ko.observable(false);
+      this.isUpdatingPlayer = ko.observable(false);
 
       this.initialize(data);
     };
@@ -155,8 +161,10 @@
         this.playerId(data.playerId);
         this.playerName(data.playerName);
         this.isApproved(data.isApproved);
+
       },
       approvePlayer: function(data, profileId) {
+        data.isUpdatingPlayer(true);
         var promise = repository.approvePlayer(profileId, data.playerId(), data);
         promise.done(function(result) {
           if(result.playerId === data.playerId()) {
@@ -166,8 +174,13 @@
 
         promise.fail(function(message) {
         });
+
+        promise.always(function() {
+          this.isUpdatingPlayer(false);
+        });
       },
       unapprovePlayer: function(data, profileId) {
+        data.isUpdatingPlayer(true);
         var promise = repository.unapprovePlayer(profileId, data.playerId(), data);
         promise.done(function(result) {
           if(result.playerId === data.playerId()) {
@@ -176,6 +189,10 @@
         });
 
         promise.fail(function(message) {
+        });
+
+        promise.always(function() {
+          this.isUpdatingPlayer(false);
         });
       },
       showRemovePromptWarning: function() {
