@@ -72,14 +72,14 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
 
     def unapprovePlayer(profileId: Int, playerId: Int) = Try(
       playerRepository.getPlayerProfile(profileId, playerId) map { playerProfile =>
-        if(playerRepository.updatePlayerProfile(playerProfile.copy(isApproved = false))) playerProfile.profileId
+        if(playerRepository.updatePlayerProfile(playerProfile.copy(isApproved = false))) playerProfile.playerId
         else throw CouldNotUpdatePlayerProfileException("Unable to unapprove player profile")
       } getOrElse(throw CouldNotGetPlayerProfile())
     )
 
     def approvePlayer(profileId: Int, playerId: Int) = Try(
       playerRepository.getPlayerProfile(profileId, playerId) map { playerProfile =>
-        if(playerRepository.updatePlayerProfile(playerProfile.copy(isApproved = true))) playerProfile.profileId
+        if(playerRepository.updatePlayerProfile(playerProfile.copy(isApproved = true))) playerProfile.playerId
         else throw CouldNotUpdatePlayerProfileException("Unable to approve player profile")
       } getOrElse(throw CouldNotGetPlayerProfile())
     )

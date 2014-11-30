@@ -122,6 +122,17 @@
             }, this);
           });
         }
+      },
+      removePlayer: function(context, player) {
+        var promise = repository.removePlayer(context.profileId(), player.playerId(), context);
+        promise.done(function(result) {
+          this.playerNames.remove(function(item) {
+            return item.playerId() === result.playerId;
+          });
+        });
+
+        promise.fail(function(message) {
+        });
       }
     });
 
@@ -142,6 +153,28 @@
         this.playerId(data.playerId);
         this.playerName(data.playerName);
         this.isApproved(data.isApproved);
+      },
+      approvePlayer: function(data, profileId) {
+        var promise = repository.approvePlayer(profileId, data.playerId(), data);
+        promise.done(function(result) {
+          if(result.playerId === data.playerId()) {
+            data.isApproved(true);
+          }
+        });
+
+        promise.fail(function(message) {
+        });
+      },
+      unapprovePlayer: function(data, profileId) {
+        var promise = repository.unapprovePlayer(profileId, data.playerId(), data);
+        promise.done(function(result) {
+          if(result.playerId === data.playerId()) {
+            data.isApproved(false);
+          }
+        });
+
+        promise.fail(function(message) {
+        });
       }
     });
 
