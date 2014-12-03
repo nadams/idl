@@ -16,7 +16,7 @@ object Player {
         p.${PlayerSchema.playerName},
         p.${PlayerSchema.isActive},
         p.${PlayerSchema.dateCreated},
-        IFNULL(pp.${PlayerProfileSchema.isApproved}, 0) AS ${PlayerProfileSchema.isApproved} 
+        CAST(IFNULL(pp.${PlayerProfileSchema.isApproved}, FALSE) AS TINYINT(1)) AS ${PlayerProfileSchema.isApproved} 
       FROM ${PlayerSchema.tableName} AS p
         LEFT OUTER JOIN ${PlayerProfileSchema.tableName} AS pp ON p.${PlayerSchema.playerId} = pp.${PlayerProfileSchema.playerId}
       WHERE ${PlayerSchema.playerId} = {playerId}

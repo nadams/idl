@@ -63,9 +63,23 @@ trait PlayerServiceComponentImpl extends PlayerServiceComponent {
       playerRepository.getPlayersByProfileId(profileId).nonEmpty
 
     def makeProfileAPlayer(profile: Profile) = 
-      playerRepository.insertPlayerWithProfile(Player(0, profile.displayName, true, new DateTime(DateTimeZone.UTC), true), profile.profileId) map { playerId =>
-        playerRepository.getPlayerProfileRecord(profile.profileId, playerId) 
-      } getOrElse(None)
+      getPlayerByName(profile.displayName) map { existingPlayer => 
+        if(playerRepository.getPlayerProfileByPlayerId(existingPlayer.playerId).isEmpty) {
+          if(playerRepository.insertPlayerProfile(existingPlayer.playerId, profile.profileId, false)) {
+            getPlayerProfileRecord(profile.profileId, existingPlayer.playerId)
+          } else {
+            None
+          }
+        } else {
+          None
+        }
+      } getOrElse {
+        playerRepository.insertPlayerWithProfile(
+          Player(0, profile.displayName, true, new DateTime(DateTimeZone.UTC), true),
+          profile.profileId,
+          true
+        ).map(playerRepository.getPlayerProfileRecord(profile.profileId, _)) getOrElse(None)
+      }
 
     def batchCreatePlayerFromName(names: Set[String]) = 
       playerRepository.batchCreatePlayerFromName(names.diff(playerService.getPlayerNamesThatExist(names)))

@@ -7,8 +7,8 @@ trait PlayerRepositoryComponent {
     def getAllPlayers() : Seq[Player]
     def getPlayersByProfileId(profileId: Int) : Seq[Player]
     def getPlayer(playerId: Int) : Option[Player]
-    def insertPlayerWithProfile(player: Player, profileId: Int) : Option[Int] 
-    def insertPlayerProfile(playerId: Int, profileId: Int) : Boolean
+    def insertPlayerWithProfile(player: Player, profileId: Int, isApproved: Boolean) : Option[Int] 
+    def insertPlayerProfile(playerId: Int, profileId: Int, isApproved: Boolean = false) : Boolean
     def getPlayerByName(name: String) : Option[Player]
     def getPlayerNamesThatExist(names: Set[String]) : Set[String]
     def createPlayerFromName(name: String) : Player
@@ -25,6 +25,7 @@ trait PlayerRepositoryComponent {
     def getFellowPlayersForProfile(profileId: Int) : Seq[FellowPlayerRecord]
     def getFellowPlayersForTeamPlayer(profileId: Int, playerId: Int, teamId: Int) : Seq[FellowPlayerRecord]
     def updatePlayerProfile(playerProfile: PlayerProfile) : Boolean
+    def getPlayerProfileByPlayerId(playerId: Int) : Seq[PlayerProfile]
   }
 }
 
@@ -59,33 +60,36 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
       .map(Player(_))
     }
 
-    def insertPlayerWithProfile(player: Player, profileId: Int) = DB.withConnection { implicit connection =>
+    def insertPlayerWithProfile(player: Player, profileId: Int, isApproved: Boolean) = DB.withConnection { implicit connection =>
       val playerId = SQL(Player.insertPlayer)
       .on('playerName -> player.playerName, 'isActive -> player.isActive, 'dateCreated -> player.dateCreated)
       .executeInsert(scalar[Long] single)
       .toInt
 
-      val result = insertPlayerProfile(playerId, profileId)
+      val result = insertPlayerProfile(playerId, profileId, isApproved)
 
       if(playerId > 0 && result) Some(playerId)
       else None
     }
 
-    def insertPlayerProfile(playerId: Int, profileId: Int) = DB.withConnection { implicit connection =>
+    def insertPlayerProfile(playerId: Int, profileId: Int, isApproved: Boolean = false) = DB.withConnection { implicit connection =>
       SQL(
         s"""
           INSERT INTO ${PlayerProfileSchema.tableName} (
             ${PlayerProfileSchema.profileId},
-            ${PlayerProfileSchema.playerId}
+            ${PlayerProfileSchema.playerId},
+            ${PlayerProfileSchema.isApproved}
           ) VALUES (
             {profileId},
-            {playerId}
+            {playerId},
+            {isApproved}
           )
         """
       )
       .on(
         'profileId -> profileId,
-        'playerId -> playerId
+        'playerId -> playerId,
+        'isApproved -> isApproved
       )
       .executeUpdate > 0
     }
@@ -208,6 +212,13 @@ trait PlayerRepositoryComponentImpl extends PlayerRepositoryComponent {
         'playerId -> playerProfile.playerId,
         'isApproved -> playerProfile.isApproved
       ).executeUpdate > 0
+    }
+
+    def getPlayerProfileByPlayerId(playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(PlayerProfile.selectByPlayerId)
+      .on('playerId -> playerId)
+      .as(PlayerProfile.multiRowParser)
+      .map(PlayerProfile(_))
     }
 
     private def insertPlayerFromName(name: String)(implicit connection: java.sql.Connection) : Player = {

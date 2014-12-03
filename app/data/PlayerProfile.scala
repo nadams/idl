@@ -60,10 +60,22 @@ object PlayerProfile {
         AND ${PlayerProfileSchema.playerId} = {playerId}
     """
 
+  lazy val selectByPlayerId = 
+    s"""
+      SELECT 
+        ${PlayerProfileSchema.profileId},
+        ${PlayerProfileSchema.playerId},
+        ${PlayerProfileSchema.isApproved}
+      FROM ${PlayerProfileSchema.tableName} 
+      WHERE ${PlayerProfileSchema.playerId} = {playerId}
+    """
+
   lazy val singleRowParser = 
     int(PlayerProfileSchema.profileId) ~
     int(PlayerProfileSchema.playerId) ~
     bool(PlayerProfileSchema.isApproved) map flatten
+
+  lazy val multiRowParser = singleRowParser *
 
   def apply(x: (Int, Int, Boolean)) : PlayerProfile = 
     PlayerProfile(x._1, x._2, x._3)
