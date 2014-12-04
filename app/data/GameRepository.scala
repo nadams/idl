@@ -75,6 +75,7 @@ trait GameRepositoryComponentImpl extends GameRepositoryComponent {
             g.${GameSchema.dateCompleted}
           FROM ${ProfileSchema.tableName} AS p
             INNER JOIN ${PlayerProfileSchema.tableName} AS pp ON p.${ProfileSchema.profileId} = pp.${PlayerProfileSchema.profileId}
+              AND ${PlayerProfileSchema.isApproved} = 1
             INNER JOIN ${PlayerSchema.tableName} AS p2 ON pp.${PlayerProfileSchema.playerId} = p2.${PlayerSchema.playerId}
             INNER JOIN ${TeamPlayerSchema.tableName} AS tp ON p2.${PlayerSchema.playerId} = tp.${TeamPlayerSchema.playerId}
             INNER JOIN ${TeamSchema.tableName} AS t ON tp.${TeamPlayerSchema.teamId} = t.${TeamSchema.teamId}

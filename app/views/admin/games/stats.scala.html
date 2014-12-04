@@ -3,249 +3,249 @@
 @import play.api.libs.json.Json
 
 @extraScripts = {
-	@helper.javascriptRouter("routes")(
-		routes.javascript.GameController.uploadStats,
-		routes.javascript.GameController.uploadDemo,
-		routes.javascript.GameController.removeRound,
-		routes.javascript.GameController.updateRound
-	)
+  @helper.javascriptRouter("routes")(
+    routes.javascript.GameController.uploadStats,
+    routes.javascript.GameController.uploadDemo,
+    routes.javascript.GameController.removeRound,
+    routes.javascript.GameController.updateRound
+  )
 
-	<script src="@routes.Assets.at("editable/js/bootstrap-editable.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/ko-extensions/dirtystate.js")"></script>
-	<script src="@routes.Assets.at("javascripts/ko-bindings/fileupload.binding.js")"></script>
-	<script src="@routes.Assets.at("javascripts/ko-bindings/editable.binding.js")"></script>
-	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
-	<script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
-	<script src="@routes.Assets.at("fileupload/js/jquery.iframe-transport.js")"></script>
-	<script src="@routes.Assets.at("fileupload/js/jquery.fileupload.js")"></script>
-	<script>
-		admin.games.stats = {
-			data: @Html(Json.toJson(model).toString) || {},
-			routes: routes
-		};
-	</script>
-	<script src="@routes.Assets.at("javascripts/views/admin/games/Stats.js")"></script>
+  <script src="@routes.Assets.at("editable/js/bootstrap-editable.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/ko-extensions/dirtystate.js")"></script>
+  <script src="@routes.Assets.at("javascripts/ko-bindings/fileupload.binding.js")"></script>
+  <script src="@routes.Assets.at("javascripts/ko-bindings/editable.binding.js")"></script>
+  <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+  <script src="@routes.Assets.at("fileupload/js/vendor/jquery.ui.widget.js")"></script>
+  <script src="@routes.Assets.at("fileupload/js/jquery.iframe-transport.js")"></script>
+  <script src="@routes.Assets.at("fileupload/js/jquery.fileupload.js")"></script>
+  <script>
+    admin.games.stats = {
+      data: @Html(Json.toJson(model).toString) || {},
+      routes: routes
+    };
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/admin/games/Stats.js")"></script>
 }
 
 @extraCss = {
-	<link rel="stylesheet" href="@routes.Assets.at("fileupload/css/jquery.fileupload.css")" />
-	<link rel="stylesheet" href="@routes.Assets.at("editable/css/bootstrap-editable.css")" />
+  <link rel="stylesheet" href="@routes.Assets.at("fileupload/css/jquery.fileupload.css")" />
+  <link rel="stylesheet" href="@routes.Assets.at("editable/css/bootstrap-editable.css")" />
 }
 
 @views.html.admin.games.gamesTemplate("Stats", extraScripts = extraScripts, extraCss = extraCss) {
-	<div class="panel panel-default" style="display: none;" data-bind="visible: true">
-		<div class="panel-heading"><h3>Stats</h3></div>
-		<div class="panel-body">
+  <div class="panel panel-default" style="display: none;" data-bind="visible: true">
+    <div class="panel-heading"><h3>Stats</h3></div>
+    <div class="panel-body">
       <div class="clearfix">
-  			<span class="pull-right"><a href="@routes.GameController.index(seasonId)">Back to Games</a></span>
+        <span class="pull-right"><a href="@routes.GameController.index(seasonId)">Back to Games</a></span>
       </div>
 
-			<!-- ko if: uploadStatsSuccess() -->
-			<div class="alert alert-success alert-dismissible" role="alert">
-				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<span>Stats uploaded successfully.</span>
-			</div>
-			<!-- /ko -->
+      <!-- ko if: uploadStatsSuccess() -->
+      <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <span>Stats uploaded successfully.</span>
+      </div>
+      <!-- /ko -->
 
-			<!-- ko if: uploadStatsFailure() -->
-			<div class="alert alert-danger alert-dismissible" role="alert">
-				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<span data-bind="text: uploadStatsFailure"></span>
-			</div>
-			<!-- /ko -->
+      <!-- ko if: uploadStatsFailure() -->
+      <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <span data-bind="text: uploadStatsFailure"></span>
+      </div>
+      <!-- /ko -->
 
-			<!-- ko if: statsUploaded -->
+      <!-- ko if: statsUploaded -->
 
-			<!-- ko if: demoInfo().length === 0 -->
-			<div class="alert alert-warning" role="alert">
-				<p>The players uploaded in the log might not be assigned to a team.</p>
-			</div>
-			<!-- /ko -->
+      <!-- ko if: demoInfo().length === 0 -->
+      <div class="alert alert-warning" role="alert">
+        <p>The players uploaded in the log might not be assigned to a team.</p>
+      </div>
+      <!-- /ko -->
 
-			<!-- ko if: demoInfo().length > 0 -->
-			<h4 class="status-header">Demo Status</h4>
-			<table class="table table-hover table-condensed">
-				<col style="width: 25%" />
-				<col style="width: 75%" />
-				<thead>
-					<tr>
-						<th>Player Name</th>
-						<th>Demo</th>
-					</tr>
-				</thead>
-				<tbody data-bind="foreach: demoInfo">
-					<tr>
-						<td data-bind="text: playerName"></td>
-						
-						<!-- ko if: demo -->
-						<td data-bind="css: { danger: !demo(), success: demo() }">
-							<!-- ko ifnot: isDemoUploadShown -->
-							<span>Uploaded: <span data-bind="text: demo().dateUploadedNiceFormat"></span></span>
-							<button class="btn btn-link" data-bind="click: showDemoUpload">Replace?</button>
-							<!-- /ko -->
+      <!-- ko if: demoInfo().length > 0 -->
+      <h4 class="status-header">Demo Status</h4>
+      <table class="table table-hover table-condensed">
+        <col style="width: 25%" />
+        <col style="width: 75%" />
+        <thead>
+          <tr>
+            <th>Player Name</th>
+            <th>Demo</th>
+          </tr>
+        </thead>
+        <tbody data-bind="foreach: demoInfo">
+          <tr>
+            <td data-bind="text: playerName"></td>
+            
+            <!-- ko if: demo -->
+            <td data-bind="css: { danger: !demo(), success: demo() }">
+              <!-- ko ifnot: isDemoUploadShown -->
+              <span>Uploaded: <span data-bind="text: demo().dateUploadedNiceFormat"></span></span>
+              <button class="btn btn-link" data-bind="click: showDemoUpload">Replace?</button>
+              <!-- /ko -->
 
-							<!-- ko if: isDemoUploadShown -->
-							<button type="button" class="close" data-bind="click: hideDemoUpload">
-								<span aria-hidden="true">&times;</span>
-								<span class="sr-only">Close</span>
-							</button>
-							<input 
-								type="file" 
-								name="demo"
-								data-bind="fileupload: { 
-									url: uploadUrl, 
-									multipart: true,
-									always: uploadAlways,
-									start: uploadStart,
-									done: uploadDone }" />
+              <!-- ko if: isDemoUploadShown -->
+              <button type="button" class="close" data-bind="click: hideDemoUpload">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <input 
+                type="file" 
+                name="demo"
+                data-bind="fileupload: { 
+                  url: uploadUrl, 
+                  multipart: true,
+                  always: uploadAlways,
+                  start: uploadStart,
+                  done: uploadDone }" />
 
-							<!-- ko if: isUploading() -->
-							<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
-							<!-- /ko -->
+              <!-- ko if: isUploading() -->
+              <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
+              <!-- /ko -->
 
-							<!-- /ko -->
-						</td>
-						<!-- /ko -->
+              <!-- /ko -->
+            </td>
+            <!-- /ko -->
 
-						<!-- ko ifnot: demo -->
-						<td data-bind="css: { danger: !demo(), success: demo() }">
-							<!-- ko ifnot: isMissingDemoUploadShown -->
-							<button class="btn btn-link" data-bind="click: showMissingDemoUpload">Missing</button>
-							<!-- /ko -->
+            <!-- ko ifnot: demo -->
+            <td data-bind="css: { danger: !demo(), success: demo() }">
+              <!-- ko ifnot: isMissingDemoUploadShown -->
+              <button class="btn btn-link" data-bind="click: showMissingDemoUpload">Missing</button>
+              <!-- /ko -->
 
-							<!-- ko if: isMissingDemoUploadShown -->
-							<button type="button" class="close" data-bind="click: hideMissingDemoUpload">
-								<span aria-hidden="true">&times;</span>
-								<span class="sr-only">Close</span>
-							</button>
-							<input 
-								type="file" 
-								name="demo"
-								data-bind="fileupload: { 
-									url: uploadUrl, 
-									multipart: true,
-									always: uploadAlways,
-									start: uploadStart,
-									done: uploadDone }" />
+              <!-- ko if: isMissingDemoUploadShown -->
+              <button type="button" class="close" data-bind="click: hideMissingDemoUpload">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <input 
+                type="file" 
+                name="demo"
+                data-bind="fileupload: { 
+                  url: uploadUrl, 
+                  multipart: true,
+                  always: uploadAlways,
+                  start: uploadStart,
+                  done: uploadDone }" />
 
-							<!-- ko if: isUploading() -->
-							<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Uploading..." />
-							<!-- /ko -->
+              <!-- ko if: isUploading() -->
+              <img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Uploading..." />
+              <!-- /ko -->
 
-							<!-- /ko -->
-						</td>
-						<!-- /ko -->
-					</tr>
-				</tbody>
-			</table>
+              <!-- /ko -->
+            </td>
+            <!-- /ko -->
+          </tr>
+        </tbody>
+      </table>
 
-			<h4 class="status-header">Round Stats</h4>
-			<ol class="list-group" data-bind="foreach: rounds">
-				<li class="list-group-item">
-					<div class="pull-right">
-						<!-- ko if: couldNotRemoveRound -->
-						<span class="label label-danger">Could not remove round</span>
-						<!-- /ko -->
-						<!-- ko if: isRemovingRound -->
-						<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
-						<!-- /ko -->
-						<div class="btn-group">
-							<button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Remove <span class="caret"></span></button>
-							<ul class="dropdown-menu" role="menu">
-								<li><button class="btn btn-link" data-bind="click: $parent.removeRound">Are you sure?</button></li>
-							</ul>
-						</div>
-					</div>
-					<h5 class="pull-left" data-bind="text: roundName()"></h5>
-					<table class="table table-hover">
-						<col />
-						<col />
-						<col />
-						<col />
-						<col />
-						<col />
-						<col style="width: 10%" />
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Captures</th>
-								<th>PCaptures</th>
-								<th>Drops</th>
-								<th>Frags</th>
-								<th>Deaths</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody data-bind="foreach: playerData">
-							<tr data-bind="css: { danger: failedToSave }">
-								<td data-bind="text: playerName"></td>
-								<td><span data-bind="editable: { value: captures, required: 'Captures must be a number', validate: validInt }"></span></td>
-								<td><span data-bind="editable: { value: pCaptures, required: 'PCaptures must be a number', validate: validInt }"></span></td>
-								<td><span data-bind="editable: { value: drops, required: 'Drops must be a number', validate: validInt }"></span></td>
-								<td><span data-bind="editable: { value: frags, required: 'Frags must be a number', validate: validInt }"></span></td>
-								<td><span data-bind="editable: { value: deaths, required: 'Deaths must be a number', validate: validInt }"></span></td>
-								<td>
-									<!-- ko if: dirtyFlag.isDirty -->
-									<button class="btn btn-link btn-lg save-btn" data-bind="click: function(data, event) { updateRoundResult($root.seasonId(), $root.gameId(), $parent.roundId(), data, event) }">
-										<span class="glyphicon glyphicon glyphicon-floppy-disk"></span>
-									</button>
-									<!-- ko if: isSaving -->
-									<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Saving..." />
-									<!-- /ko -->
-									<!-- /ko -->
-								</td>
-							</tr>
-							<!-- ko if: failedToSave -->
-							<tr class="danger">
-								<td colspan="7">Failed to save stats for this round.</td>
-							</tr>
-							<!-- /ko -->
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="7" class="team-totals">Totals</td>
-							</tr>
-							<!-- ko foreach: teamStats -->
-							<tr class="info">
-								<td class="team-totals" data-bind="text: teamName"></td>
-								<td data-bind="text: captures"></td>
-								<td data-bind="text: pCaptures"></td>
-								<td data-bind="text: drops"></td>
-								<td data-bind="text: frags"></td>
-								<td data-bind="text: deaths"></td>
-								<td></td>
-							</tr>
-							<!-- /ko -->
-						</tfoot>
-					</table>
-				</li>
-			</ol>
-			<!-- /ko -->
-			<!-- /ko -->
+      <h4 class="status-header">Round Stats</h4>
+      <ol class="list-group" data-bind="foreach: rounds">
+        <li class="list-group-item">
+          <div class="pull-right">
+            <!-- ko if: couldNotRemoveRound -->
+            <span class="label label-danger">Could not remove round</span>
+            <!-- /ko -->
+            <!-- ko if: isRemovingRound -->
+            <img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
+            <!-- /ko -->
+            <div class="btn-group">
+              <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Remove <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+                <li><button class="btn btn-link" data-bind="click: $parent.removeRound">Are you sure?</button></li>
+              </ul>
+            </div>
+          </div>
+          <h5 class="pull-left" data-bind="text: roundName()"></h5>
+          <table class="table table-hover">
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col style="width: 10%" />
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Captures</th>
+                <th>PCaptures</th>
+                <th>Drops</th>
+                <th>Frags</th>
+                <th>Deaths</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: playerData">
+              <tr data-bind="css: { danger: failedToSave }">
+                <td data-bind="text: playerName"></td>
+                <td><span data-bind="editable: { value: captures, required: 'Captures must be a number', validate: validInt }"></span></td>
+                <td><span data-bind="editable: { value: pCaptures, required: 'PCaptures must be a number', validate: validInt }"></span></td>
+                <td><span data-bind="editable: { value: drops, required: 'Drops must be a number', validate: validInt }"></span></td>
+                <td><span data-bind="editable: { value: frags, required: 'Frags must be a number', validate: validInt }"></span></td>
+                <td><span data-bind="editable: { value: deaths, required: 'Deaths must be a number', validate: validInt }"></span></td>
+                <td>
+                  <!-- ko if: dirtyFlag.isDirty -->
+                  <button class="btn btn-link btn-lg save-btn" data-bind="click: function(data, event) { updateRoundResult($root.seasonId(), $root.gameId(), $parent.roundId(), data, event) }">
+                    <span class="glyphicon glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+                  <!-- ko if: isSaving -->
+                  <img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Saving..." />
+                  <!-- /ko -->
+                  <!-- /ko -->
+                </td>
+              </tr>
+              <!-- ko if: failedToSave -->
+              <tr class="danger">
+                <td colspan="7">Failed to save stats for this round.</td>
+              </tr>
+              <!-- /ko -->
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="7" class="team-totals">Totals</td>
+              </tr>
+              <!-- ko foreach: teamStats -->
+              <tr class="info">
+                <td class="team-totals" data-bind="text: teamName"></td>
+                <td data-bind="text: captures"></td>
+                <td data-bind="text: pCaptures"></td>
+                <td data-bind="text: drops"></td>
+                <td data-bind="text: frags"></td>
+                <td data-bind="text: deaths"></td>
+                <td></td>
+              </tr>
+              <!-- /ko -->
+            </tfoot>
+          </table>
+        </li>
+      </ol>
+      <!-- /ko -->
+      <!-- /ko -->
 
-			<!-- ko ifnot: statsUploaded -->
-			<p>This game has no stats, upload a Zandronum demo log file.</p>
-			<div class="form-group">
-				<label for="statsUpload" class="col-sm-2 control-label">Upload a demo...</label>
-				<input 
-					type="file" 
-					name="log" 
-					id="statsUpload" 
-					data-bind="fileupload: { 
-						url: uploadStatsUrl, 
-						multipart: true, 
-						always: statsUploadAlways,
-						start: statsUploadStart,
-						done: statsUploadDone,
-						fail: statsUploadFail }" />
+      <!-- ko ifnot: statsUploaded -->
+      <p>This game has no stats, upload a Zandronum demo log file.</p>
+      <div class="form-group">
+        <label for="statsUpload" class="col-sm-2 control-label">Upload a demo...</label>
+        <input 
+          type="file" 
+          name="log" 
+          id="statsUpload" 
+          data-bind="fileupload: { 
+            url: uploadStatsUrl, 
+            multipart: true, 
+            always: statsUploadAlways,
+            start: statsUploadStart,
+            done: statsUploadDone,
+            fail: statsUploadFail }" />
 
-				<!-- ko if: isUploading() -->
-				<img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
-				<!-- /ko -->
-			</div>
-			<!-- /ko -->
-		</div>
-	</div>
+        <!-- ko if: isUploading() -->
+        <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Uploading..." />
+        <!-- /ko -->
+      </div>
+      <!-- /ko -->
+    </div>
+  </div>
 }

@@ -9,7 +9,6 @@ trait TeamServiceComponent {
     def getTeamsForSeason(seasonId: Int) : Seq[Team]
     def getAllPlayers() : Seq[Player]
     def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) : Seq[Int]
-    def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean
     def getAllEligibleTeams() : Seq[Team]
     def insertTeam(team: Team) : Boolean
     def updateTeam(team: Team) : Boolean
@@ -18,6 +17,7 @@ trait TeamServiceComponent {
     def removeTeam(teamId: Int) : Boolean
     def getTeamsForGame(gameId: Int) : Option[(Team, Team)]
     def makeCaptain(teamId: Int, playerId: Int) : Option[Int]
+    def getTeamByName(teamName: String) : Option[Team]
   }
 }
 
@@ -36,14 +36,12 @@ trait TeamServiceComponentImpl extends TeamServiceComponent {
     def removeTeam(teamId: Int) = teamRepository.removeTeam(teamId)
     def getTeamsForGame(gameId: Int) = teamRepository.getTeamsForGame(gameId)
     def makeCaptain(teamId: Int, playerId: Int) = teamRepository.makeCaptain(teamId, playerId)
+    def getTeamByName(teamName: String) = teamRepository.getTeamByName(teamName)
 
     def assignPlayersToTeam(teamId: Int, playerIds: Seq[Int]) =
-      playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId) }
+      playerIds.filter { playerId => teamRepository.assignPlayerToTeam(playerId, teamId, isApproved = true) }
 
     def removePlayersFromTeam(teamId: Int, playerIds: Seq[Int]) =
       playerIds.filter { playerId => teamRepository.removePlayerFromTeam(playerId, teamId) }
-      
-    def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) = 
-      teamRepository.updateTeamPlayer(playerId, teamId, isCaptain)
   }
 }

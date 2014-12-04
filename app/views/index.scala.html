@@ -74,17 +74,17 @@
 }
 
 @main("International Doom League", extraScripts = extraScripts, extraCss = extraCss) {
-	@if(model.newsItems.isEmpty) {
-		<div class="jumbotron">
-			<h1>There are no news items yet.</h1>
+  @if(model.newsItems.isEmpty) {
+    <div class="jumbotron">
+      <h1>There are no news items yet.</h1>
 
-			@if(header.canSeeAdminMenu) {
-				<p>
-					Head to the <a href="@routes.NewsController.index">news page</a> to add some articles.
-				</p>
-			}
-		</div>
-	}
+      @if(header.canSeeAdminMenu) {
+        <p>
+          Head to the <a href="@routes.NewsController.index">news page</a> to add some articles.
+        </p>
+      }
+    </div>
+  }
 
   <!-- ko foreach: newsItems -->
   <div class="panel panel-default">

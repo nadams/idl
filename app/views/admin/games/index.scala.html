@@ -4,128 +4,128 @@
 @import play.api.libs.json.Json
 
 @extraScripts = {
-	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
-	<script>
-		admin.games.index = {
-			data: @Html(Json.toJson(model).toString) || {}
-		};
-	</script>
-	<script src="@routes.Assets.at("javascripts/views/admin/games/Index.js")"></script>
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+  <script>
+    admin.games.index = {
+      data: @Html(Json.toJson(model).toString) || {}
+    };
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/admin/games/Index.js")"></script>
 }
 
 @canAlter(game: models.admin.games.GameModel) = {
-	@if(game.status != GameStatus.Pending) {disabled="disabled"}
+  @if(game.status != GameStatus.Pending) {disabled="disabled"}
 }
 
 @views.html.admin.games.gamesTemplate("Games", extraScripts = extraScripts) {
-	@if(model.games.isEmpty) {
-		<div class="jumbotron">
-			<h1>There are no games for this season yet.</h1>
-		</div>
-	} else {
-		<div class="panel panel-default" style="display: none;" data-bind="visible: true">
-			<div class="panel-heading"><h4>Games</h4></div>
-			<div class="panel-body">
-				<table class="table table-striped table-hover">
-					<thead>
-						<tr>
-							<th>
-								<a href="#" data-bind="click: sortByTeam1">
-									Team 1
+  @if(model.games.isEmpty) {
+    <div class="jumbotron">
+      <h1>There are no games for this season yet.</h1>
+    </div>
+  } else {
+    <div class="panel panel-default" style="display: none;" data-bind="visible: true">
+      <div class="panel-heading"><h4>Games</h4></div>
+      <div class="panel-body">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>
+                <a href="#" data-bind="click: sortByTeam1">
+                  Team 1
 
-									<!-- ko if: team1CurrentSort -->
-									<!-- ko if: team1SortOrder -->
-									<span class="glyphicon glyphicon-chevron-up"></span>
-									<!-- /ko -->
+                  <!-- ko if: team1CurrentSort -->
+                  <!-- ko if: team1SortOrder -->
+                  <span class="glyphicon glyphicon-chevron-up"></span>
+                  <!-- /ko -->
 
-									<!-- ko ifnot: team1SortOrder -->
-									<span class="glyphicon glyphicon-chevron-down"></span>
-									<!-- /ko -->
-									<!-- /ko -->
-								</a>
-							</th>
-							<th>
-								<a href="#" data-bind="click: sortByTeam2">
-									Team 2
+                  <!-- ko ifnot: team1SortOrder -->
+                  <span class="glyphicon glyphicon-chevron-down"></span>
+                  <!-- /ko -->
+                  <!-- /ko -->
+                </a>
+              </th>
+              <th>
+                <a href="#" data-bind="click: sortByTeam2">
+                  Team 2
 
-									<!-- ko if: team2CurrentSort -->
-									<!-- ko if: team2SortOrder -->
-									<span class="glyphicon glyphicon-chevron-up"></span>
-									<!-- /ko -->
+                  <!-- ko if: team2CurrentSort -->
+                  <!-- ko if: team2SortOrder -->
+                  <span class="glyphicon glyphicon-chevron-up"></span>
+                  <!-- /ko -->
 
-									<!-- ko ifnot: team2SortOrder -->
-									<span class="glyphicon glyphicon-chevron-down"></span>
-									<!-- /ko -->
-									<!-- /ko -->
-								</a>
-							</th>
+                  <!-- ko ifnot: team2SortOrder -->
+                  <span class="glyphicon glyphicon-chevron-down"></span>
+                  <!-- /ko -->
+                  <!-- /ko -->
+                </a>
+              </th>
               <th>
                 <a href="#" data-bind="click: sortByGameType">
                 Type
                 
-									<!-- ko if: gameTypeCurrentSort -->
-									<!-- ko if: gameTypeSortOrder -->
-									<span class="glyphicon glyphicon-chevron-up"></span>
-									<!-- /ko -->
+                  <!-- ko if: gameTypeCurrentSort -->
+                  <!-- ko if: gameTypeSortOrder -->
+                  <span class="glyphicon glyphicon-chevron-up"></span>
+                  <!-- /ko -->
 
-									<!-- ko ifnot: gameTypeSortOrder -->
-									<span class="glyphicon glyphicon-chevron-down"></span>
-									<!-- /ko -->
-									<!-- /ko -->
+                  <!-- ko ifnot: gameTypeSortOrder -->
+                  <span class="glyphicon glyphicon-chevron-down"></span>
+                  <!-- /ko -->
+                  <!-- /ko -->
                 </a>
               </th>
-							<th>
-								<a href="#" data-bind="click: sortByWeek">
-									Scheduled Week
+              <th>
+                <a href="#" data-bind="click: sortByWeek">
+                  Scheduled Week
 
-									<!-- ko if: weekCurrentSort -->
-									<!-- ko if: weekSortOrder -->
-									<span class="glyphicon glyphicon-chevron-up"></span>
-									<!-- /ko -->
+                  <!-- ko if: weekCurrentSort -->
+                  <!-- ko if: weekSortOrder -->
+                  <span class="glyphicon glyphicon-chevron-up"></span>
+                  <!-- /ko -->
 
-									<!-- ko ifnot: weekSortOrder -->
-									<span class="glyphicon glyphicon-chevron-down"></span>
-									<!-- /ko -->
-									<!-- /ko -->
-								</a>
-							</th>
-							<th>
-								<a href="#" data-bind="click: sortByStatus">
-									Status
+                  <!-- ko ifnot: weekSortOrder -->
+                  <span class="glyphicon glyphicon-chevron-down"></span>
+                  <!-- /ko -->
+                  <!-- /ko -->
+                </a>
+              </th>
+              <th>
+                <a href="#" data-bind="click: sortByStatus">
+                  Status
 
-									<!-- ko if: statusCurrentSort -->
-									<!-- ko if: statusSortOrder -->
-									<span class="glyphicon glyphicon-chevron-up"></span>
-									<!-- /ko -->
+                  <!-- ko if: statusCurrentSort -->
+                  <!-- ko if: statusSortOrder -->
+                  <span class="glyphicon glyphicon-chevron-up"></span>
+                  <!-- /ko -->
 
-									<!-- ko ifnot: statusSortOrder -->
-									<span class="glyphicon glyphicon-chevron-down"></span>
-									<!-- /ko -->
-									<!-- /ko -->
-								</a>
-							</th>
-							<th>Edit</th>
-							<th>Remove</th>
-						</tr>
-					</thead>
-					<tbody data-bind="foreach: games">
-						<tr>
-							<td data-bind="text: team1"></td>
-							<td data-bind="text: team2"></td>
+                  <!-- ko ifnot: statusSortOrder -->
+                  <span class="glyphicon glyphicon-chevron-down"></span>
+                  <!-- /ko -->
+                  <!-- /ko -->
+                </a>
+              </th>
+              <th>Edit</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody data-bind="foreach: games">
+            <tr>
+              <td data-bind="text: team1"></td>
+              <td data-bind="text: team2"></td>
               <td data-bind="text: gameType"></td>
-							<td data-bind="text: scheduledWeek"></td>
-							<td><a data-bind="text: gameStatus, attr: { href: resultsLink }"></a></td>
-							<td><a class="btn btn-default" data-bind="attr: { href: editLink }, css: { 'disabled': !canAlterGame() }">Edit</a></td>
-							<td>
-								<form method="post" data-bind="attr: { action: removeLink }">
-									<button class="btn btn-danger" data-bind="enable: canAlterGame">Remove</button>
-								</form>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	}
+              <td data-bind="text: scheduledWeek"></td>
+              <td><a data-bind="text: gameStatus, attr: { href: resultsLink }"></a></td>
+              <td><a class="btn btn-default" data-bind="attr: { href: editLink }, css: { 'disabled': !canAlterGame() }">Edit</a></td>
+              <td>
+                <form method="post" data-bind="attr: { action: removeLink }">
+                  <button class="btn btn-danger" data-bind="enable: canAlterGame">Remove</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
 }

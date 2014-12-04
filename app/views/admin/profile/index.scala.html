@@ -1,0 +1,75 @@
+@()(implicit header: MenuModel, req: RequestHeader)
+
+@extraScripts = {
+  @helper.javascriptRouter("routes")(
+    routes.javascript.AdminProfileController.search,
+    routes.javascript.AdminProfileController.profile
+  )
+  <script>
+    var admin = {};
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/admin/profile/ProfileRepository.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/admin/profile/IndexModel.js")"></script>
+  <script>
+    $(function() {
+      $('#profileSearch').focus();
+    });
+  </script>
+}
+
+@views.html.admin.profile.profileTemplate("Manage Profiles", extraScripts = extraScripts) {
+  <div class="panel panel-default" style="display: none;" data-bind="visible: true">
+    <div class="panel-heading">
+      <h4>Search for Profiles</h4>
+    </div>
+    <div class="panel-body">
+      <form class="form" role="form" data-bind="submit: searchProfiles">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-xs-4">
+              <label>Profile Name</label>
+              <div class="input-group">
+                <input type="text" id="profileSearch" class="form-control" placeholder="Search..." data-bind="textInput: profileSearchValue" />
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="submit">
+                    <span data-bind="visible: !isSearching()">Search</span>
+                    <img data-bind="visible: isSearching()" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." class="loading-spinner" />
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- ko if: hasResults -->
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Display Name</th>
+            <th>Email</th>
+            <th>Player Names</th>
+          </tr>
+        </thead>
+        <tbody data-bind="foreach: results">
+          <tr>
+            <td><a data-bind="text: displayName, attr: { href: profileUrl }"></a></td>
+            <td data-bind="text: email"></td>
+            <td>
+              <!-- ko if: hasPlayerNames -->
+              <ul class="list-group" data-bind="foreach: playerNames">
+                <li class="list-group-item" data-bind="text: playerName, css: { 'list-group-item-warning': !isApproved(), 'list-group-item-success': isApproved() }"></li>
+              </ul>
+              <!-- /ko -->
+
+              <!-- ko ifnot: hasPlayerNames -->
+              <span>No player names</span>
+              <!-- /ko -->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- /ko -->
+    </div>
+  </div>
+}

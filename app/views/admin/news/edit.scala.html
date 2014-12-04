@@ -4,60 +4,60 @@
 @import models.admin.news.EditNews
 
 @extraCss = {
-	<link rel="stylesheet" media="screen" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
-	<link rel="stylesheet" media="screen" href="@routes.Assets.at("summernote/summernote.css")" />
-	<link rel="stylesheet" media="screen" href="@routes.Assets.at("summernote/summernote-bs3.css")" />
+  <link rel="stylesheet" media="screen" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("summernote/summernote.css")" />
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("summernote/summernote-bs3.css")" />
 }
 
 @extraScripts = {
-	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
-	<script src="@routes.Assets.at("summernote/summernote.min.js")"></script>
-	<script>
-		var admin = admin || {};
-		admin.news = admin.news || {};
-		admin.news.edit = admin.news.edit || {};
-		admin.news.edit = {
-			data: @Html(Json.toJson(model).toString) || {}
-		};
-	</script>
-	<script src="@routes.Assets.at("javascripts/ko-bindings/summernote.bindings.js")"></script>
-	<script src="@routes.Assets.at("javascripts/views/admin/news/EditNews.js")"></script>
+  <script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("summernote/summernote.min.js")"></script>
+  <script>
+    var admin = admin || {};
+    admin.news = admin.news || {};
+    admin.news.edit = admin.news.edit || {};
+    admin.news.edit = {
+      data: @Html(Json.toJson(model).toString) || {}
+    };
+  </script>
+  <script src="@routes.Assets.at("javascripts/ko-bindings/summernote.bindings.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/admin/news/EditNews.js")"></script>
 }
 
 @newsTemplate(if(model.isNewNews) "Create News" else s"Edit News: ${model.subject}", extraScripts = extraScripts, extraCss = extraCss) {
-	@defining(if(model.isNewNews) routes.NewsController.saveNew else routes.NewsController.saveExisting(model.newsId)) { route =>
-		<div class="panel panel-default">
-			<div class="panel-heading"><h4>Create/Edit News</h4></div>
-			<form method="post" action="@route" role="form" class="panel-body edit-news-container">
-				<input type="hidden" name="newsId" value="@model.newsId" />
+  @defining(if(model.isNewNews) routes.NewsController.saveNew else routes.NewsController.saveExisting(model.newsId)) { route =>
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4>Create/Edit News</h4></div>
+      <form method="post" action="@route" role="form" class="panel-body edit-news-container">
+        <input type="hidden" name="newsId" value="@model.newsId" />
 
-				<fieldset>
-					<div class="row form-group">
-						<div class="@if(errors.subjectError.nonEmpty) { has-error }">
-							<label for="subject" class="control-label">Subject</label>
-							<input type="text" id="subject" name="subject" class="form-control" data-bind="value: subject" />
-							@if(errors.subjectError.nonEmpty) {
-								<span class="help-block">@errors.subjectError.get</span>
-							}
-						</div>
-					</div>
-					<div class="row form-group">
-						<div class="@if(errors.contentError.nonEmpty) { has-error }">
-							<textarea id="content" name="content" data-bind="summernote: content"></textarea>
-							@if(errors.contentError.nonEmpty) {
-								<span class="help-block">@errors.contentError.get</span>
-							}
-						</div>
-					</div>
-					<div class="row form-group">
-						<div class="col-xs-4">
-							<button type="submit" class="btn btn-primary">Save</button>
-							<a class="btn btn-default" href="@routes.NewsController.index">Cancel</a>
-						</div>
-					</div>
-				</fieldset>
-			</form>
-		</div>
-	}
+        <fieldset>
+          <div class="row form-group">
+            <div class="@if(errors.subjectError.nonEmpty) { has-error }">
+              <label for="subject" class="control-label">Subject</label>
+              <input type="text" id="subject" name="subject" class="form-control" data-bind="value: subject" />
+              @if(errors.subjectError.nonEmpty) {
+                <span class="help-block">@errors.subjectError.get</span>
+              }
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="@if(errors.contentError.nonEmpty) { has-error }">
+              <textarea id="content" name="content" data-bind="summernote: content"></textarea>
+              @if(errors.contentError.nonEmpty) {
+                <span class="help-block">@errors.contentError.get</span>
+              }
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary">Save</button>
+              <a class="btn btn-default" href="@routes.NewsController.index">Cancel</a>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  }
 }

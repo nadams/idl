@@ -1,27 +1,317 @@
-@(model: models.profile.IndexModel)(implicit header: MenuModel, flash: Flash)
+@(model: models.profile.IndexModel)(implicit header: MenuModel, req: RequestHeader)
 
-@views.html.profile.profileTemplate("Profile") {
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4>Manage Profile</h4>
-		</div>
-		<div class="panel-body">
-			@if(flash.get("profileIsNowPlayer").nonEmpty) {
-				<div class="alert alert-success">
-					<p>@flash.get("profileIsNowPlayer")</p>
-				</div>
-			}
+@import play.api.libs.json.Json
 
-			@if(!model.profileIsPlayer) {
-				<form action="@routes.ProfileController.becomePlayer" method="post" role="form">
-					<div class="form-group alert alert-info">
-						<h5>You are not currently an IDL player, would you like to become an IDL player?</h5>
-						<button type="submit" class="btn btn-primary">Yes Please</button>
-					</div>
-				</form>
-			} else {
-				<p>Welcom Player</p>
-			}
-		</div>
-	</div>
+@extraCss = {
+  <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/profile.css")" />
+}
+
+@extraScripts = {
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+  @helper.javascriptRouter("routes")(
+    routes.javascript.ProfileController.becomePlayer,
+    routes.javascript.ProfileController.updatePassword,
+    routes.javascript.ProfileController.addPlayer,
+    routes.javascript.ProfileController.removePlayer,
+    routes.javascript.ProfileController.updateDisplayName,
+    routes.javascript.ProfileController.requestToJoinTeam
+  )
+  <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
+  <script>
+    var profile = profile || {};
+    profile.index = profile.index || {};
+    profile.index.data = @Html(Json.toJson(model).toString) || {};
+
+    (function() {
+      $('ul.nav.nav-pills > li > a').on('shown.bs.tab', function(e) {
+        var id = $(e.target).attr('href').substr(1);
+        window.location.hash = id;
+      });
+
+      var hash = window.location.hash;
+      if(hash) {
+        $('ul.nav.nav-pills > li a[href="' + hash + '"]').tab('show');
+      } else {
+        $('ul.visible-sm.nav.nav-pills > li > a:first').tab('show');
+        $('ul.hidden-sm.nav.nav-pills > li > a:first').tab('show');
+      }
+    })();
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/profile/ProfileRepository.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/profile/IndexModel.js")"></script>
+}
+
+@main("Profile", extraScripts = extraScripts, extraCss = extraCss) {
+  <div class="panel panel-default" style="display: none;" data-bind="visible: true">
+    <div class="panel-heading">
+      <h4>Manage Profile</h4>
+    </div>
+    <div class="panel-body">
+      <!-- ko if: profileIsNowPlayer -->
+      <div class="alert alert-success">
+        <p data-bind="text: profileIsNowPlayerMessage"></p>
+      </div>
+      <!-- /ko -->
+      <div class="row">
+        <div class="col-md-3">
+          <ul class="hidden-sm nav nav-pills nav-stacked" role="tablist">
+            <li><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+            <!-- ko if: profileIsPlayer -->
+            <li><a href="#player" role="tab" data-toggle="tab">Player</a></li>
+            <li><a href="#team" role="tab" data-toggle="tab">Teams</a></li>
+            <!-- /ko -->
+          </ul>
+          <ul class="visible-sm nav nav-pills profile-nav-sm" role="tablist">
+            <li><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+            <!-- ko if: profileIsPlayer -->
+            <li><a href="#player" role="tab" data-toggle="tab">Player</a></li>
+            <li><a href="#team" role="tab" data-toggle="tab">Teams</a></li>
+            <!-- /ko -->
+          </ul>
+        </div>
+        <div class="col-md-9 profile-body">
+          <div class="tab-content">
+            <div class="tab-pane active" id="profile">
+              <!-- ko ifnot: profileIsPlayer -->
+              <form role="form">
+                <div class="form-group alert alert-info">
+                  <h5>You are not currently an IDL player, would you like to become one?</h5>
+                  <button class="btn btn-primary" data-bind="click: makeProfilePlayer">Yes Please</button>
+                </div>
+              </form>
+              <!-- /ko -->
+
+              <!-- ko with: profileModel -->
+              <div class="row">
+                <form role="form" class="col-xs-12 col-sm-8 col-md-6">
+                  <h3>Profile Settings</h3>
+                  <!-- ko if: successfullyUpdatedDisplayName -->
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <div class="alert alert-success" role="alert">
+                        <span>Display name saved successfully.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /ko -->
+                  <!-- ko if: hasDisplayNameError -->
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <div class="alert alert-danger">
+                        <p class="error" data-bind="text: displayNameError"></p>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /ko -->
+                  <fieldset>
+                    <div class="form-group">
+                      <label for="displayName" class="control-label">Display Name</label>
+                      <div class="input-group">
+                        <input type="text" id="displayName" name="displayName" class="form-control" data-bind="textInput: displayNameInput" />
+                        <span class="input-group-btn">
+                          <button class="btn btn-default" data-bind="click: updateDisplayName, enable: canUpdateDisplayName">
+                            <span data-bind="if: isUpdatingDisplayName">
+                              <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." style="width: 1em; height: 1em;" />
+                            </span>
+                            <span data-bind="ifnot: isUpdatingDisplayName">
+                              <span>Save<span>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+
+              <form role="form">
+                <h4>Password Settings</h4>
+                <fieldset>
+                  <!-- ko if: hasGlobalErrors -->
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-8 col-md-6">
+                      <div class="alert alert-danger" data-bind="foreach: globalErrors">
+                        <p class="error" data-bind="text: $data"></p>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /ko -->
+                  <!-- ko if: successfullyUpdatedPassword -->
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-8 col-md-6">
+                      <div class="alert alert-success" role="alert">
+                        <span>Password updated successfully</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /ko -->
+                  <div class="row form-group">
+                    <div class="col-xs-12 col-sm-8 col-md-6" data-bind="css: { 'has-error': hasCurrentPasswordError }">
+                      <label for="currentPassword" class="control-label">Current Password</label>
+                      <input type="password" class="form-control" id="currentPassword" data-bind="value: currentPassword" />
+                      <!-- ko if: hasCurrentPasswordError -->
+                      <span class="help-block" data-bind="text: currentPasswordError"></span>
+                      <!-- /ko -->
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-xs-12 col-sm-8 col-md-6" data-bind="css: { 'has-error': hasNewPasswordError }">
+                      <label for="newPassword" class="control-label">New Password</label>
+                      <input type="password" class="form-control" id="newPassword" data-bind="value: newPassword" />
+                      <!-- ko if: hasNewPasswordError -->
+                      <span class="help-block" data-bind="text: newPasswordError"></span>
+                      <!-- /ko -->
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-xs-12 col-sm-8 col-md-6" data-bind="css: { 'has-error': hasConfirmPasswordError }">
+                      <label for="confirmPassword" class="control-label">Confirm Password</label>
+                      <input type="password" class="form-control" id="confirmPassword" data-bind="value: confirmPassword" />
+                      <!-- ko if: hasConfirmPasswordError -->
+                      <span class="help-block" data-bind="text: confirmPasswordError"></span>
+                      <!-- /ko -->
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-xs-12 col-sm-8 col-md-6">
+                      <button class="btn btn-primary" data-bind="click: updatePassword">Update Password</button>
+                      <a href="#" class="btn btn-default" data-bind="click: clearPasswordForm">Cancel</a>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+              <!-- /ko -->
+            </div>
+            <!-- ko if: profileIsPlayer -->
+            <div class="tab-pane" id="player" data-bind="with: playerModel">
+              <h3>Player Settings</h3>
+              <div class="row">
+                <div class="col-xs-12 col-sm-8 col-md-6">
+                  <h4>Doom Names</h4>
+                  <!-- ko if: hasPlayerNameError -->
+                  <div class="alert alert-danger">
+                    <p class="error" data-bind="text: playerNameError"></p>
+                  </div>
+                  <!-- /ko -->
+                  <div class="input-group add-doom-name">
+                    <input type="text" class="form-control" data-bind="textInput: playerNameToCreate" />
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button" data-bind="click: addPlayerName, disable: isAddingPlayerName, enable: canAddPlayerName">
+                        <span data-bind="if: isAddingPlayerName">
+                          <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." style="width: 1em; height: 1em;" />
+                        </span>
+                        <span data-bind="ifnot: isAddingPlayerName">
+                          <span>Add<span>
+                        </span>
+                      </button>
+                    </span>
+                  </div>
+                  <ul class="list-group" data-bind="foreach: playerNames">
+                    <li class="list-group-item clearfix" data-bind="attr: { title: itemTitle }, css: { 
+                      'list-group-item-warning': !isApproved(), 
+                      'list-group-item-success': isApproved() }">
+                      <span data-bind="text: playerName"></span>
+                      <button class="btn btn-xs btn-danger pull-right" data-bind="click: toggleConfirmDelete"><span class="glyphicon glyphicon-trash"></span></button>
+                    </li>
+                    <!-- ko if: isConfirmingRemoval -->
+                    <li class="list-group-item list-group-item-danger clearfix">
+                      <span>Are you sure you want to remove <span data-bind="text: playerName"></span>?</span>
+                      <span class="pull-right">
+                        <button class="btn btn-xs btn-primary" data-bind="click: toggleConfirmDelete">No</button>
+                        <button class="btn btn-xs btn-danger" data-bind="click: $parent.removePlayerName">Yes</button>
+                      </span>
+                    </li>
+                    <!-- /ko -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="team" data-bind="with: teamsModel">
+              <h3>Team Settings</h3>
+              <div class="row">
+                <div class="col-xs-12 col-sm-8 col-md-6">
+                  <div>
+                    <h4>Teams Enrolled In</h4>
+                    <div class="team-settings-subsection">
+                      <!-- ko ifnot: hasTeams -->
+                      <p>No Teams</p>
+                      <!-- /ko -->
+                      <!-- ko if: hasTeams -->
+                      <div class="dropdown team-dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                          <span data-bind="text: chosenTeamName"></span>
+                          <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                          <!-- ko if: hasEnrolledTeams -->
+                            <li role="presentation" class="dropdown-header">Enrolled Teams</li>
+                            <!-- ko foreach: enrolledTeams -->
+                              <li role="presentation"><a role="menuitem" href="#" tabindex="-1" data-bind="text: teamName, click: $parent.switchTeam"></a></li>
+                            <!-- /ko -->
+                          <!-- /ko -->
+
+                          <!-- ko if: hasPendingTeams -->
+                            <li role="presentation" class="dropdown-header">Pending Teams</li>
+                            <!-- ko foreach: pendingTeams -->
+                              <li role="presentation"><a role="menuitem" href="#" tabindex="-1" data-bind="text: teamName, click: $parent.switchTeam"></a></li>
+                            <!-- /ko -->
+                          <!-- /ko -->
+                        </ul>
+                      </div>
+
+                      <div class="team-list" data-bind="with: selectedTeam">
+                        <ul class="list-group" data-bind="foreach: membersOrdered">
+                          <li class="list-group-item" data-bind="text: formattedName"></li>
+                        </ul>
+                      </div>
+                      <!-- /ko -->
+                    </div>
+                  </div>
+                  <div>
+                    <h4>Request to Join a Team</h4>
+                    <div class="team-settings-subsection">
+                      <!-- ko if: hasTeamJoinError -->
+                      <div class="alert alert-danger">
+                        <p class="error" data-bind="text: teamJoinError"></p>
+                      </div>
+                      <!-- /ko -->
+                      <!-- ko if: hasTeamJoinSuccess -->
+                      <div class="alert alert-success">
+                        <p data-bind="text: joinTeamSuccess"></p>
+                      </div>
+                      <!-- /ko -->
+                      <form class="form form-inline">
+                        <div class="team-request-form">
+                          <div class="form-group" data-bind="css: { 'has-error': hasTeamNameError() }">
+                            <label class="sr-only" for="teamName" class="control-label">Team Name</label>
+                            <input type="text" id="teamName" class="form-control" placeholder="Team Name" data-bind="textInput: teamToJoin" />
+                          </div>
+
+                          <div class="form-group" data-bind="css: { 'has-error': hasPlayerNameError }">
+                            <label class="sr-only" for="playerNames">Player Name</label>
+                            <select id="playerNames" class="form-control" data-bind="options: playerModel.playerNames(), 
+                              value: selectedPlayer, 
+                              optionsText: 'playerName', 
+                              optionsCaption: 'Player Name...'"></select>
+                          </div>
+                        </div>
+
+                        <button class="btn btn-primary pull-left" data-bind="click: requestToJoinTeam">Join</button>
+                        <div data-bind="if: isJoiningTeam">
+                          <img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." />
+                        </div>
+                        <div class="clearfix"></div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /ko -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 }
