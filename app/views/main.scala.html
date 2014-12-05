@@ -55,7 +55,12 @@
         <div class="container">
             @content
         </div>
-        
+        <script>
+          var idl = idl || {};
+          idl.nullOrEmpty = function(string) {
+            return typeof string === 'undefined' || string.length === 0;
+          };
+        </script>
         @extraScripts
     </body>
 </html>

@@ -1,19 +1,15 @@
-/* global ko, profile, _ */
+/* global ko, idl, _ */
 
-(function(ko, _, profile, repository) {
+(function(ko, _, idl, repository) {
   'use strict';
 
-  var nullOrEmpty = function(string) {
-    return typeof string === 'undefined' || string.length === 0;
-  };
-
-  profile.index.IndexModel = (function() {
+  idl.profile.index.IndexModel = (function() {
     var Model = function(data) {
       this.profileId = ko.observable();
       this.profileIsPlayer = ko.observable(false);
-      this.profileModel = new profile.index.ProfileModel(data.profileModel);
-      this.playerModel = new profile.index.PlayerModel(data.playerModel);
-      this.teamsModel = new profile.index.TeamsModel(data.teams, this.playerModel);
+      this.profileModel = new idl.profile.index.ProfileModel(data.profileModel);
+      this.playerModel = new idl.profile.index.PlayerModel(data.playerModel);
+      this.teamsModel = new idl.profile.index.TeamsModel(data.teams, this.playerModel);
 
       this.profileIsNowPlayer = ko.observable(false);
       this.profileIsNowPlayerMessage = ko.observable('');
@@ -48,20 +44,14 @@
     return Model;
   })();
 
-  profile.index.ProfileModel = (function() {
+  idl.profile.index.ProfileModel = (function() {
     var Model = function(data) {
       this.displayName = ko.observable();
       this.displayNameInput = ko.observable();
-      this.currentPassword = ko.observable('');
-      this.newPassword = ko.observable('');
-      this.confirmPassword = ko.observable('');
-      this.successfullyUpdatedPassword = ko.observable(false);
       this.successfullyUpdatedDisplayName = ko.observable(false);
+      this.updatePasswordModel = new idl.shared.UpdatePasswordModel(repository);
       
       this.displayNameError = ko.observable();
-      this.currentPasswordError = ko.observable('');
-      this.newPasswordError = ko.observable('');
-      this.confirmPasswordError = ko.observable('');
       this.globalErrors = ko.observableArray([]);
 
       this.isUpdatingDisplayName = ko.observable(false);
@@ -69,27 +59,15 @@
       this.initialize(data);
 
       this.canUpdateDisplayName = ko.computed(function() {
-        return !nullOrEmpty(this.displayNameInput()) && this.displayNameInput() !== this.displayName();
+        return !idl.nullOrEmpty(this.displayNameInput()) && this.displayNameInput() !== this.displayName();
       }, this);
 
       this.hasDisplayNameError = ko.computed(function() {
-        return !nullOrEmpty(this.displayNameError());
+        return !idl.nullOrEmpty(this.displayNameError());
       }, this);
 
       this.hasGlobalErrors = ko.computed(function() {
         return this.globalErrors().length > 0;
-      }, this);
-      
-      this.hasCurrentPasswordError = ko.computed(function() {
-        return !nullOrEmpty(this.currentPasswordError());
-      }, this);
-      
-      this.hasNewPasswordError = ko.computed(function() {
-        return !nullOrEmpty(this.newPasswordError());
-      }, this);
-
-      this.hasConfirmPasswordError = ko.computed(function() {
-        return !nullOrEmpty(this.confirmPasswordError());
       }, this);
     };
 
@@ -97,31 +75,6 @@
       initialize: function(data) {
         this.displayName(data.displayName);
         this.displayNameInput(data.displayName);
-      },
-      updatePassword: function() {
-        var promise = repository.updatePassword(
-          this.currentPassword(),
-          this.newPassword(),
-          this.confirmPassword(),
-          this
-        );
-
-        promise.done(function() {
-          this.clearPasswordForm();
-          this.successfullyUpdatedPassword(true);
-          this.globalErrors.removeAll();
-        });
-
-        promise.fail(function(response) {
-          var data = response.responseJSON;
-
-          this.successfullyUpdatedPassword(false);
-          this.currentPasswordError(data.currentPasswordError);
-          this.newPasswordError(data.newPasswordError);
-          this.confirmPasswordError(data.confirmPasswordError);
-          this.globalErrors.removeAll();
-          this.globalErrors(data.globalErrors);
-        });
       },
       updateDisplayName: function() {
         this.isUpdatingDisplayName(true);
@@ -143,22 +96,13 @@
           this.successfullyUpdatedDisplayName(false);
           this.displayNameError(error.responseText);
         });
-      },
-      clearPasswordForm: function() {
-        this.currentPassword('');
-        this.newPassword('');
-        this.confirmPassword('');
-        this.currentPasswordError('');
-        this.newPasswordError('');
-        this.confirmPasswordError('');
-        this.globalErrors.removeAll();
       }
     });
 
     return Model;
   })();
 
-  profile.index.PlayerModel = (function() {
+  idl.profile.index.PlayerModel = (function() {
     var Model = function(data) {
       this.playerNames = ko.observableArray();
       this.playerNameToCreate = ko.observable('');
@@ -168,7 +112,7 @@
       this.initialize(data);
 
       this.hasPlayerNameError = ko.computed(function() {
-        return !nullOrEmpty(this.playerNameError());
+        return !idl.nullOrEmpty(this.playerNameError());
       }, this);
 
       this.removePlayerName = function(player) {
@@ -189,7 +133,7 @@
     ko.utils.extend(Model.prototype, {
       initialize: function(data) {
         this.playerNames(_.map(data.playerNames, function(item) {
-          return new profile.index.PlayerNameModel(item);
+          return new idl.profile.index.PlayerNameModel(item);
         }, this));
       },
       addPlayerName: function() {
@@ -199,7 +143,7 @@
         var promise = repository.addPlayer(playerName, this);
 
         promise.done(function(data) {
-          this.playerNames.push(new profile.index.PlayerNameModel(data));
+          this.playerNames.push(new idl.profile.index.PlayerNameModel(data));
         });
 
         promise.always(function() {
@@ -212,14 +156,14 @@
         });
       },
       manuallyAddPlayerName: function(name) {
-        this.playerNames.push(new profile.index.PlayerNameModel(name));
+        this.playerNames.push(new idl.profile.index.PlayerNameModel(name));
       }
     });
 
     return Model;
   })();
 
-  profile.index.PlayerNameModel = (function() {
+  idl.profile.index.PlayerNameModel = (function() {
     var Model = function(data) {
       this.playerId = ko.observable();
       this.playerName = ko.observable();
@@ -247,7 +191,7 @@
     return Model;
   })();
 
-  profile.index.TeamsModel = (function() {
+  idl.profile.index.TeamsModel = (function() {
     var Model = function(data, playerModel) {
       this.playerModel = playerModel;
       this.teams = ko.observableArray();
@@ -301,18 +245,18 @@
       }, this);
 
       this.hasTeamJoinError = ko.computed(function() {
-        return !nullOrEmpty(this.teamJoinError());
+        return !idl.nullOrEmpty(this.teamJoinError());
       }, this);
 
       this.hasTeamJoinSuccess = ko.computed(function() {
-        return !nullOrEmpty(this.teamJoinSuccess());
+        return !idl.nullOrEmpty(this.teamJoinSuccess());
       }, this);
     };
 
     ko.utils.extend(Model.prototype, {
       initialize: function(data) {
         this.teams(_.map(data, function(item) {
-          return new profile.index.TeamMembershipModel(item);
+          return new idl.profile.index.TeamMembershipModel(item);
         }, this));
 
         if(this.teams().length > 0) {
@@ -320,7 +264,7 @@
         }
       },
       requestToJoinTeam: function() {
-        if(nullOrEmpty(this.teamToJoin())) {
+        if(idl.nullOrEmpty(this.teamToJoin())) {
           this.hasTeamNameError(true);
         } else {
           this.hasTeamNameError(false);
@@ -358,7 +302,7 @@
     return Model;
   })();
 
-  profile.index.TeamMembershipModel = (function() {
+  idl.profile.index.TeamMembershipModel = (function() {
     var Model = function(data) {
       this.teamId = ko.observable();
       this.teamName = ko.observable();
@@ -378,7 +322,7 @@
         this.teamName(data.teamName);
         this.isApproved(data.isApproved);
         this.members(_.map(data.members, function(item) {
-          return new profile.index.TeamPlayerModel(item);
+          return new idl.profile.index.TeamPlayerModel(item);
         }, this));
       }
     });
@@ -386,7 +330,7 @@
     return Model;
   })();
 
-  profile.index.TeamPlayerModel = (function() {
+  idl.profile.index.TeamPlayerModel = (function() {
     var Model = function(data) {
       this.playerId = ko.observable();
       this.playerName = ko.observable();
@@ -410,6 +354,6 @@
     return Model;
   })();
 
-  var model = new profile.index.IndexModel(profile.index.data);
+  var model = new idl.profile.index.IndexModel(idl.profile.index.data);
   ko.applyBindings(model);
-})(ko, _, profile, new profile.index.ProfileRepository());
+})(ko, _, idl, new idl.profile.index.ProfileRepository());

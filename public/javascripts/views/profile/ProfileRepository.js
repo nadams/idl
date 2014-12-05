@@ -1,9 +1,11 @@
-/* global idl, profile, routes */
+/* global idl, routes */
 
-(function(ajax, profile, routes) {
+(function(idl, routes) {
   'use strict';
 
-  profile.index.ProfileRepository = (function() {
+  var ajax = idl.ajax;
+
+  idl.profile.index.ProfileRepository = (function() {
     var Repository = function() {
       this.becomePlayer = function(context) {
         var url = routes.controllers.ProfileController.becomePlayer().url; 
@@ -50,4 +52,4 @@
     return Repository;
   })();
 
-})(idl.ajax, profile, routes);
+})(idl, routes);

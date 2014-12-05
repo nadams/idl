@@ -18,10 +18,11 @@
     routes.javascript.ProfileController.requestToJoinTeam
   )
   <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/shared/UpdatePassword.js")"></script>
   <script>
-    var profile = profile || {};
-    profile.index = profile.index || {};
-    profile.index.data = @Html(Json.toJson(model).toString) || {};
+    idl.profile = idl.profile || {};
+    idl.profile.index = profile.index || {};
+    idl.profile.index.data = @Html(Json.toJson(model).toString) || {};
 
     (function() {
       $('ul.nav.nav-pills > li > a').on('shown.bs.tab', function(e) {
@@ -125,6 +126,7 @@
                 </form>
               </div>
 
+              <!-- ko with: updatePasswordModel -->
               <form role="form">
                 <h4>Password Settings</h4>
                 <fieldset>
@@ -181,6 +183,7 @@
                   </div>
                 </fieldset>
               </form>
+              <!-- /ko -->
               <!-- /ko -->
             </div>
             <!-- ko if: profileIsPlayer -->
