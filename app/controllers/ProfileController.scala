@@ -9,12 +9,12 @@ import _root_.data._
 import models.FieldExtensions._
 import models.FormExtensions._
 
-object ProfileController 
-  extends Controller 
-  with Secured 
-  with ProvidesHeader 
-  with ProfileComponentImpl 
-  with TeamComponentImpl 
+object ProfileController
+  extends Controller
+  with Secured
+  with ProvidesHeader
+  with ProfileComponentImpl
+  with TeamComponentImpl
   with PlayerComponentImpl {
 
   def login = Action { implicit request =>
@@ -41,9 +41,9 @@ object ProfileController
       Ok(
         views.html.profile.index(
           IndexModel.toModel(
-            profile.profileId, 
-            playerService.profileIsPlayer(profile.profileId), 
-            profile, 
+            profile.profileId,
+            playerService.profileIsPlayer(profile.profileId),
+            profile,
             playerService.getPlayerProfileRecordsForProfile(profile.profileId),
             playerService.getFellowPlayersForProfile(profile.profileId)
           )
@@ -52,7 +52,7 @@ object ProfileController
     }
   }
 
-  def updatePassword = IsAuthenticated { username => implicit request => 
+  def updatePassword = IsAuthenticated { username => implicit request =>
     ChangePasswordForm().bind(request.body.asJson.get).fold(
       errors => {
         val currentPassword = errors("currentPassword").formattedMessage._2.getOrElse("")
@@ -61,7 +61,7 @@ object ProfileController
 
         BadRequest(Json.toJson(PasswordModelErrors(currentPassword, newPassword, confirmPassword, errors.formattedMessages)))
       },
-      result => 
+      result =>
         if(profileService.updateProfilePassword(username, result.newPassword)) {
           Ok(Json.toJson("Success"))
         } else {
@@ -74,15 +74,15 @@ object ProfileController
     Redirect(routes.HomeController.index).withSession(request.session - SessionKeys.username)
   }
 
-  def becomePlayer = IsAuthenticated { username => implicit request => 
-    profileService.getByUsername(username) map { profile => 
-      playerService.makeProfileAPlayer(profile) map { record => 
+  def becomePlayer = IsAuthenticated { username => implicit request =>
+    profileService.getByUsername(username) map { profile =>
+      playerService.makeProfileAPlayer(profile) map { record =>
         Ok(Json.toJson(BecomePlayerResultModel.toModel(record, "Congratulations, you are now an IDL player!")))
       } getOrElse(InternalServerError(Json.toJson("Cannot add you as an IDL player.")))
     } getOrElse(profileNotFound(username))
   }
 
-  def games = IsAuthenticated { username => implicit request => 
+  def games = IsAuthenticated { username => implicit request =>
     Ok("")
   }
 
@@ -101,7 +101,7 @@ object ProfileController
   }
 
   def removePlayer(playerId: Int) = IsAuthenticated { username => implicit request =>
-    profileService.getByUsername(username) map { profile => 
+    profileService.getByUsername(username) map { profile =>
       if(playerService.removePlayerFromProfile(profile.profileId, playerId)) Ok(Json.toJson(playerId))
       else BadRequest(s"Could not remove player $playerId from $username")
     } getOrElse(profileNotFound(username))
@@ -118,10 +118,10 @@ object ProfileController
   def requestToJoinTeam = IsAuthenticated { username => implicit request =>
     import models.profile.IndexModel._
 
-    handleJsonPost[RequestToJoinTeamModel] { model => 
+    handleJsonPost[RequestToJoinTeamModel] { model =>
       profileService.getByUsername(username) map { profile =>
-        teamService.getTeamByName(model.teamName) map { team => 
-          teamService.assignPlayersToTeam(team.teamId, Seq(model.playerId)).headOption map { teamId => 
+        teamService.getTeamByName(model.teamName) map { team =>
+          teamService.assignPlayersToTeam(team.teamId, Seq(model.playerId)).headOption map { teamId =>
             Ok(Json.toJson(TeamMembershipModel.toModel(playerService.getFellowPlayersForTeamPlayer(profile.profileId, model.playerId, teamId))))
           } getOrElse(InternalServerError("Could not add player to team"))
         } getOrElse(NotFound(s"Team '${model.teamName}' does not exist"))

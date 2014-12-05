@@ -10,16 +10,16 @@
       this.confirmPassword = ko.observable('');
 
       this.successfullyUpdatedPassword = ko.observable(false);
-    
+
       this.currentPasswordError = ko.observable('');
       this.newPasswordError = ko.observable('');
       this.confirmPasswordError = ko.observable('');
       this.globalErrors = ko.observableArray([]);
-      
+
       this.hasCurrentPasswordError = ko.computed(function() {
         return !idl.nullOrEmpty(this.currentPasswordError());
       }, this);
-      
+
       this.hasNewPasswordError = ko.computed(function() {
         return !idl.nullOrEmpty(this.newPasswordError());
       }, this);
