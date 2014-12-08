@@ -129,5 +129,16 @@ object ProfileController
     }
   }
 
+  def forgotPassword = Action { implicit request =>
+    Ok(views.html.profile.forgotPassword(ForgotPasswordModel.empty))
+  }
+
+  def recoverAccount = Action { implicit request =>
+    RecoverPasswordForm().bindFromRequest.fold(
+      formWithErrors => Ok(views.html.profile.forgotPassword(ForgotPasswordModel.empty)),
+      form => Redirect(routes.ProfileController.login)
+    )
+  }
+
   private def profileNotFound(username: String) = NotFound(s"The profile `$username` was not found.")
 }
