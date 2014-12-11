@@ -8,7 +8,7 @@ import security.Roles
 
 trait Secured extends ProfileComponentImpl {
   private def username(request: RequestHeader) = request.session.get(SessionKeys.username)
-  private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.ProfileController.login.url, Map(Secured.returnUrl -> Seq(request.uri)))
+  private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.ProfileController.login.url, Map(IdlAction.returnUrlKey -> Seq(request.uri)))
 
   def IsAuthenticated(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user =>
     IdlAction(request => f(user)(request))
@@ -20,6 +20,3 @@ trait Secured extends ProfileComponentImpl {
   }
 }
 
-object Secured {
-  val returnUrl = "returnUrl"
-}

@@ -29,7 +29,7 @@ object ProfileController
 
         BadRequest(views.html.profile.login(loginModel, errorMessages))
       },
-      user => request.queryString.get(Secured.returnUrl)
+      user => request.queryString.get(IdlAction.returnUrlKey)
         .map(url => Redirect(url.head))
         .getOrElse(Redirect(routes.HomeController.index))
         .withSession(SessionKeys.username -> user.username)
