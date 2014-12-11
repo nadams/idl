@@ -17,11 +17,11 @@ object ProfileController
   with TeamComponentImpl
   with PlayerComponentImpl {
 
-  def login = Action { implicit request =>
+  def login = IdlAction { implicit request =>
     Ok(views.html.profile.login(LoginModel(), Seq.empty[String]))
   }
 
-  def performLogin = Action { implicit request =>
+  def performLogin = IdlAction { implicit request =>
     LoginForm().bindFromRequest.fold(
       errors => {
         val loginModel = LoginModel(errors("username").formattedMessage._1, "")
@@ -70,7 +70,7 @@ object ProfileController
     )
   }
 
-  def logout = Action { implicit request =>
+  def logout = IdlAction { implicit request =>
     Redirect(routes.HomeController.index).withSession(request.session - SessionKeys.username)
   }
 
