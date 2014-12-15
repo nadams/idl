@@ -70,7 +70,7 @@ object ProfileController
     )
   }
 
-  def logout = IdlAction { implicit request =>
+  def logout = Action { implicit request =>
     Redirect(routes.HomeController.index).withSession(request.session - SessionKeys.username)
   }
 
