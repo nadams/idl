@@ -146,3 +146,12 @@ object ForumNewsSchema {
   val topicsTopicId = "id_topic"
   val topicsFirstMsgId = "id_first_msg"
 }
+
+object PasswordTokenSchema {
+  val tableName = "PasswordToken"
+  val passwordTokenId = "PasswordTokenId"
+  val profileId = "ProfileId"
+  val token = "Token"
+  val dateCreated = "DateCreated"
+  val isClaimed = "IsClaimed"
+}

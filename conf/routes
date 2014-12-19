@@ -16,8 +16,8 @@ POST    /profile/addPlayer/:name                controllers.ProfileController.ad
 POST    /profile/removePlayer/:playerId         controllers.ProfileController.removePlayer(playerId: Int)
 POST    /profile/updateDisplayName/:displayName controllers.ProfileController.updateDisplayName(displayName: String)
 POST    /profile/requestToJoinTeam              controllers.ProfileController.requestToJoinTeam
-GET     /login/forgotPassword                   controllers.ProfileController.forgotPassword
-POST    /login/forgotPassword                   controllers.ProfileController.recoverAccount
+GET     /forgotPassword                         controllers.ProfileController.forgotPassword
+POST    /forgotPassword                         controllers.ProfileController.recoverAccount
     
 GET     /registration                           controllers.RegistrationController.index
 POST    /registration                           controllers.RegistrationController.register

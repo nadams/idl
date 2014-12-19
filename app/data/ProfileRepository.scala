@@ -16,6 +16,7 @@ trait ProfileRepositoryComponent {
     def updateLastLoginDate(username: String) : Boolean
     def assignProfileToRole(profileId: Int, roleId: Int) : Boolean
     def removeProfileFromRole(profileId: Int, roleId: Int) : Boolean
+    def insertPasswordToken(profileId: Int, token: Token) : Boolean
   }
 }
 
@@ -24,7 +25,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 
   class ProfileRepositoryImpl extends ProfileRepository {
     import java.sql._
-    import anorm._ 
+    import anorm._
     import anorm.SqlParser._
     import org.joda.time.{ DateTime, DateTimeZone }
     import play.api.db.DB
@@ -38,7 +39,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       .map(Profile(_))
     }
 
-    def getById(profileId: Int) = DB.withConnection { implicit connection => 
+    def getById(profileId: Int) = DB.withConnection { implicit connection =>
       SQL(Profile.selectById)
       .on('profileId -> profileId)
       .as(Profile.singleRowParser singleOpt)
@@ -58,12 +59,12 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       ).executeUpdate > 0
     }
 
-    def getRolesForUsername(username: String) : Seq[Roles.Role] = DB.withConnection { implicit connection => 
+    def getRolesForUsername(username: String) : Seq[Roles.Role] = DB.withConnection { implicit connection =>
       SQL(
         s"""
           SELECT pr.${RoleSchema.roleId}
-          FROM ${ProfileSchema.tableName} AS p 
-            INNER JOIN ${ProfileRoleSchema.tableName} AS pr ON p.${ProfileSchema.profileId} = pr.${ProfileRoleSchema.profileId} 
+          FROM ${ProfileSchema.tableName} AS p
+            INNER JOIN ${ProfileRoleSchema.tableName} AS pr ON p.${ProfileSchema.profileId} = pr.${ProfileRoleSchema.profileId}
           WHERE p.${ProfileSchema.email} = {username}
           ORDER BY p.${ProfileSchema.profileId} ASC
         """
@@ -73,7 +74,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       .map(Roles(_))
     }
 
-    def insertProfile(profile: Profile) = DB.withConnection { implicit connection => 
+    def insertProfile(profile: Profile) = DB.withConnection { implicit connection =>
       Profile(
         SQL(Profile.insert)
         .on(
@@ -94,7 +95,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       )
     }
 
-    def addProfileToRole(profileId: Int, role: Roles.Role) = DB.withConnection { implicit connection => 
+    def addProfileToRole(profileId: Int, role: Roles.Role) = DB.withConnection { implicit connection =>
       SQL(
         s"""
           INSERT INTO ${ProfileRoleSchema.tableName} (
@@ -113,7 +114,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       .executeUpdate > 0
     }
 
-    def searchProfiles(name: String) = DB.withConnection { implicit connection => 
+    def searchProfiles(name: String) = DB.withConnection { implicit connection =>
       SQL(ProfileSearchRecord.searchByName)
       .on('name -> ("%" + name + "%"))
       .as(ProfileSearchRecord.multiRowParser)
@@ -126,16 +127,26 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
       .executeUpdate > 0
     }
 
-    def assignProfileToRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
+    def assignProfileToRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection =>
       SQL(Profile.assignProfileToRole)
       .on('roleId -> roleId, 'profileId -> profileId)
       .executeUpdate > 0
     }
 
-    def removeProfileFromRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
+    def removeProfileFromRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection =>
       SQL(Profile.removeProfileFromRole)
       .on('roleId -> roleId, 'profileId -> profileId)
       .executeUpdate > 0
+    }
+
+    def insertPasswordToken(profileId: Int, token: Token) = DB.withConnection { implicit connection =>
+      SQL(Token.insertToken)
+      .on(
+        'profileId -> profileId,
+        'token -> token.token,
+        'dateCreated -> new DateTime(DateTimeZone.UTC),
+        'isClaimed -> false
+      ).executeUpdate > 0
     }
   }
 }

@@ -136,7 +136,10 @@ object ProfileController
   def recoverAccount = Action { implicit request =>
     RecoverPasswordForm().bindFromRequest.fold(
       formWithErrors => Ok(views.html.profile.forgotPassword(ForgotPasswordModel.empty)),
-      form => Redirect(routes.ProfileController.login)
+      form => {
+        Logger.info(form.toString)
+        Redirect(routes.ProfileController.login)
+      }
     )
   }
 

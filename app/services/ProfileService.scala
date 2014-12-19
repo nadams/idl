@@ -22,6 +22,7 @@ trait ProfileServiceComponent {
     def updateProfile(profile: Profile) : Option[Profile]
     def addProfileToRoles(profileId: Int, roles: Seq[Int]) : Seq[Int]
     def removeProfileFromRoles(profileId: Int, roles: Seq[Int]) : Seq[Int]
+    def profileForgotPassword(username: String) : Option[Token]
   }
 }
 
@@ -43,15 +44,15 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
     def authenticate(username: String, password: String) : Boolean =
       password != "" && getByUsername(username).exists(checkCredentials(_, password))
 
-    def updateProfilePassword(username: String, password: String) : Boolean = 
+    def updateProfilePassword(username: String, password: String) : Boolean =
       password != "" && getByUsername(username).exists { profile =>
         val updatedProfile = Profile(
-          profile.profileId, 
-          profile.email, 
+          profile.profileId,
+          profile.email,
           profile.displayName,
-          hashPassword(password), 
-          profile.passwordExpired, 
-          profile.dateCreated, 
+          hashPassword(password),
+          profile.passwordExpired,
+          profile.dateCreated,
           profile.lastLoginDate
         )
 
@@ -76,8 +77,8 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
       profile
     }
 
-    def profileIsInRole(username: String, role: Roles.Role): Boolean = 
-      profileRepository.getRolesForUsername(username).exists { profileRole => 
+    def profileIsInRole(username: String, role: Roles.Role): Boolean =
+      profileRepository.getRolesForUsername(username).exists { profileRole =>
         profileRole == Roles.SuperAdmin || profileRole == role
       }
 
@@ -89,7 +90,7 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 
     def updateDisplayName(profile: Profile, displayName: String) = {
       val updatedProfile = profile.copy(displayName = displayName)
-  
+
       if(profileRepository.updateProfile(updatedProfile)) Some(updatedProfile)
       else None
     }
@@ -97,7 +98,7 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
     def searchProfiles(name: String) = profileRepository.searchProfiles(name)
     def updateLastLoginDate(username: String) = profileRepository.updateLastLoginDate(username)
     def getRolesForUsername(username: String) = profileRepository.getRolesForUsername(username)
-    def updateProfile(profile: Profile) = 
+    def updateProfile(profile: Profile) =
       if(profileRepository.updateProfile(profile)) Some(profile)
       else None
 
@@ -106,5 +107,15 @@ trait ProfileServiceComponentImpl extends ProfileServiceComponent {
 
     def addProfileToRoles(profileId: Int, roles: Seq[Int]) =
       roles.filter(roleId => profileRepository.assignProfileToRole(profileId, roleId))
+
+    def profileForgotPassword(username: String) =
+      profileRepository.getByUsername(username) map { profile =>
+        val token = Token()
+
+        if(profileRepository.insertPasswordToken(profile.profileId, token))
+          if(profileRepository.updateProfile(profile.copy(passwordExpired = true))) Some(token)
+          else None
+        else None
+      } getOrElse(None)
   }
 }
