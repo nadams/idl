@@ -3,59 +3,59 @@
 @import play.api.libs.json.Json
 
 @extraScripts = {
-	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/ko-bindings/brackets.binding.js")"></script>
-	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
-	<script src="@routes.Assets.at("brackets/jquery.bracket.min.js")"></script>
-	<script>
-		var brackets = brackets || {};
-		brackets.index = brackets.index || {};
-		brackets.index.data = @Html(Json.toJson(model).toString) || {};
-	</script>
-	<script src="@routes.Assets.at("javascripts/views/brackets/Index.js")"></script>
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/ko-bindings/brackets.binding.js")"></script>
+  <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+  <script src="@routes.Assets.at("brackets/jquery.bracket.min.js")"></script>
+  <script>
+    var brackets = brackets || {};
+    brackets.index = brackets.index || {};
+    brackets.index.data = @Html(Json.toJson(model).toString) || {};
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/brackets/Index.js")"></script>
 }
 
 @extraCss = {
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("brackets/jquery.bracket.min.css")" />	
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("brackets/jquery.bracket.min.css")" />  
 }
 
 @main("Brackets", extraScripts = extraScripts, extraCss = extraCss) {
-	<div style="display: none;" data-bind="visible: true">
-		<div class="panel panel-default">
-			<div class="panel-heading"><h3>Latest Season Stats</h3></div>
-			<div class="panel-body">
-				<h4>Regular Season</h4>
-				<div data-bind="if: hasRegularSeasonStats">
-					<table class="table table-striped table-hover">
-						<thead>
-							<tr>
-								<th>Team</th>
-								<th>Wins</th>
-								<th>Losses</th>
-								<th>Ties</th>
-							</tr>
-						</thead>
-						<tbody data-bind="foreach: regularSeasonStats">
-							<tr>
-								<td data-bind="text: teamName"></td>
-								<td data-bind="text: wins"></td>
-								<td data-bind="text: losses"></td>
-								<td data-bind="text: ties"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div data-bind="ifnot: hasRegularSeasonStats">
-					<p>Stats for the current season have not been uploaded yet.</p>
-				</div>
-				<h4>Playoff Season</h4>
-				<div data-bind="if: hasPlayoffStats">
-					<div data-bind="brackets: { teams: teams, results: results }"></div>
-				</div>
-				<div data-bind="ifnot: hasPlayoffStats">
-					<p>The season hasn't reached the playoffs yet.</p>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div style="display: none;" data-bind="visible: true">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h3>Latest Season Stats</h3></div>
+      <div class="panel-body">
+        <h4>Regular Season</h4>
+        <div data-bind="if: hasRegularSeasonStats">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Ties</th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: regularSeasonStats">
+              <tr>
+                <td data-bind="text: teamName"></td>
+                <td data-bind="text: wins"></td>
+                <td data-bind="text: losses"></td>
+                <td data-bind="text: ties"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div data-bind="ifnot: hasRegularSeasonStats">
+          <p>Stats for the current season have not been uploaded yet.</p>
+        </div>
+        <h4>Playoff Season</h4>
+        <div data-bind="if: hasPlayoffStats">
+          <div data-bind="brackets: { data: bracketStats }"></div>
+        </div>
+        <div data-bind="ifnot: hasPlayoffStats">
+          <p>The season hasn't reached the playoffs yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 }

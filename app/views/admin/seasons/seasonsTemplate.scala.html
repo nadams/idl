@@ -1,40 +1,40 @@
 @(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel, req: RequestHeader)
 
 @extraNavItemsTemplate = {
-	<ul class="nav navbar-nav navbar-right nav-actions">
-		<li><a href="@routes.SeasonController.create">Add</a></li>
-		<li><a href="@routes.SeasonController.index">Seasons</a></li>
-	</ul>
+  <ul class="nav navbar-nav navbar-right nav-actions">
+    <li><a href="@routes.SeasonController.create">Add</a></li>
+    <li><a href="@routes.SeasonController.index">Seasons</a></li>
+  </ul>
 
-	@extraNavItems
+  @extraNavItems
 }
 
 @extraCssTemplate = {
-	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/general.css")" />
-
+  <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/admin.css")" />
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/general.css")" />
     @extraCss
 }
 
 @extraScriptsTemplate = { 
-	@helper.javascriptRouter("routes")(
-		routes.javascript.SeasonController.remove,
-		routes.javascript.SeasonController.removeTeamsFromSeason,
-		routes.javascript.SeasonController.assignTeamsToSeason
-	)
+  @helper.javascriptRouter("routes")(
+    routes.javascript.SeasonController.remove,
+    routes.javascript.SeasonController.removeTeamsFromSeason,
+    routes.javascript.SeasonController.assignTeamsToSeason
+  )
 
-	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/ajax.js")"></script>
-	<script>
-		var admin = admin || {};
-		admin.seasons = admin.seasons || {};
-	</script>
-	<script src="@routes.Assets.at("javascripts/views/admin/seasons/SeasonsRepository.js")"></script>
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
+  <script>
+    var admin = admin || {};
+    admin.seasons = admin.seasons || {};
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/admin/seasons/SeasonsRepository.js")"></script>
 
-	@extraScripts
+  @extraScripts
 }
 
 @main(title, extraCssTemplate, extraScriptsTemplate, extraNavItemsTemplate) {
-	@content
+  @content
 }

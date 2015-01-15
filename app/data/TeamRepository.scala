@@ -5,16 +5,17 @@ trait TeamRepositoryComponent {
 
   trait TeamRepository {
     def getTeamsForSeason(seasonId: Int) : Seq[Team]
-    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) : Boolean
+    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false, isApproved: Boolean = false) : Boolean
     def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean
-    def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean
     def getAllActiveTeams() : Seq[Team]
     def insertTeam(team: Team) : Boolean
     def updateTeam(team: Team) : Boolean
     def getTeam(teamId: Int) : Option[Team]
+    def getTeamByName(teamName: String) : Option[Team]
     def getAllTeams() : Seq[Team]
     def removeTeam(teamId: Int) : Boolean
     def getTeamsForGame(gameId: Int) : Option[(Team, Team)]
+    def makeCaptain(teamId: Int, playerId: Int) : Option[Int]
   }
 }
 
@@ -36,18 +37,10 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         FROM ${TeamSchema.tableName} AS t
       """
 
-    val teamParser = 
-      int(TeamSchema.teamId) ~ 
-      str(TeamSchema.name) ~ 
-      bool(TeamSchema.isActive) ~ 
-      datetime(TeamSchema.dateCreated) map flatten
-
-    val multiRowParser = teamParser *
-
     def teamProjection(alias: String) = 
       s"""
         $alias.${TeamSchema.teamId},
-        $alias.${TeamSchema.name},
+        $alias.${TeamSchema.teamName},
         $alias.${TeamSchema.isActive} ,
         $alias.${TeamSchema.dateCreated}
       """
@@ -61,11 +54,11 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         """
       )
       .on('seasonId -> seasonId)
-      .as(multiRowParser)
+      .as(Team.multiRowParser)
       .map(Team(_))
     }
 
-    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false) = DB.withConnection { implicit connection =>
+    def assignPlayerToTeam(playerId: Int, teamId: Int, isCaptain: Boolean = false, isAproved: Boolean = false) = DB.withConnection { implicit connection =>
       SQL(
         s"""
           SELECT COUNT(*) AS Results
@@ -80,23 +73,12 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         'teamId -> teamId
       )
       .as(scalar[Long] single) match {
-        case x if x == 0 => SQL(
-          s"""
-            INSERT INTO ${TeamPlayerSchema.tableName} (
-              ${TeamPlayerSchema.teamId},
-              ${TeamPlayerSchema.playerId}, 
-              ${TeamPlayerSchema.isCaptain}
-            ) VALUES(
-              {teamId}, 
-              {playerId}, 
-              {isCaptain}
-            )
-          """
-        )
+        case x if x == 0 => SQL(TeamPlayer.insertTeamPlayer)
         .on(
           'teamId -> teamId,
           'playerId -> playerId,
-          'isCaptain -> isCaptain
+          'isCaptain -> isCaptain,
+          'isApproved -> isAproved
         )
         .executeUpdate > 0
         case _ => false
@@ -104,36 +86,10 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
     }
 
     def removePlayerFromTeam(playerId: Int, teamId: Int) : Boolean = DB.withConnection { implicit collection => 
-      SQL(
-        s"""
-          DELETE FROM 
-            ${TeamPlayerSchema.tableName}
-          WHERE 
-            ${TeamPlayerSchema.playerId} = {playerId} AND 
-            ${TeamPlayerSchema.teamId} = {teamId}
-        """
-      )
+      SQL(TeamPlayer.removeTeamPlayer)
       .on(
         'playerId -> playerId,
         'teamId -> teamId
-      )
-      .executeUpdate > 0
-    }
-
-    def updateTeamPlayer(playerId: Int, teamId: Int, isCaptain: Boolean) : Boolean = DB.withConnection { implicit connection => 
-      SQL(
-        s"""
-          UPDATE ${TeamPlayerSchema.tableName}
-          SET ${TeamPlayerSchema.isCaptain} = {isCaptain}
-          WHERE 
-            ${TeamPlayerSchema.playerId} = {playerId} AND 
-            ${TeamPlayerSchema.teamId} = {teamId}
-        """
-      )
-      .on(
-        'playerId -> playerId,
-        'teamId -> teamId,
-        'isCaptain -> isCaptain
       )
       .executeUpdate > 0
     }
@@ -145,7 +101,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
           WHERE t.${TeamSchema.isActive} = 1
         """
       )
-      .as(multiRowParser)
+      .as(Team.multiRowParser)
       .map(Team(_))
     }
 
@@ -153,7 +109,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       SQL(
         s"""
           INSERT INTO ${TeamSchema.tableName} (
-            ${TeamSchema.name},
+            ${TeamSchema.teamName},
             ${TeamSchema.isActive},
             ${TeamSchema.dateCreated}
           ) VALUES (
@@ -164,7 +120,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         """
       )
       .on(
-        'teamName -> team.name,
+        'teamName -> team.teamName,
         'isActive -> team.isActive,
         'dateCreated -> team.dateCreated
       )
@@ -176,7 +132,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         s"""
           UPDATE ${TeamSchema.tableName}
           SET
-            ${TeamSchema.name} = {teamName},
+            ${TeamSchema.teamName} = {teamName},
             ${TeamSchema.isActive} = {isActive}
           WHERE
             ${TeamSchema.teamId} = {teamId}
@@ -184,7 +140,7 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       )
       .on(
         'teamId -> team.teamId,
-        'teamName -> team.name,
+        'teamName -> team.teamName,
         'isActive -> team.isActive,
         'dateCreated -> team.dateCreated
       )
@@ -201,13 +157,13 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       .on(
         'teamId -> teamId
       )
-      .as(teamParser singleOpt)
+      .as(Team.singleRowParser singleOpt)
       .map(Team(_))
     }
 
     def getAllTeams() = DB.withConnection { implicit connection => 
       SQL(selectAllTeamsSql)
-      .as(multiRowParser)
+      .as(Team.multiRowParser)
       .map(Team(_))
     }
 
@@ -224,16 +180,42 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
       .executeUpdate > 0
     }
 
+    def makeCaptain(teamId: Int, playerId: Int) = DB.withConnection { implicit connection => 
+      SQL(
+        s"""
+          UPDATE ${TeamPlayerSchema.tableName}
+          SET ${TeamPlayerSchema.isCaptain} = 0
+          WHERE ${TeamPlayerSchema.isCaptain} = 1
+            AND ${TeamPlayerSchema.teamId} = {teamId}
+        """
+      )
+      .on('teamId -> teamId, 'playerId -> playerId)
+      .executeUpdate
+            
+      SQL(
+        s"""
+          UPDATE ${TeamPlayerSchema.tableName}
+          SET ${TeamPlayerSchema.isCaptain} = 1 
+          WHERE ${TeamPlayerSchema.teamId} = {teamId}
+            AND ${TeamPlayerSchema.playerId} = {playerId} 
+        """
+      )
+      .on('teamId -> teamId, 'playerId -> playerId)
+      .executeUpdate
+      
+      Some(playerId)
+    }
+
     def getTeamsForGame(gameId: Int) = DB.withConnection { implicit connection => 
       SQL(
         s"""
           SELECT 
             t1.${TeamSchema.teamId} AS Team1Id,
-            t1.${TeamSchema.name} AS Team1Name,
+            t1.${TeamSchema.teamName} AS Team1Name,
             t1.${TeamSchema.isActive} AS Team1IsActive,
             t1.${TeamSchema.dateCreated} AS Team1DateCreated,
             t2.${TeamSchema.teamId} AS Team2Id,
-            t2.${TeamSchema.name} AS Team2Name,
+            t2.${TeamSchema.teamName} AS Team2Name,
             t2.${TeamSchema.isActive} AS Team2IsActive,
             t2.${TeamSchema.dateCreated} AS Team2DateCreated
           FROM ${TeamGameSchema.tableName} AS tg
@@ -257,6 +239,13 @@ trait TeamRepositoryComponentImpl extends TeamRepositoryComponent {
         Team(data._1, data._2, data._3, data._4), 
         Team(data._5, data._6, data._7, data._8)
       )}
+    }
+
+    def getTeamByName(teamName: String) = DB.withConnection { implicit connection =>
+      SQL(Team.selectByName)
+      .on('teamName -> teamName)
+      .as(Team.singleRowParser singleOpt)
+      .map(Team(_))
     }
   }
 }

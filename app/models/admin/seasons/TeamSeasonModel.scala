@@ -13,5 +13,5 @@ object TeamSeasonsModel {
   lazy val empty : TeamSeasonsModel = TeamSeasonsModel(0, "", Seq.empty[TeamModel], Seq.empty[Int])
 
   def toModel(season: Season, allTeams: Seq[Team], teamsInSeason: Seq[Team]) : TeamSeasonsModel = 
-    TeamSeasonsModel(season.seasonId, season.name, allTeams.map { team => TeamModel(team.teamId, team.name) }, teamsInSeason.map(_.teamId))
+    TeamSeasonsModel(season.seasonId, season.name, allTeams.map { team => TeamModel(team.teamId, team.teamName) }, teamsInSeason.map(_.teamId))
 }

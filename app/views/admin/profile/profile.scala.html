@@ -1,0 +1,146 @@
+@(model: models.admin.profile.ProfileInformationModel)(implicit header: MenuModel, req: RequestHeader)
+
+@import play.api.libs.json.Json
+
+@extraScripts = {
+  @helper.javascriptRouter("routes")(
+    routes.javascript.AdminProfileController.updateProfile,
+    routes.javascript.AdminProfileController.addRoles,
+    routes.javascript.AdminProfileController.removeRoles,
+    routes.javascript.AdminProfileController.unapprovePlayer,
+    routes.javascript.AdminProfileController.approvePlayer,
+    routes.javascript.AdminProfileController.removePlayer
+  )
+  <script>
+    admin.profile.data = @Html(Json.toJson(model).toString)
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/admin/profile/ProfileRepository.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/admin/profile/ProfileModel.js")"></script>
+}
+
+@views.html.admin.profile.profileTemplate("Profile Details", extraScripts = extraScripts) {
+  <div class="panel panel-default">
+    <div class="panel-heading"><h3>Edit Profile: <span data-bind="text: displayName"></span></h3></div>
+    <div class="panel-body">
+      <h3>Profile Information</h3>
+      <form class="form-horizontal" role="form" data-bind="submit: updateProfile">
+        <div class="form-group">
+          <label for="displayName" class="col-sm-2 control-label">Display Name</label>
+          <div class="col-sm-4">
+            <input type="text" id="displayName" class="form-control" data-bind="value: displayName" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email" class="col-sm-2 control-label">Email</label>
+          <div class="col-sm-4">
+            <input type="text" id="email" class="form-control" data-bind="value: email" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="lastLoginDate" class="col-sm-2 control-label">Last Login</label>
+          <div class="col-sm-4">
+            <span data-bind="text: lastLoginDateFormatted"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-4">
+            <button type="submit" class="btn btn-primary" id="saveProfileInformation" data-bind="disable: isUpdatingProfile">
+              <span data-bind="ifnot: isUpdatingProfile">Save</span>
+              <span data-bind="if: isUpdatingProfile"><img src="@routes.Assets.at("images/ajax-loader-blue.gif")" alt="Loading..." class="loading-spinner" /></span>
+            </button>
+            <a href="" class="btn btn-default">Cancel</a>
+          </div>
+        </div>
+      </form>
+      <h3>Player Names</h3>
+      <div class="row">
+        <div class="col-sm-4">
+          <!-- ko if: hasPlayerNames -->
+          <ul class="list-group" data-bind="foreach: playerNames">
+            <li class="list-group-item" data-bind="css: { 'list-group-item-warning': !isApproved(), 'list-group-item-success': isApproved() }">
+              <span data-bind="text: playerName"></span>
+              <span data-bind="if: isUpdatingPlayer"><img src="@routes.Assets.at("images/ajax-loader.gif")" alt="Loading..." class="loading-spinner" /></span>
+              <!-- ko if: isApproved -->
+              <button class="btn btn-danger btn-xs pull-right" data-bind="click: function(data, event) { unapprovePlayer(data, $parent.profileId()) }">Unapprove</button>
+              <!-- /ko -->
+              <!-- ko ifnot: isApproved -->
+              <div class="pull-right">
+                <button class="btn btn-primary btn-xs" data-bind="click: function(data, event) { approvePlayer(data, $parent.profileId()) }">Approve</button>
+                <button class="btn btn-danger btn-xs" data-bind="click: toggleRemovePromptWarning">Remove</button>
+              </div>
+              <!-- /ko -->
+            </li>
+            <!-- ko if: promptRemoveWarning -->
+            <li class="list-group-item list-group-item-danger">
+              <span>Are you sure?</span>
+              <div class="pull-right">
+                <button class="btn btn-primary btn-xs" data-bind="click: hideRemovePromptWarning">No</button>
+                <button class="btn btn-danger btn-xs" data-bind="click: function(data, event) { $parent.removePlayer($parent, $data) }">Yes</button>
+              </div>
+            </li>
+            <!-- /ko -->
+          </ul>
+          <!-- /ko -->
+          <!-- ko ifnot: hasPlayerNames -->
+          <span>This profile has no player names.</span>
+          <!-- /ko -->
+        </div>
+      </div>
+      <h3>Roles</h3>
+      <div class="row">
+        <div class="col-md-3">
+          <div>
+            <label for="rolesAssigned">Roles Assigned</label>
+          </div>
+          <select 
+            id="rolesAssigned"
+            class="form-control game-combobox"
+            multiple="multiple" 
+            size="5"
+            data-bind="
+              options: profileRoles, 
+              optionsText: 'roleName', 
+              optionValue: 'roleId',
+              selectedOptions: selectedRolesToRemove"></select>
+        </div>
+        <div class="col-md-3">
+          <div class="visible-xs visible-sm">
+            <button class="btn btn-default" data-bind="click: addRoles, enable: canAssignRoles">
+              <span class="glyphicon glyphicon-arrow-up"></span>
+            </button>
+            <button class="btn btn-default" data-bind="click: removeRoles, enable: canRemoveRoles">
+              <span class="glyphicon glyphicon-arrow-down"></span>
+            </button>
+          </div>
+          <div class="visible-md visible-lg text-left">
+            <div class="mutate-buttons">
+              <div class="button-group">
+                <button class="btn btn-default" data-bind="click: addRoles, enable: canAssignRoles">
+                  <span class="glyphicon glyphicon-arrow-left"></span>
+                </button>
+                <button class="btn btn-default" data-bind="click: removeRoles, enable: canRemoveRoles">
+                  <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div>
+            <label for="rolesAvailable">Roles Available</label>
+          </div>
+          <select 
+            id="rolesAvailable"
+            class="form-control game-combobox"
+            multiple="multiple" 
+            size="5"
+            data-bind="
+              options: availableRoles, 
+              optionsText: 'roleName', 
+              optionsValue: 'roleId',
+              selectedOptions: selectedRolesToAssign"></select>
+        </div>
+      </div>
+    </div>
+  </div>
+}

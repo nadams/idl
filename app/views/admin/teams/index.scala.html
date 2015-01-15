@@ -3,77 +3,82 @@
 @import play.api.libs.json.Json
 
 @extraScripts = {
-	@helper.javascriptRouter("routes")(
-		routes.javascript.TeamController.remove
-	)
+  @helper.javascriptRouter("routes")(
+    routes.javascript.TeamController.remove
+  )
 
-	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
-	<script>
-		var admin = admin || {};
-		admin.teams = admin.teams || {};
-		admin.teams.data = @Html(Json.toJson(model).toString) || {};
-	</script>
-	<script src="@routes.Assets.at("javascripts/ajax.js")"></script>
-	<script src="@routes.Assets.at("javascripts/views/admin/teams/TeamsRepository.js")"></script>
-	<script src="@routes.Assets.at("javascripts/views/admin/teams/Teams.js")"></script>
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+  <script>
+    var admin = admin || {};
+    admin.teams = admin.teams || {};
+    admin.teams.data = @Html(Json.toJson(model).toString) || {};
+  </script>
+  <script src="@routes.Assets.at("javascripts/ajax.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/admin/teams/TeamsRepository.js")"></script>
+  <script src="@routes.Assets.at("javascripts/views/admin/teams/Teams.js")"></script>
 }
 
 @views.html.admin.teams.teamsTemplate("Manage Teams", extraScripts = extraScripts) {
-	<div style="display: none;" data-bind="visible: true">
+  <div style="display: none;" data-bind="visible: true">
 
-		<!-- ko if: teams().length === 0 -->
-		<div class="jumbotron">
-			<h1>There are no teams yet.</h1>
-		</div>
-		<!-- /ko -->
+    <!-- ko if: teams().length === 0 -->
+    <div class="jumbotron">
+      <h1>There are no teams yet.</h1>
+    </div>
+    <!-- /ko -->
 
-		<!-- ko if: teams().length > 0 -->
-		<div class="panel panel-default">
-			<div class="panel-heading"><h4>Teams</h4></div>
-			<div class="panel-body">
-				<table class="table table-striped table-hover">
-					<thead>
-						<tr>
-							<th class="center-text">Name</th>
-							<th class="center-text">Active</th>
-							<th class="center-text">Remove</th>
-						</tr>
-					</thead>
-					<tbody class="table-striped table-hover" data-bind="foreach: teams">
-						<tr>
-							<td class="center-text">
-								<a data-bind="attr: { href: editUrl }, text: teamName"></a>
-							</td>
-							<td class="center-text">
-								<input type="checkbox" disabled="disabled" data-bind="checked: isActive" />
-							</td>
-							<td class="center-text">
-								<button class="btn btn-danger" data-bind="click: showConfirmRemoveTeam">Remove</button>
-							</td>
-						</tr>
-						<!-- ko if: confirmRemoveTeam -->
-						<tr>
-							<td colspan="3" class="danger">
-								<button type="button" class="close" aria-hidden="true" data-bind="click: hideConfirmRemoveTeam">&times;</button>
-								<div class="danger-row">
-									<p class="text-danger">Are you sure you want to remove this season? It will remove all records associated with it.</p>
-									<div>
-										<button class="btn btn-primary" data-bind="click: hideConfirmRemoveTeam">No</button>
-										<button class="btn btn-danger" data-bind="click: function() { $parent.removeTeam($data); }">Yes</button>
-										<span data-bind="if: isRemovingTeam">
-											<img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
-										</span>
-									</div>
-								</div>
-							</td>
-						</tr>
-						<!-- /ko -->
+    <!-- ko if: teams().length > 0 -->
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4>Teams</h4></div>
+      <div class="panel-body">
+        <table class="table table-striped table-hover">
+          <colgroup>
+            <col />
+            <col style="width: 10%;" />
+            <col style="width: 10%;" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="center-text">Name</th>
+              <th class="center-text">Active</th>
+              <th class="center-text">Remove</th>
+            </tr>
+          </thead>
+          <tbody class="table-striped table-hover" data-bind="foreach: teams">
+            <tr>
+              <td class="center-text">
+                <a data-bind="attr: { href: editUrl }, text: teamName"></a>
+              </td>
+              <td class="center-text">
+                <input type="checkbox" disabled="disabled" data-bind="checked: isActive" />
+              </td>
+              <td class="center-text">
+                <button class="btn btn-danger" data-bind="click: showConfirmRemoveTeam">Remove</button>
+              </td>
+            </tr>
+            <!-- ko if: confirmRemoveTeam -->
+            <tr>
+              <td colspan="3" class="danger">
+                <button type="button" class="close" aria-hidden="true" data-bind="click: hideConfirmRemoveTeam">&times;</button>
+                <div class="danger-row">
+                  <p class="text-danger">Are you sure you want to remove this season? It will remove all records associated with it.</p>
+                  <div>
+                    <button class="btn btn-primary" data-bind="click: hideConfirmRemoveTeam">No</button>
+                    <button class="btn btn-danger" data-bind="click: function() { $parent.removeTeam($data); }">Yes</button>
+                    <span data-bind="if: isRemovingTeam">
+                      <img src="@routes.Assets.at("images/ajax-loader-danger.gif")" alt="Removing..." />
+                    </span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- /ko -->
 
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<!-- /ko -->
-	</div>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- /ko -->
+  </div>
 }

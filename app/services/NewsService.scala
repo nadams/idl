@@ -13,6 +13,7 @@ trait NewsServiceComponent {
     def getNewsById(id: Int) : Option[News]
     def insertNews(news: News) : Boolean
     def updateNews(newsId: Int, subject: String, content: String) : Boolean
+    def getForumNews() : Seq[ForumNews]
   }
 }
 
@@ -28,5 +29,7 @@ trait NewsServiceComponentImpl extends NewsServiceComponent {
     def insertNews(news: News) = newsRepository.insertNews(news)
     def updateNews(newsId: Int, subject: String, content: String) = 
       getNewsById(newsId).exists(news => newsRepository.updateNews(news.updateContent(subject, content))) 
+
+    def getForumNews() = newsRepository.getForumNews()
   }
 }

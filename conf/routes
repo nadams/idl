@@ -8,14 +8,17 @@ GET     /                                       controllers.HomeController.index
 GET     /login                                  controllers.ProfileController.login
 POST    /login                                  controllers.ProfileController.performLogin
 GET     /profile                                controllers.ProfileController.index
-GET     /profile/password                       controllers.ProfileController.password
-POST    /profile/password                       controllers.ProfileController.updatePassword
+POST    /profile/updatePassword                 controllers.ProfileController.updatePassword
 POST    /profile/logout                         controllers.ProfileController.logout
 POST    /profile/becomePlayer                   controllers.ProfileController.becomePlayer
-GET     /profile/myGames                        controllers.ProfileController.myGames
+GET     /profile/games                          controllers.ProfileController.games
+POST    /profile/addPlayer/:name                controllers.ProfileController.addPlayer(name: String)
+POST    /profile/removePlayer/:playerId         controllers.ProfileController.removePlayer(playerId: Int)
+POST    /profile/updateDisplayName/:displayName controllers.ProfileController.updateDisplayName(displayName: String)
+POST    /profile/requestToJoinTeam              controllers.ProfileController.requestToJoinTeam
     
-#GET     /registration                           controllers.RegistrationController.index
-#POST    /registration                           controllers.RegistrationController.register
+GET     /registration                           controllers.RegistrationController.index
+POST    /registration                           controllers.RegistrationController.register
     
 GET     /admin/news                             controllers.NewsController.index(page: Int = 1, size: Int = 15)
 GET     /admin/news/create                      controllers.NewsController.create
@@ -35,6 +38,7 @@ POST    /admin/teams/create                     controllers.TeamController.saveN
 GET     /admin/teams/edit/:id                   controllers.TeamController.edit(id: Int)
 POST    /admin/teams/edit/:id                   controllers.TeamController.saveExisting(id: Int)
 POST    /admin/teams/remove/:id                 controllers.TeamController.remove(id: Int)
+POST    /admin/teams/:teamId/player/:playerId/makeCaptain controllers.TeamController.makeCaptain(teamId: Int, playerId: Int)
     
 GET     /admin/seasons                          controllers.SeasonController.index
 GET     /admin/seasons/create                   controllers.SeasonController.create
@@ -55,6 +59,18 @@ POST    /admin/season/:seasonId/games/:gameId/remove                controllers.
 GET     /admin/season/:seasonId/games/:gameId/stats                 controllers.GameController.stats(seasonId: Int, gameId: Int)
 POST    /admin/season/:seasonId/games/:gameId/stats/upload          controllers.GameController.uploadStats(seasonId: Int, gameId: Int)
 POST    /admin/season/:seasonId/games/:gameId/stats/:playerId/demo  controllers.GameController.uploadDemo(seasonId: Int, gameId: Int, playerId: Int)
+POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/remove controllers.GameController.removeRound(seasonId: Int, gameId: Int, roundId: Int)
+POST    /admin/season/:seasonId/games/:gameId/rounds/:roundId/update controllers.GameController.updateRound(seasonId: Int, gameId: Int, roundId: Int)
+
+GET     /admin/profile                            controllers.AdminProfileController.index
+GET     /admin/profile/:profileId                 controllers.AdminProfileController.profile(profileId: Int)
+GET     /admin/profile/search/:name               controllers.AdminProfileController.search(name: String)
+POST    /admin/profile/:profileId/update          controllers.AdminProfileController.updateProfile(profileId: Int)
+POST    /admin/profile/:profileId/addRoles        controllers.AdminProfileController.addRoles(profileId: Int)
+POST    /admin/profile/:profileId/removeRoles     controllers.AdminProfileController.removeRoles(profileId: Int)
+POST    /admin/profile/:profileId/unapprovePlayer controllers.AdminProfileController.unapprovePlayer(profileId: Int)
+POST    /admin/profile/:profileId/approvePlayer   controllers.AdminProfileController.approvePlayer(profileId: Int)
+POST    /admin/profile/:profileId/removePlayer    controllers.AdminProfileController.removePlayer(profileId: Int)
 
 GET     /brackets                               controllers.BracketsController.index
         

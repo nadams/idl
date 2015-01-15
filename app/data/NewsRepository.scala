@@ -10,6 +10,7 @@ trait NewsRepositoryComponent {
     def insertNews(news: News) : Boolean
     def getNewsById(id: Int) : Option[News]
     def updateNews(news: News) : Boolean
+    def getForumNews(maxItems: Int = 10) : Seq[ForumNews]
   }
 }
 
@@ -116,6 +117,13 @@ trait NewsRepositoryComponentImpl extends NewsRepositoryComponent {
         'postedByProfileId -> news.postedByProfileId
       )
       .executeUpdate > 0
+    }
+
+    def getForumNews(maxItems: Int = 10) = DB.withConnection("forums") { implicit connection =>
+      SQL(ForumNews.selectAllSql)
+      .on('maxItems -> maxItems)
+      .as(ForumNews.multiRowParser)
+      .map(ForumNews(_))
     }
   }
 }

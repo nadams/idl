@@ -1,27 +1,28 @@
 @(title: String, extraCss: Html = Html(""), extraScripts: Html = Html(""), extraNavItems: Html = Html(""))(content: Html)(implicit header: MenuModel, req: RequestHeader, seasonId: Int)
 
 @extraNavItemsTemplate = {
-	<ul class="nav navbar-nav navbar-right nav-actions">
-		<li><a href="@routes.GameController.create(seasonId)">Add</a></li>
-		<li><a href="@routes.GameController.index(seasonId)">Games</a></li>
-	</ul>
+  <ul class="nav navbar-nav navbar-right nav-actions">
+    <li><a href="@routes.GameController.create(seasonId)">Add</a></li>
+    <li><a href="@routes.GameController.index(seasonId)">Games</a></li>
+  </ul>
 
-	@extraNavItems
+  @extraNavItems
 }
 
 @extraCssTemplate = {
+  <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/admin.css")" />
     @extraCss
 }
 
 @extraScriptsTemplate = { 
-	<script>
-		var admin = admin || {};
-		admin.games = admin.games || {};
-	</script>
+  <script>
+    var admin = admin || {};
+    admin.games = admin.games || {};
+  </script>
 
-	@extraScripts
+  @extraScripts
 }
 
 @main(title, extraCssTemplate, extraScriptsTemplate, extraNavItemsTemplate) {
-	@content
+  @content
 }

@@ -43,6 +43,17 @@ object AnormExtensions {
     }
   }
 
+  implicit def intToBool : Column[Boolean] = Column.nonNull { (value, meta) =>
+    val MetaDataItem(qualified, nullable, clazz) = meta
+
+    value match {
+      case bool: Boolean => Right(bool)
+      case bit: Int => Right(bit == 1)
+      case bit: Long => Right(bit == 1)
+      case _ => Left(TypeDoesNotMatch("Cattnot convert " + value + ":" + value.asInstanceOf[AnyRef].getClass))
+    }
+  }
+
   def bytes(columnName: String) = get[Array[Byte]](columnName)(implicitly[Column[Array[Byte]]])
   def datetime(columnName: String) = get[DateTime](columnName)(implicitly[Column[DateTime]])
 }

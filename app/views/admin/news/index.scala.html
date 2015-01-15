@@ -4,52 +4,52 @@
 @import models.admin.news._
 
 @extraScripts = {
-	<script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
-	<script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
-	<script>
-		var admin = admin || {};
-		admin.news = admin.news || {};
-		admin.news.index = admin.news.index || {};
-		admin.news.index = {
-			data: @Html(Json.toJson(model).toString) || {}
-		};
-	</script>
-	<script src="@routes.Assets.at("javascripts/views/admin/news/NewsIndex.js")"></script>
+  <script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/knockout.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/lodash.min.js")"></script>
+  <script>
+    var admin = admin || {};
+    admin.news = admin.news || {};
+    admin.news.index = admin.news.index || {};
+    admin.news.index = {
+      data: @Html(Json.toJson(model).toString) || {}
+    };
+  </script>
+  <script src="@routes.Assets.at("javascripts/views/admin/news/NewsIndex.js")"></script>
 }
 
 @newsTemplate("Manage News", extraScripts = extraScripts) {
-	@if(model.newsItems.nonEmpty) {
-		<div class="panel panel-default">
-			<div class="panel-heading"><h4>News</h4></div>
-			<table class="panel-body table table-striped table-hover" id="newsList" style="display: none;" data-bind="visible: true">
-				<thead>
-					<tr>
-						<th>Subject</th>
-						<th>Date Created</th>
-						<th>Date Modified</th>
-						<th>Posted by</th>
-						<th>Remove</th>
-					</tr>
-				</thead>
-				<tbody data-bind="foreach: newsItems">
-					<tr>
-						<td><a data-bind="attr: { href: editUrl }, text: subject"></a></td>
-						<td data-bind="text: niceDateCreated"></td>
-						<td data-bind="text: niceDateModified"></td>
-						<td data-bind="text: postedByUsername"></td>
-						<td>
-							<form method="post" data-bind="attr: { action: removeUrl }">
-								<button type="submit" class="btn btn-danger">Remove</button>
-							</form>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	} else {
-		<div class="jumbotron">
-			<h1>There are no news items yet.</h1>
-		</div>
-	}
+  @if(model.newsItems.nonEmpty) {
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4>News</h4></div>
+      <table class="panel-body table table-striped table-hover" id="newsList" style="display: none;" data-bind="visible: true">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Date Created</th>
+            <th>Date Modified</th>
+            <th>Posted by</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody data-bind="foreach: newsItems">
+          <tr>
+            <td><a data-bind="attr: { href: editUrl }, text: subject"></a></td>
+            <td data-bind="text: niceDateCreated"></td>
+            <td data-bind="text: niceDateModified"></td>
+            <td data-bind="text: postedByUsername"></td>
+            <td>
+              <form method="post" data-bind="attr: { action: removeUrl }">
+                <button type="submit" class="btn btn-danger">Remove</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  } else {
+    <div class="jumbotron">
+      <h1>There are no news items yet.</h1>
+    </div>
+  }
 }

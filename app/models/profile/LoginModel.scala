@@ -17,7 +17,11 @@ object LoginForm extends ProfileComponentImpl {
       "password" -> text
     )(LoginModel.apply)(LoginModel.unapply)
     verifying("Invalid username/password", result => result match {
-      case LoginModel(email, password) => profileService.authenticate(email, password)
+      case LoginModel(email, password) => {
+        val result = profileService.authenticate(email, password)
+        if(result) profileService.updateLastLoginDate(email)
+        result
+      }
     })
   )
 }

@@ -13,7 +13,7 @@ case class EditTeamModel(teamId: Int, teamName: String, isActive: Boolean) {
 object EditTeamModel {
   def empty = EditTeamModel(0, "", true)
 
-  def toModel(team: Team) = EditTeamModel(team.teamId, team.name, team.isActive)
+  def toModel(team: Team) = EditTeamModel(team.teamId, team.teamName, team.isActive)
   def toEntity(model: EditTeamModel) = Team(model.teamId, model.teamName, model.isActive, new DateTime(DateTimeZone.UTC))
 }
 

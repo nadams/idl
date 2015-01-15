@@ -1,46 +1,46 @@
 @(model: models.profile.LoginModel, errors: Seq[String])(implicit header: MenuModel)
 
 @extraScripts = {
-	<script>
-		(function($) {
-			$(function() {
-				$('#username').focus();
-			});
-		})(jQuery);
-	</script>
+  <script>
+    (function($) {
+      $(function() {
+        $('#username').focus();
+      });
+    })(jQuery);
+  </script>
 }
 
 @main("Login", extraScripts = extraScripts) {
-	<form method="post" role="form" class="panel panel-default">
-		<fieldset class="panel-body">
-			<legend>Login</legend>
+  <form method="post" role="form" class="panel panel-default">
+    <fieldset class="panel-body">
+      <legend>Login</legend>
 
-			@if(errors.nonEmpty) {
-				<div class="alert alert-danger">
-					@for(error <- errors) {
-						<p class="error">@error</p>
-					}
-				</div>
-			}
+      @if(errors.nonEmpty) {
+        <div class="alert alert-danger">
+          @for(error <- errors) {
+            <p class="error">@error</p>
+          }
+        </div>
+      }
 
-			<div class="row form-group">
-				<div class="col-xs-4">
-					<label for="username">Username (email address)</label>
-					<input type="text" class="form-control" id="username" name="username" value="@model.username" />
-				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-xs-4">
-					<label for="password">Password</label>
-					<input type="password" class="form-control" id="password" name="password" />
-				</div>
-			</div>
-			
-			<div class="row form-group">
-				<div class="col-xs-4">
-					<button type="submit" class="btn btn-primary">Log In</button>
-				</div>
-			</div>
-		</fieldset>
-	</form>
+      <div class="row form-group">
+        <div class="col-xs-4">
+          <label for="username">Username (email address)</label>
+          <input type="text" class="form-control" id="username" name="username" value="@model.username" />
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-xs-4">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" />
+        </div>
+      </div>
+      
+      <div class="row form-group">
+        <div class="col-xs-4">
+          <button type="submit" class="btn btn-primary">Log In</button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
 }

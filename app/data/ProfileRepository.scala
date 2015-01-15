@@ -7,10 +7,15 @@ trait ProfileRepositoryComponent {
 
   trait ProfileRepository {
     def getByUsername(username: String) : Option[Profile]
+    def getById(profileId: Int) : Option[Profile]
     def updateProfile(profile: Profile) : Boolean
     def getRolesForUsername(username: String) : Seq[Roles.Role]
     def insertProfile(profile: Profile) : Profile
     def addProfileToRole(profileId: Int, role: Roles.Role) : Boolean
+    def searchProfiles(name: String) : Seq[ProfileSearchRecord]
+    def updateLastLoginDate(username: String) : Boolean
+    def assignProfileToRole(profileId: Int, roleId: Int) : Boolean
+    def removeProfileFromRole(profileId: Int, roleId: Int) : Boolean
   }
 }
 
@@ -21,47 +26,28 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
     import java.sql._
     import anorm._ 
     import anorm.SqlParser._
-    import org.joda.time.DateTime
+    import org.joda.time.{ DateTime, DateTimeZone }
     import play.api.db.DB
     import play.api.Play.current
     import AnormExtensions._
 
-    val profileParser = 
-      int(ProfileSchema.profileId) ~ 
-      str(ProfileSchema.email) ~ 
-      str(ProfileSchema.displayName) ~ 
-      str(ProfileSchema.password) ~ 
-      bool(ProfileSchema.passwordExpired) ~ 
-      datetime(ProfileSchema.dateCreated) ~ 
-      datetime(ProfileSchema.lastLoginDate) map(flatten)
-
     def getByUsername(username: String) : Option[Profile] = DB.withConnection { implicit connection =>
-      SQL(
-        s"""
-          SELECT *
-          FROM ${ProfileSchema.tableName}
-          WHERE ${ProfileSchema.email} = {email}
-        """
-      )
+      SQL(Profile.selectByUsername)
       .on('email -> username)
-      .as(profileParser singleOpt)
+      .as(Profile.singleRowParser singleOpt)
+      .map(Profile(_))
+    }
+
+    def getById(profileId: Int) = DB.withConnection { implicit connection => 
+      SQL(Profile.selectById)
+      .on('profileId -> profileId)
+      .as(Profile.singleRowParser singleOpt)
       .map(Profile(_))
     }
 
     def updateProfile(profile: Profile) : Boolean = DB.withConnection { implicit connection =>
-      SQL(
-        s"""
-          UPDATE ${ProfileSchema.tableName}
-          SET 
-            ${ProfileSchema.email} = {email},
-            ${ProfileSchema.displayName} = {displayName},
-            ${ProfileSchema.password} = {password},
-            ${ProfileSchema.dateCreated} = {dateCreated},
-            ${ProfileSchema.passwordExpired} = {passwordExpired},
-            ${ProfileSchema.lastLoginDate} = {lastLoginDate}
-          WHERE ${ProfileSchema.profileId} = {profileId}
-        """
-      ).on(
+      SQL(Profile.update)
+      .on(
         'profileId -> profile.profileId,
         'email -> profile.email,
         'displayName -> profile.displayName,
@@ -89,25 +75,7 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
 
     def insertProfile(profile: Profile) = DB.withConnection { implicit connection => 
       Profile(
-        SQL(
-          s"""
-            INSERT INTO ${ProfileSchema.tableName} (
-              ${ProfileSchema.email},
-              ${ProfileSchema.displayName},
-              ${ProfileSchema.password},
-              ${ProfileSchema.dateCreated},
-              ${ProfileSchema.passwordExpired},
-              ${ProfileSchema.lastLoginDate}
-            ) VALUES (
-              {email},
-              {displayName},
-              {password},
-              {dateCreated},
-              {passwordExpired},
-              {lastLoginDate}
-            )
-          """
-        )
+        SQL(Profile.insert)
         .on(
           'email -> profile.email,
           'displayName -> profile.displayName,
@@ -142,6 +110,31 @@ trait ProfileRepositoryComponentImpl extends ProfileRepositoryComponent {
         'profileId -> profileId,
         'roleId -> role.id
       )
+      .executeUpdate > 0
+    }
+
+    def searchProfiles(name: String) = DB.withConnection { implicit connection => 
+      SQL(ProfileSearchRecord.searchByName)
+      .on('name -> ("%" + name + "%"))
+      .as(ProfileSearchRecord.multiRowParser)
+      .map(ProfileSearchRecord(_))
+    }
+
+    def updateLastLoginDate(username: String) = DB.withConnection { implicit connection =>
+      SQL(Profile.updateLastLoginDate)
+      .on('lastLoginDate -> new DateTime(DateTimeZone.UTC), 'email -> username)
+      .executeUpdate > 0
+    }
+
+    def assignProfileToRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
+      SQL(Profile.assignProfileToRole)
+      .on('roleId -> roleId, 'profileId -> profileId)
+      .executeUpdate > 0
+    }
+
+    def removeProfileFromRole(profileId: Int, roleId: Int) = DB.withConnection { implicit connection => 
+      SQL(Profile.removeProfileFromRole)
+      .on('roleId -> roleId, 'profileId -> profileId)
       .executeUpdate > 0
     }
   }

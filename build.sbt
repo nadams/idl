@@ -1,10 +1,10 @@
 name := "idl"
 
-version := "idl-1.0.1"
+version := "idl-1.0.4"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.4"
 
 scalacOptions += "-language:postfixOps"
 
@@ -25,8 +25,15 @@ val compass = taskKey[Int]("Compile sass")
 
 val compassClean = taskKey[Int]("Clean sass")
 
+val productionCompile = taskKey[Int]("Compile for production")
+
 compass := {
   "compass compile" !
+}
+
+productionCompile := {
+  compile.value
+  "compass compile --output-style compressed --force" !
 }
 
 compassClean := {

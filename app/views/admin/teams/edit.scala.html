@@ -1,46 +1,46 @@
 @(model: models.admin.teams.EditTeamModel, errors: models.admin.teams.EditTeamModelErrors)(implicit header: MenuModel)
 
 @title() = {
-	@if(model.isNewTeam) { 
-		Create Team
-	} else { 
-		@(s"Edit Team: ${model.teamName}")
-	}
+  @if(model.isNewTeam) { 
+    Create Team
+  } else { 
+    @(s"Edit Team: ${model.teamName}")
+  }
 }
 
 @views.html.admin.teams.teamsTemplate(title.toString) {
-	<div class="panel panel-default">
-		<div class="panel-heading"><h4>@title</h4></div>
-		<form 
-			method="post" 
-			action="@if(model.isNewTeam) {@routes.TeamController.saveNew} else {@routes.TeamController.saveExisting(model.teamId)}" 
-			role="form" 
-			class="panel-body">
-			<input type="hidden" name="teamId" value="@model.teamId" />
+  <div class="panel panel-default">
+    <div class="panel-heading"><h4>@title</h4></div>
+    <form 
+      method="post" 
+      action="@if(model.isNewTeam) {@routes.TeamController.saveNew} else {@routes.TeamController.saveExisting(model.teamId)}" 
+      role="form" 
+      class="panel-body">
+      <input type="hidden" name="teamId" value="@model.teamId" />
 
-			<fieldset>
-				<div class="row form-group">
-					<div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
-						<label for="teamName">Name</label>
-						<input type="text" id="teamName" name="teamName" class="form-control" value="@model.teamName" />
-						@if(errors.nameError.nonEmpty) {
-							<span class="help-block">@errors.nameError.get</span>
-						}
-					</div>
-				</div>
-				<div class="row form-group">
-					<div class="col-xs-4">
-						<label for="isActive">Active</label>
-						<input type="checkbox" id="isActive" name="isActive" @if(model.isActive) {checked="checked"} />
-					</div>
-				</div>
-				<div class="row form-group">
-					<div class="col-xs-4">
-						<button type="submit" class="btn btn-primary">Save</button>
-						<a class="btn btn-default" href="@routes.TeamController.index">Cancel</a>
-					</div>
-				</div>
-			</fieldset>
-		</form>
-	</div>
+      <fieldset>
+        <div class="row form-group">
+          <div class="col-xs-4 @if(errors.nameError.nonEmpty) { has-error }">
+            <label for="teamName">Name</label>
+            <input type="text" id="teamName" name="teamName" class="form-control" value="@model.teamName" />
+            @if(errors.nameError.nonEmpty) {
+              <span class="help-block">@errors.nameError.get</span>
+            }
+          </div>
+        </div>
+        <div class="row form-group">
+          <div class="col-xs-4">
+            <label for="isActive">Active</label>
+            <input type="checkbox" id="isActive" name="isActive" @if(model.isActive) {checked="checked"} />
+          </div>
+        </div>
+        <div class="row form-group">
+          <div class="col-xs-4">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-default" href="@routes.TeamController.index">Cancel</a>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
 }
